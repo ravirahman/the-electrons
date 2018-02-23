@@ -42,6 +42,8 @@ First Team Best Team (a.k.a. Team 1) is comprised of six MIT undergraduates from
 **Martina Stadler** is a junior in Course 16 with a focus on autonomous systems. She is a Co-President of the MIT Student Chapter of AIAA, and is the Payload Subteam Lead and the Social Chair for the MIT Rocket Team. When she has a spare moment, she plays IM hockey with AeroAstro and bakes cakes for her floor.
 
 <br>
+<br>
+<br>
 
 <span class="image right about">![](assets/images/about/Jake.png)</span>
 
