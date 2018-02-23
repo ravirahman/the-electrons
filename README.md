@@ -81,7 +81,7 @@ You will see that there is a template for a lab report titled **lab3.md**. As yo
 
 [https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#code](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#code).
 
-Also, LaTex is supported! Many of the reports will require you to display equations: delineate LaTex equations by wrapping them with $$ (e.g. $$\frac{1}{2}) and they will be converted to LaTex when the website loads.
+Also, LaTex is supported! Many of the reports will require you to display equations: delineate LaTex equations by wrapping them with $$ (e.g. $$\frac{1}{2}$$) and they will be converted to LaTex when the website loads.
 
 *Note: This will work best when the LaTex equations are on their own lines.*
 
