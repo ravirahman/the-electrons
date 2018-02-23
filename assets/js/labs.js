@@ -3,7 +3,7 @@ function run(post, target) {
 
     var oRequest = new XMLHttpRequest(),
         sURL = "http://"
-        + "localhost:8000"
+        + self.location.hostname
         + post,
         target = document.getElementById(target),
         allText = "";
