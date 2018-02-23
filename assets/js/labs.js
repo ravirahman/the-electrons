@@ -2,7 +2,7 @@ function run(post, target) {
     var converter = new showdown.Converter();
 
     var oRequest = new XMLHttpRequest(),
-        sURL = "http://"
+        sURL = "https://"
         + self.location.hostname
         + post,
         target = document.getElementById(target),
