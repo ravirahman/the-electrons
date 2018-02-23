@@ -11,6 +11,7 @@ First Team Best Team (a.k.a. Team 1) is comprised of six MIT undergraduates from
 <br>
 <br>
 <br>
+<br>
 
 <span class="image right about">![](assets/images/about/Wadhwania.jpg)</span>
 
@@ -29,6 +30,8 @@ First Team Best Team (a.k.a. Team 1) is comprised of six MIT undergraduates from
 
 **Nick Villanueva** is currently a senior in MIT’s AeroAstro Department. He is originally from Lafayette California. Upon graduation he plans to commission into the U.S. Air Force.
 
+<br>
+<br>
 <br>
 <br>
 <br>
