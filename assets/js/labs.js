@@ -8,8 +8,8 @@ function run(post, target) {
         target = document.getElementById(target),
         allText = "";
 
-    oRequest.setRequestHeader("Accept", "text/html");
     oRequest.open("GET",sURL,false);
+    oRequest.setRequestHeader("Accept", "text/html");
     oRequest.onreadystatechange = function () {
         if (oRequest.readyState == 4) {
             if (oRequest.status == 200) {
