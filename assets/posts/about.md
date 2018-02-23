@@ -10,12 +10,12 @@ First Team Best Team (a.k.a. Team 1) is comprised of six MIT undergraduates from
 
 <br>
 <br>
+<br>
 
 <span class="image right about">![](assets/images/about/Wadhwania.jpg)</span>
 
 **Samir Wadhwania** is from San Antonio, Texas. He is a current junior in MIT's AeroAstro Department, but has varying interests outside of engineering such as international development and public policy. Academically, Samir's interests lie in controls and autonomous systems. Outside of class, Samir likes to spend his time reading up on current events, longboarding, and bowling.
 
-<br>
 <br>
 
 <span class="image left about">![](assets/images/about/Clementine.jpg)</span>
@@ -31,12 +31,13 @@ First Team Best Team (a.k.a. Team 1) is comprised of six MIT undergraduates from
 
 <br>
 <br>
+<br>
+<br>
 
 <span class="image left about">![](assets/images/about/Martina.JPG)</span>
 
 **Martina Stadler** is a junior in Course 16 with a focus on autonomous systems. She is a Co-President of the MIT Student Chapter of AIAA, and is the Payload Subteam Lead and the Social Chair for the MIT Rocket Team. When she has a spare moment, she plays IM hockey with AeroAstro and bakes cakes for her floor.
 
-<br>
 <br>
 
 <span class="image right about">![](assets/images/about/Jake.png)</span>
