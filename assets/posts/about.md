@@ -16,11 +16,11 @@ First Team Best Team (a.k.a. Team 1) is comprised of six MIT undergraduates from
 
 **Clementine Mitchell** is from Glasgow, Scotland. She is currently a junior studying Aerospace Engineering with particular interests in controls and human factors relating to spaceflight. Outside of class, Clementine spends her time working on her research project in MIT’s Man Vehicle Lab and running on MIT’s Track and Field team.
 
-<span class="image right about">![](assets/images/about/Nick.jpg)</span>
+<span class="image right about">![](assets/images/about/Nick.JPG)</span>
 
 **Nick Villanueva** is currently a senior in MIT’s AeroAstro Department. He is originally from Lafayette California. Upon graduation he plans to commission into the U.S. Air Force.
 
-<span class="image left about">![](assets/images/about/Martina.jpg)</span>
+<span class="image left about">![](assets/images/about/Martina.JPG)</span>
 
 **Martina Stadler** is a junior in Course 16 with a focus on autonomous systems. She is a Co-President of the MIT Student Chapter of AIAA, and is the Payload Subteam Lead and the Social Chair for the MIT Rocket Team. When she has a spare moment, she plays IM hockey with AeroAstro and bakes cakes for her floor.
 
