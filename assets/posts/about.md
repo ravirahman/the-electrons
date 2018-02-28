@@ -4,9 +4,9 @@
 
 First Team Best Team (a.k.a. Team 1) is comprised of six MIT undergraduates from MIT's AeroAstro department, which are individually described in the page below. The team varies in experience, but overall shares a genuine interest in topics around autonomy, such as path planning, computer vision, and control systems. These interests in autonomy, along with graduation requirements, drove them all indivdually to take 6.141 and will drive the team towards a succesful race by the end of the semester.
 
-<span class="image left about">![](assets/images/about/Gomez.jpg)</span>
+<span class="image left about">![](assets/images/about/Jerry.jpg)</span>
 
-**Jose Gomez** is a senior in MIT's AeroAstro Department and originally from Mcallen, Texas. He focuses on working on controls and autonomous systems, but has varying experince in other topics. After graduation, Jose plans to work for General Motors in the Milford, MI proving grounds as a controls engineer.
+**Jerry Wu** is a senior double majoring in Math and Computer Science and originally from Fremont, California. His expertise is primarily in algorithms, with some performance engineering and machine learning experience. After graduation, Jerry plans to work for Google in Mountain View, though he is not currently decided whether he will stay at Google after a year or move on to Berkeley's Computer Science PhD program.
 
 <br>
 <br>
