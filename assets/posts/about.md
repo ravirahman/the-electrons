@@ -2,7 +2,7 @@
 
 <span class="image main">![](assets/images/about/team_pic.jpg)</span>
 
-The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to right): [#jerry](Jerry Wu), [#kolby](Kolby Danner), [#marek](Marek Subernat), [#sabina](Sabina Chen), and ![#ravi](Ravi Rahman). The team varies in experience, but overall shares a genuine interest in topics around autonomy, path planning, computer vision, and control systems. Our diverse interests will lead towards
+The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to right): [Jerry Wu](#jerry), [Kolby Danner](#kolby), [Marek Subernat](#marek), [Sabina Chen](#sabina), and [Ravi Rahman](#ravi). The team varies in experience, but overall shares a genuine interest in topics around autonomy, path planning, computer vision, and control systems. Our diverse interests will lead towards
 
 <span class="image left about" id="jerry">![](assets/images/about/Jerry.jpg)</span>
 
@@ -15,7 +15,7 @@ The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to ri
 
 <span class="image left about">![](assets/images/about/kolby.JPG)</span>
 
-**Martina Stadler** is a junior in Course 16 with a focus on autonomous systems. She is a Co-President of the MIT Student Chapter of AIAA, and is the Payload Subteam Lead and the Social Chair for the MIT Rocket Team. When she has a spare moment, she plays IM hockey with AeroAstro and bakes cakes for her floor.
+**Kolby Danner** <!-- todo -->
 
 <br>
 <br>
@@ -23,8 +23,11 @@ The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to ri
 
 <span class="image left about" id="marek">![](assets/images/about/marek.jpg)</span>
 
-**Kolby Danner**  <!-- TODO -->
+ **Marek Subernat** is a Junior Aerospace Engineer with particular interests in human factors and controls. He was born in Poland and grew up in NYC. He spends his free time playing music, varying from theater pit orchestras to MIT's festival jazz ensemble.
 
+<br>
+<br>
+<br>
 <br>
 <br>
 
@@ -33,6 +36,9 @@ The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to ri
 
 **Sabina Chen**   <!-- TODO -->
 
+<br>
+<br>
+<br>
 <br>
 
 <span class="image right about" id="ravi">![](assets/images/about/ravi.jpg)</span>
