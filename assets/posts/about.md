@@ -11,12 +11,16 @@ The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to ri
 <br>
 <br>
 <br>
+
+<span class="image left about">![](assets/images/about/kolby.jpg)</span>
+
+**Kolby Danner** is from the small town of Maiden, North Carolina, which is not far from Charlotte. He is a senior in the mechanical engineering department concentrating in controls, instrumentation, and robotics. Outside of class, Kolby enjoys being active by playing basketball and working out or simply relaxing by watching reruns of The Office; there is no in between.
+
 <br>
-
-<span class="image left about">![](assets/images/about/kolby.JPG)</span>
-
-**Kolby Danner** <!-- todo -->
-
+<br>
+<br>
+<br>
+<br>
 <br>
 <br>
 <br>
@@ -30,11 +34,12 @@ The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to ri
 <br>
 <br>
 <br>
+<br>
 
 
 <span class="image right about" id="sabina">![](assets/images/about/sabina.jpg)</span>
 
-**Sabina Chen**   <!-- TODO -->
+**Sabina Chen** is a Junior studying Electrical Engineering and Computer Science. She is originally from Arcadia, California. Her primary interests lie in robotics, artificial intelligence, and autonomous controls, particularly in the field of planetary exploration and space technology. Outside of class, Sabina enjoys spending her time figure skating, reading, or biking through Boston.
 
 <br>
 <br>
