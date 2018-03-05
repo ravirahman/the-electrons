@@ -8,16 +8,13 @@ The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to ri
 
 **Jerry Wu** is a senior double majoring in Math and Computer Science and originally from Fremont, California. His expertise is primarily in algorithms, with some performance engineering and machine learning experience. After graduation, Jerry plans to work for Google in Mountain View, though he is not currently decided whether he will stay at Google after a year or move on to Berkeley's Computer Science PhD program.
 
-<br>
-<br>
+
 <br>
 
-<span class="image left about">![](assets/images/about/kolby.jpg)</span>
+<span class="image right about">![](assets/images/about/kolby.jpg)</span>
 
 **Kolby Danner** is from the small town of Maiden, North Carolina, which is not far from Charlotte. He is a senior in the mechanical engineering department concentrating in controls, instrumentation, and robotics. Outside of class, Kolby enjoys being active by playing basketball and working out or simply relaxing by watching reruns of The Office; there is no in between.
 
-<br>
-<br>
 <br>
 <br>
 <br>
@@ -46,7 +43,7 @@ The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to ri
 <br>
 <br>
 
-<span class="image right about" id="ravi">![](assets/images/about/ravi.jpg)</span>
+<span class="image left about" id="ravi">![](assets/images/about/ravi.jpg)</span>
 
 **Ravi Rahman**, an MIT Computer Science and Electrical Engineering (6-2) sophomore and Mathematics minor, specializes in algorithm design and full stack development. From this class, he wants to understand how to design autonomous systems. In addition, his coursework this semester includes machine learning and managerial finance. Last summer, Ravi interened at Illumio, a cybersecurity startup located in Sunnyvale, CA. Currently, he researches in MIT CSAIL's Distributed Robotics Lab, and he will working at Uber in San Francisco this upcoming summer.
 
