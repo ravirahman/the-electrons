@@ -20,6 +20,7 @@ The team's code for this lab consists of two major components: the wall-followin
 The wall-following code begins by selecting the portion of the laser scan data which is both on the side of the robot the wall is supposed to be at as well as in front of the robot (so the angle must be between 0 and pi/2 radians). We filter out points at the max range of the laser scan, which are assumed to be the laser not hitting anything and are not part of the wall. The code then uses a least-squares linear regression to estimate the location and angle of the wall. Once the wall is located, the code uses a modified PID controller based on the difference between the robot's distance to the wall and the desired distance to the wall. The derivative of this difference is computed algebraically from the robot's orientation relative to the wall. The integration term is computed with anti-windup behavior, such as the integration term decaying exponentially over time, so that the behavior is more controlled when the robot starts far away from the nearest wall. The output of the PID controller is the desired angle of approach to the wall, which is clamped at absolute value 1 radian because the robot may lose track of the wall if it starts to approach it head-on. Finally, the steering angle is simply set to the difference between the robot's angle to the wall and the desired angle to the wall.
 
 <center>![regression](/assets/images/lab3/regression.png)</center>
+Format: ![Alt Text](url)
 
 <center>![wf_callback](/assets/images/lab3/wf_callback.png)</center>
 
