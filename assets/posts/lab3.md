@@ -21,9 +21,7 @@ Our code for the wall-following robot has two major components: the wall-followi
 
 The ROS architecture is depicted below. The nodes of the system are represented by the colored boxes, and the topics are the values along the arrows.
 
-<span class="image main">![][node_architecture]</span>
-
-[node_architecture]: /assets/images/lab3/node_architecture.png
+<span class="image main">![](assets/images/lab3/node_architecture.png)</span>
 
 #### Wall Follower - Jerry
 
