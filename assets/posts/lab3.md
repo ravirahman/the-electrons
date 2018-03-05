@@ -46,7 +46,9 @@ This lab was essentially an extension of the previous lab to real world conditio
 We realized that the velodyne sensor was offset after attempting to run the safety controller on the actual robot, and having the robot not respond as expected. From running the safety controller on simulation, the robot should stop immediately after realizing that it was less than or equal to 1 meter away from an obstacle. However, after running the safety controller on the actual robot and analyzing the laser scan data, we realized that the robot was not actually recognizing obstacles in front of it. From both the scan data and experimental evaluation, we deduced that the velodyne sensor was offset by around 55 degrees (0.95 radians) to the right of 0. We tested the angle offset by placing an obstacle in front of the laser scanner at various angles, and observing if the robot sensed the obstacle.
 
 <span>![](assets/images/lab3/offset_left.png)</span>
+
 <span>![](assets/images/lab3/offset_center.png)</span>
+
 <span>![](assets/images/lab3/offset_right.png)</span>
 
 #### Wall Follower
