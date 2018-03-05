@@ -1,41 +1,6 @@
 
-# RSS Team 12
+# Electrons - RSS Team 12
 
-## Set up the website
-
-### Set your team name and number within the website
-
-We do not expect you to know how to build a website or use HTML/CSS. However, editing the given files to you should be quick and easy.
-
-Read through the **index.html** file to see how the website is structured. Wherever you encounter `[Insert Team Name here]` or `[Insert Team # here]`, do just that.
-
-The team name is up to you to decide!
-
-### Create your About page
-
-If you look at the files given to you, you will discover the **about.md** file: ```assets/posts/about.md```. This file is used for the About page.
-
-The current About page is an example from a previous year's team. Replace the members' information with your own team's information, and don't forget to include pictures! Pictures can theoretically be stored anywhere, but it's good practice to organize your files neatly. Pictures for the About page are currently in ```assets/pictures/about/```.
-
-*Note: It is encouraged to do this without using any HTML!*
-
-### Link to your GitHub
-
-In the **index.html** file, find the line that reads:
-
-```<a href="https://github.mit.edu/" target="_blank">GitHub</a>```
-
-Fill in the URL to your team's organization so that the website will link to your GitHub and, subsequently, labs.
-
-### Remove the Setup button
-
-In the **index.html** file, find the line that reads:
-
-```<li><a href="#instructions">Setup</a></li>```
-
-Comment it out using:
-
-```<!-- <li><a href="#instructions">Setup</a></li> -->``` 
 
 ## Notes for the future
 

@@ -2,33 +2,18 @@
 
 <span class="image main">![](assets/images/about/team_pic.jpg)</span>
 
-First Team Best Team (a.k.a. Team 1) is comprised of six MIT undergraduates from MIT's AeroAstro department, which are individually described in the page below. The team varies in experience, but overall shares a genuine interest in topics around autonomy, such as path planning, computer vision, and control systems. These interests in autonomy, along with graduation requirements, drove them all indivdually to take 6.141 and will drive the team towards a succesful race by the end of the semester.
+The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to right): [Jerry Wu](#jerry), [Kolby Danner](#kolby), [Marek Subernat](#marek), [Sabina Chen](#sabina), and [Ravi Rahman](#ravi). The team varies in experience, but overall shares a genuine interest in topics around autonomy, path planning, computer vision, and control systems. Our diverse interests will lead towards
 
-<span class="image left about">![](assets/images/about/Jerry.jpg)</span>
+<span class="image left about" id="jerry">![](assets/images/about/Jerry.jpg)</span>
 
 **Jerry Wu** is a senior double majoring in Math and Computer Science and originally from Fremont, California. His expertise is primarily in algorithms, with some performance engineering and machine learning experience. After graduation, Jerry plans to work for Google in Mountain View, though he is not currently decided whether he will stay at Google after a year or move on to Berkeley's Computer Science PhD program.
 
-<br>
-<br>
-<br>
-<br>
-
-<span class="image right about">![](assets/images/about/Wadhwania.jpg)</span>
-
-**Samir Wadhwania** is from San Antonio, Texas. He is a current junior in MIT's AeroAstro Department, but has varying interests outside of engineering such as international development and public policy. Academically, Samir's interests lie in controls and autonomous systems. Outside of class, Samir likes to spend his time reading up on current events, longboarding, and bowling.
 
 <br>
 
-<span class="image left about">![](assets/images/about/Clementine.jpg)</span>
+<span class="image right about">![](assets/images/about/kolby.jpg)</span>
 
-**Clementine Mitchell** is from Glasgow, Scotland. She is currently a junior studying Aerospace Engineering with particular interests in controls and human factors relating to spaceflight. Outside of class, Clementine spends her time working on her research project in MIT’s Man Vehicle Lab and running on MIT’s Track and Field team.
-
-<br>
-<br>
-
-<span class="image right about">![](assets/images/about/Nick.JPG)</span>
-
-**Nick Villanueva** is currently a senior in MIT’s AeroAstro Department. He is originally from Lafayette California. Upon graduation he plans to commission into the U.S. Air Force.
+**Kolby Danner** is from the small town of Maiden, North Carolina, which is not far from Charlotte. He is a senior in the mechanical engineering department concentrating in controls, instrumentation, and robotics. Outside of class, Kolby enjoys being active by playing basketball and working out or simply relaxing by watching reruns of The Office; there is no in between.
 
 <br>
 <br>
@@ -37,14 +22,31 @@ First Team Best Team (a.k.a. Team 1) is comprised of six MIT undergraduates from
 <br>
 <br>
 
-<span class="image left about">![](assets/images/about/Martina.JPG)</span>
+<span class="image left about" id="marek">![](assets/images/about/marek.jpg)</span>
 
-**Martina Stadler** is a junior in Course 16 with a focus on autonomous systems. She is a Co-President of the MIT Student Chapter of AIAA, and is the Payload Subteam Lead and the Social Chair for the MIT Rocket Team. When she has a spare moment, she plays IM hockey with AeroAstro and bakes cakes for her floor.
+ **Marek Subernat** is a Junior Aerospace Engineer with particular interests in human factors and controls. He was born in Poland and grew up in NYC. He spends his free time playing music, varying from theater pit orchestras to MIT's festival jazz ensemble.
 
 <br>
 <br>
 <br>
+<br>
+<br>
+<br>
 
-<span class="image right about">![](assets/images/about/Jake.png)</span>
 
-**Jake Ligouri** is a fourth year undergraduate at MIT pursuing a degree in Aerospace Engineering. He will be taking his talents to New York following graduation to begin a career in Commodities Trading. Jake currently spends his free time rowing on the Charles River and developing an app with his fraternity brothers.
+<span class="image right about" id="sabina">![](assets/images/about/sabina.jpg)</span>
+
+**Sabina Chen** is a Junior studying Electrical Engineering and Computer Science. She is originally from Arcadia, California. Her primary interests lie in robotics, artificial intelligence, and autonomous controls, particularly in the field of planetary exploration and space technology. Outside of class, Sabina enjoys spending her time figure skating, reading, or biking through Boston.
+
+<br>
+<br>
+<br>
+<br>
+
+<span class="image left about" id="ravi">![](assets/images/about/ravi.jpg)</span>
+
+**Ravi Rahman**, an MIT Computer Science and Electrical Engineering (6-2) sophomore and Mathematics minor, specializes in algorithm design and full stack development. From this class, he wants to understand how to design autonomous systems. In addition, his coursework this semester includes machine learning and managerial finance. Last summer, Ravi interened at Illumio, a cybersecurity startup located in Sunnyvale, CA. Currently, he researches in MIT CSAIL's Distributed Robotics Lab, and he will working at Uber in San Francisco this upcoming summer.
+
+Beyond academics, his interests include competing in hackathons, playing squash, skiing, and traveling.
+
+Connect with Ravi on [LinkedIn](https://linkedin.com/in/ravirahman) | [Email](mailto:r_rahman@mit.edu)
