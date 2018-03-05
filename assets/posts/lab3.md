@@ -9,7 +9,7 @@ Though far from a self-driving car, a wall-following robot is a significant step
 
 ### Initial Setup - Kolby
 
-This was the first lab to be completed in teams, and it was also the our first exposure to the robot. Therefore the first order of business was to understand the basics of the robot: how to charge its components, how to power it on and off, and how to communicate with the robot. Then came the more technical side of the lab. In the previous week each team member independently developed wall-following code and ran it in a simulated environment. To get this code on the robot, Jerry SSHed into the robot and cloned his wall-following repository.
+This was the first lab to be completed in teams, and it was also the our first exposure to the robot. Therefore the first order of business was to understand the basics of the robot: how to charge its components, how to power it on and off, and how to communicate with the robot. Then came the more technical side of the lab. In the previous week each team member independently developed wall-following code and ran it in a simulated environment. Jerry had the best-performing code according to his test scores, so we decided to use his code as a starting point. To get this code on the robot, Jerry SSHed into the robot and cloned his wall-following repository.
 
 At this point the robot was fairly capable of following walls. All that remained was a bit of debugging with the velodyne LIDAR and the new task of this week's lab: implementing a safety controller to avoid crashing into obstacles at high speeds.
 
