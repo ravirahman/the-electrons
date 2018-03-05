@@ -9,9 +9,9 @@ Though far from a self-driving car, a wall-following robot is a significant step
 
 ### Initial Setup - Kolby
 
-This was the first lab to be completed in teams, and it was also the team's first exposure to the robot. Therefore the first order of business was to understand the basics of the robot: how to charge its components, how to power it on and off, and how to communicate with the robot. Then came the more technical side of the lab. In the previous week each team member independently developed wall-following code and ran it in a simulated environment. To get this code on the robot, Jerry SSHed into the robot and cloned his wall-following repository.
+This was the first lab to be completed in teams, and it was also the our first exposure to the robot. Therefore the first order of business was to understand the basics of the robot: how to charge its components, how to power it on and off, and how to communicate with the robot. Then came the more technical side of the lab. In the previous week each team member independently developed wall-following code and ran it in a simulated environment. To get this code on the robot, Jerry SSHed into the robot and cloned his wall-following repository.
 
-At this point the robot was capable of faithfully following walls, so all that remained was the new task of this week's lab: implementing a safety controller to avoid crashing into obstacles at high speeds.
+At this point the robot was fairly capable of following walls. All that remained was a bit of debugging with the velodyne LIDAR and the new task of this week's lab: implementing a safety controller to avoid crashing into obstacles at high speeds.
 
 ### Technical Approach - Jerry
 
@@ -87,6 +87,4 @@ In terms of task delegation, we used Git issues to assign tasks to individual te
 
 ## Future Work - Kolby, Marek
 
-The team is happy with the progress made so far, but is eager to improve upon and expand the capabilities of the robot. One area for improvement is the safety controller. Specifically, the team wishes to make it more robust so that instead of simply slowing down or stopping near obstacles, the robot maneuvers around obstacles with great agility. Related to this idea is how the car behaves at faster speeds. Using some mathematical or physical model relating current speed and distance from obstacles, the robot could better predict the future and understand what it needs to do under certain circumstances. This model could potentially be developed by the team through further experimentation.
-
-Additionally, the team is excited to learn about new applications of laser scan data and machine vision and to use this new knowledge to improve the autonomy of the robot.
+We are happy with the progress made so far, but are eager to improve upon and expand the capabilities of the robot. One area for improvement is the safety controller. Specifically, we wish to make it more robust so that instead of simply slowing down or stopping near obstacles, the robot maneuvers around obstacles with great agility. Related to this idea is how the car behaves at faster speeds. Using some mathematical or physical model relating current speed and distance from obstacles, the robot could better predict the future and understand what it needs to do under certain circumstances. This model could potentially be developed by the team through further experimentation.
