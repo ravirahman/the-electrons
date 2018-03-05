@@ -19,13 +19,13 @@ The team's code for this lab consists of two major components: the wall-followin
 
 The wall-following code begins by selecting the portion of the laser scan data which is both on the side of the robot the wall is supposed to be at as well as in front of the robot (so the angle must be between 0 and pi/2 radians). We filter out points at the max range of the laser scan, which are assumed to be the laser not hitting anything and are not part of the wall. The code then uses a least-squares linear regression to estimate the location and angle of the wall. Once the wall is located, the code uses a modified PID controller based on the difference between the robot's distance to the wall and the desired distance to the wall. The derivative of this difference is computed algebraically from the robot's orientation relative to the wall. The integration term is computed with anti-windup behavior, such as the integration term decaying exponentially over time, so that the behavior is more controlled when the robot starts far away from the nearest wall. The output of the PID controller is the desired angle of approach to the wall, which is clamped at absolute value 1 radian because the robot may lose track of the wall if it starts to approach it head-on. Finally, the steering angle is simply set to the difference between the robot's angle to the wall and the desired angle to the wall.
 
-<center>![alt text][regression]</center>
+<center>![regression](/assets/images/lab3/regression.png)</center>
 
-<center>![alt text][wf_callback]</center>
+<center>![wf_callback](/assets/images/lab3/wf_callback.png)</center>
 
 The safety controller begins by detecting the distance to the nearest obstacle in front of the robot. It slices up the laser scan data into small segments, and averages over the scanned distances in these segments, in order to reduce noise. Each segment is 0.02 radians, so we can detect a 2cm-wide obstacle at 1 meter. Based on the angle and distance of each segment, we compute which segments are directly in front of the car, and compute the minimum distance to these segments. We assume that the stopping distance of the robot is proportional to the square of the robot's speed, and correspondingly compute the maximum safe speed so that the robot can stop a specified distance away from the nearest obstacle. If the robot is trying to move faster than this maximum safe speed, we publish a command setting the robot's speed to the maximum safe speed instead. We also considered writing a safety controller which could also turn to avoid obstacles, but decided that such a controller would have to be too complex for us to implement.
 
-<center>![alt text][sc_callback]</center>
+<center>![sc_callback](/assets/images/lab3/sc_callback.png)</center>
 
 [regression]: /assets/images/lab3/regression.png
 [wf_callback]: /assets/images/lab3/wf_callback.png
