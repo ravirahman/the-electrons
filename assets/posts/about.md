@@ -2,7 +2,7 @@
 
 <span class="image main">![](assets/images/about/team_pic.jpg)</span>
 
-The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to right): [Jerry Wu](#jerry), [Kolby Danner](#kolby), [Marek Subernat](#marek), [Sabina Chen](#sabina), and [Ravi Rahman](#ravi). The team varies in experience, but overall shares a genuine interest in topics around autonomy, path planning, computer vision, and control systems. Our diverse interests will lead towards
+The Electrons (RSS Team 12) are comprised of five MIT undergraduates (left to right): [Jerry Wu](#jerry), [Kolby Danner](#kolby), [Marek Subernat](#marek), [Sabina Chen](#sabina), and [Ravi Rahman](#ravi). The team varies in experience, but overall shares a genuine interest in topics around autonomy, path planning, computer vision, and control systems. Our diverse intersts and skillsets will encourage innovative designs and lead towards a successful project.
 
 <span class="image left about" id="jerry">![](assets/images/about/Jerry.jpg)</span>
 
