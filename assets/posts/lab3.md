@@ -49,7 +49,7 @@ We realized that the velodyne sensor was offset after attempting to run the safe
 
 We tested the wall follower by having the robot follow the walls of the MIT underground tunnel. From the video, we can see that the racecar does a swoop out in the beginning to get exactly one meter away from the wall. The wheels can be seen turning back and forth to adjust for the racecar distance using the PID controller, and correctly stays a distance of 1 meter away while following the wall afterwards.
 
-<span class="image main">![](assets/videos/lab3/wall_following.mov)</span>
+[wall follower video](https://drive.google.com/file/d/18ZdSuFjE9J6yzr5LhrMTdYToe_ZhQqoQ/view?usp=sharing "Wall Follower Video")
 
 #### Safety Controller
 
