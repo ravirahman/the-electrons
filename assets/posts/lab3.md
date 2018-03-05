@@ -45,6 +45,10 @@ This lab was essentially an extension of the previous lab to real world conditio
 
 We realized that the velodyne sensor was offset after attempting to run the safety controller on the actual robot, and having the robot not respond as expected. From running the safety controller on simulation, the robot should stop immediately after realizing that it was less than or equal to 1 meter away from an obstacle. However, after running the safety controller on the actual robot and analyzing the laser scan data, we realized that the robot was not actually recognizing obstacles in front of it. From both the scan data and experimental evaluation, we deduced that the velodyne sensor was offset by around 55 degrees (0.95 radians) to the right of 0. We tested the angle offset by placing an obstacle in front of the laser scanner at various angles, and observing if the robot sensed the obstacle.
 
+<span class="image left about">![](assets/images/lab3/offset_left.png)</span>
+<span class="image main">![](assets/images/lab3/offset_center.png)</span>
+<span class="image right about">![](assets/images/lab3/offset_right.png)</span>
+
 #### Wall Follower
 
 We tested the wall follower by having the robot follow the walls of the MIT underground tunnel. From the video, we can see that the racecar does a swoop out in the beginning to get exactly one meter away from the wall. The wheels can be seen turning back and forth to adjust for the racecar distance using the PID controller, and correctly stays a distance of 1 meter away while following the wall afterwards.
@@ -63,7 +67,7 @@ We tested the safety controller by putting obstacles of various sizes and angles
 
 ### Results - Marek
 
-In both a simulated and physical environment, the robot is currently capable of safely stopping in front of an obstacle, following a wall, and implementing both features simultaneously. The safety controller is capable of seeing an obstacle, safely adjusting speed when approaching it, and stopping before colliding with it. Both the safety controller and wall follower subscribe to the laser san and publish to the robot. When run with the wall follower, the safety controller’s messages take priority when the laser scan data indicates an obstacle in front of the car.
+In both a simulated and physical environment, the robot is currently capable of safely stopping in front of an obstacle, following a wall, and implementing both features simultaneously. The safety controller is capable of seeing an obstacle, safely adjusting speed when approaching it, and stopping before colliding with it. Both the safety controller and wall follower subscribe to the laser scan and publish to the robot. When run with the wall follower, the safety controller’s messages take priority when the laser scan data indicates an obstacle in front of the car.
 
 <center>[**Wall Following and Safety Controller**](https://drive.google.com/open?id=1GprdgOWhVJPOxWh7ENvJbyrfXyzNAoF5 "Wall Following and Safety Controller")</center>
 
