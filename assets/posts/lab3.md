@@ -27,15 +27,19 @@ The safety controller begins by detecting the distance to the nearest obstacle i
 
 <center>![alt text][sc_callback]</center>
 
-[regression]: https://drive.google.com/file/d/19lL7BU1N8jeR-r9EDrFnpCDhxNWXF7HB/view?usp=sharing "Linear Regression"
-[wf_callback]: https://drive.google.com/file/d/1lt9sLp1aF285rLvY3PBxAJyKZ6FH14EV/view?usp=sharing "PID Controller"
-[sc_callback]: https://drive.google.com/file/d/1MoF9SnHk75KwYl6b_4qSUCsQBEF4FETF/view?usp=sharing "Safety Control"
+[regression]: /assets/images/lab3/regression.png
+[wf_callback]: /assets/images/lab3/wf_callback.png
+[sc_callback]: /assets/images/lab3/sc_callback.png
 
 ### ROS Implementation - Sabina
 
 The high-level ROS structure of the wall-following code is to listen to laser scan data by subscribing to a scan topic and to publish appropriate steering commands to the output topic, which in turn tells the motor what to do. The corresponding structure for the safety controller is to listen to both laser scan data and the output topic. This allows the safety controller to intercept the driving command that is being published by the wall follower, use the laser scan data to assess the current situation, and publish its own driving commands if the car is in danger of crashing. There is also an additional node, called scan_adjusted, which acts as an intermediate correctional node before the velodyne laser scan data is sent to the wall follower and safety controller nodes. Fairly late into the lab it was discovered that the velodyne LIDAR does not point directly to the front of the car but rather to the side by about 55 degrees. This intermediate node adjusts all of the readings to account for this angle offset.
 
+<center>![alt text][node_architecture]</center>
+
 The team also included more specific implementation considerations. For example, the code is fully vectorized with numpy operations. This allows for more efficient algorithms using numpy functions than an iterative approach. Additionally, both the wall follower and safety controller have visualizations which assist in debugging by seeing what the robot's brain is doing compared to what it should be doing. Finally, essentially everything was made as a parameter. This makes the code more ready for change. For example, if for some reason the safe stopping distance needed to be modified, one could simply change the parameters associated with that formulation rather than hunting down every instance of it in the code.
+
+[node_architecture]: /assets/images/lab3/node_architecture.png
 
 ## Experimental Evaluation - Ravi, Sabina, Marek
 
@@ -63,10 +67,10 @@ We tested the safety controller by putting obstacles of various sizes and angles
 
 <center>![alt text][safety_leg]</center>
 
-[wall_following]: https://drive.google.com/file/d/1af9QzEDoHNvww7RnT6zxt5qlWWydvIVg/view?usp=sharing "Wall Follower"
-[safety_wall]: https://drive.google.com/open?id=1Vsw8tKgdKCHJHYEcVc7z3wFYocqH7hmK "Safety Controller: Wall"
-[safety_corner]: https://drive.google.com/open?id=1p3PMP0atJT_8RNU1ANLfFGPy_DYX868S "Safety Controller: Corner"
-[safety_leg]: https://drive.google.com/open?id=1SzcJMI-59TZ_5ML5HyCh7h0lW9mKYOza "Safety Controller: Leg"
+[wall_following]: /assets/videos/lab3/wall_following.mov
+[safety_wall]: /assets/videos/lab3/safety_wall.mov
+[safety_corner]: /assets/videos/lab3/safety_corner.mov
+[safety_leg]: /assets/videos/lab3/safety_leg.mov
 
 ### Results - Marek
 
@@ -74,7 +78,7 @@ In both a simulated and physical environment, the robot is currently capable of 
 
 <center>![alt text][wall_following_safety]</center>
 
-[wall_following_safety]: https://drive.google.com/file/d/1GprdgOWhVJPOxWh7ENvJbyrfXyzNAoF5/view?usp=sharing "Wall Follower with Safety"
+[wall_following_safety]: /assets/videos/lab3/wall_following_safety.mov
 
 ## Lessons Learned - Jerry, Kolby, Marek
 
