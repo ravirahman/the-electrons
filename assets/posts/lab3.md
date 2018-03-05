@@ -49,23 +49,23 @@ We realized that the velodyne sensor was offset after attempting to run the safe
 
 We tested the wall follower by having the robot follow the walls of the MIT underground tunnel. From the video, we can see that the racecar does a swoop out in the beginning to get exactly one meter away from the wall. The wheels can be seen turning back and forth to adjust for the racecar distance using the PID controller, and correctly stays a distance of 1 meter away while following the wall afterwards.
 
-<center>[Wall Follower](https://drive.google.com/file/d/18ZdSuFjE9J6yzr5LhrMTdYToe_ZhQqoQ/view?usp=sharing "Wall Follower Video")</center>
+<center>[**Wall Follower**](https://drive.google.com/file/d/18ZdSuFjE9J6yzr5LhrMTdYToe_ZhQqoQ/view?usp=sharing "Wall Follower Video")</center>
 
 #### Safety Controller
 
 We tested the safety controller by putting obstacles of various sizes and angles in front of the racecar, and observing if the robot stops.  We conducted three tests: having the racecar stop 1 meter away from a wall, stop before a corner, and stop in front of a small obstacle. These tests show that the racecar can accurately detect large objects, as well as small objects in front of uneven backgrounds.
 
-<center>[Safety Controller: Wall](https://drive.google.com/open?id=1Vsw8tKgdKCHJHYEcVc7z3wFYocqH7hmK "Safety Controller: Wall")</center>
+<center>[**Safety Controller: Wall**](https://drive.google.com/open?id=1Vsw8tKgdKCHJHYEcVc7z3wFYocqH7hmK "Safety Controller: Wall")</center>
 
-<center>[Safety Controller: Corner](https://drive.google.com/open?id=1p3PMP0atJT_8RNU1ANLfFGPy_DYX868S "Safety Controller: Corner")</center>
+<center>[**Safety Controller: Corner**](https://drive.google.com/open?id=1p3PMP0atJT_8RNU1ANLfFGPy_DYX868S "Safety Controller: Corner")</center>
 
-<center>[Safety Controller: Pedestrian](https://drive.google.com/open?id=1SzcJMI-59TZ_5ML5HyCh7h0lW9mKYOza "Safety Controller: Pedestrian")</center>
+<center>[**Safety Controller: Pedestrian**](https://drive.google.com/open?id=1SzcJMI-59TZ_5ML5HyCh7h0lW9mKYOza "Safety Controller: Pedestrian")</center>
 
 ### Results - Marek
 
 In both a simulated and physical environment, the robot is currently capable of safely stopping in front of an obstacle, following a wall, and implementing both features simultaneously. The safety controller is capable of seeing an obstacle, safely adjusting speed when approaching it, and stopping before colliding with it. Both the safety controller and wall follower subscribe to the laser san and publish to the robot. When run with the wall follower, the safety controller’s messages take priority when the laser scan data indicates an obstacle in front of the car.
 
-<center>[Wall Following and Safety Controller](https://drive.google.com/open?id=1GprdgOWhVJPOxWh7ENvJbyrfXyzNAoF5 "Wall Following and Safety Controller")</center>
+<center>[**Wall Following and Safety Controller**](https://drive.google.com/open?id=1GprdgOWhVJPOxWh7ENvJbyrfXyzNAoF5 "Wall Following and Safety Controller")</center>
 
 ## Lessons Learned - Jerry, Kolby, Marek
 
