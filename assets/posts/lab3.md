@@ -61,10 +61,10 @@ We tested the safety controller by putting obstacles of various sizes and angles
 
 <center>![alt text][safety_leg]</center>
 
-[wall_following]: /assets/videos/lab3/wall_following.mov
-[safety_wall]: /assets/videos/lab3/safety_wall.mov
-[safety_corner]: /assets/videos/lab3/safety_corner.mov
-[safety_leg]: /assets/videos/lab3/safety_leg.mov
+[wall_following]: assets/videos/lab3/wall_following.mov
+[safety_wall]: assets/videos/lab3/safety_wall.mov
+[safety_corner]: assets/videos/lab3/safety_corner.mov
+[safety_leg]: assets/videos/lab3/safety_leg.mov
 
 ### Results - Marek
 
@@ -72,7 +72,7 @@ In both a simulated and physical environment, the robot is currently capable of 
 
 <center>![alt text][wall_following_safety]</center>
 
-[wall_following_safety]: /assets/videos/lab3/wall_following_safety.mov
+[wall_following_safety]: assets/videos/lab3/wall_following_safety.mov
 
 ## Lessons Learned - Jerry, Kolby, Marek
 
