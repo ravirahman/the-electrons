@@ -7,7 +7,7 @@ Lab 4
   * Visualize the Cone (Image Mask)
   * Detect the Cone (Rectangle Finder)
   
-     Overview and Motivations
+     Overview and Motivation
      
      SIFT/RANSAC
      
@@ -15,11 +15,11 @@ Lab 4
      
      Color Segmentation
      
-     Actual Implementation (Rectangle Finder)
+     Actual Implementation
      
   * Locate the Cone (Coordinate Transform)
   
-     Overview and Motivations
+     Overview and Motivation
      
      Approach
      
@@ -40,11 +40,11 @@ Lab 4
 
 ## ROS Architecture Overview - Sabina and Ravi
 
-INSERT DIAGRAM HERE
+<span class="image main">![](assets/images/lab4/ROS_Architecture.png)</span>
 
 The above figure illustrates our ROS pipeline that links together the various components to enable parking and line following. First, the Image Masking node subscribes to the Zed Camera and publishes a masked image. The Rectangle Finder node subscribes to the masked image topic and publishes a bounding box and target point within the image. The Coordinate Transform node subscribes to the bounding box topic and converts the target point from image pixels to real-world coordinates. The Robot Parking and Pure Pursuit nodes subscribe to a topic where real-world target coordinates are published, and in turn directly publishes the driving commands. We use a launch file to launch all the necessary nodes at once when running robot parking and line following.
 
-INSERT DIAGRAM HERE
+<span class="image main">![](assets/images/lab4/ROS_Flow_Example.png)</span>
 
 Our biggest challenge was integrating these coordinates together. We tested all packages individually using mock data. However, when combing these packages into one pipeline, we realized our specifications were not consistent, and that mock data didn’t represent real-world conditions. We had to adjust ROS topic names and data types so they were consistent. We also needed to adjust parameter values, such as the coordinates in the transformation matrix or orange color of the cone, to reflect robot and testing conditions. Finally, we confirmed that our code worked as expected.
 
@@ -58,7 +58,7 @@ INSERT RAW AND MASKED IMAGES HERE
 
 ## Detect the Cone (Rectangle Finder) - Sabina and Marek
 
-### Overview and Motivations
+### Overview and Motivation
 
 The goal of this part of the lab was to use various object detection algorithms to detect a cone in test images and to compare the effectiveness of these algorithms. The work performed in this section played into a larger scope of this lab first by learning how to detect certain objects in an image and further by selecting an accurate method of object detection moving forward. The ability to detect objects, whether they be obstacles or paths to follow, is essential to autonomous driving.
 
@@ -111,7 +111,7 @@ INSERT BOUNDING BOX + TARGET POINT HERE
 
 ## Locate the Cone (Coordinate Transform) - Kolby, Jerry, Sabina, Ravi
 
-### Overview and Motivations
+### Overview and Motivation
 
 With only the location of the cone in the reference frame of the image, the robot does not have enough information to determine its distance from the cone. However, equipped with the coordinates of the bounding box of the cone, the intrinsic properties of the camera, and the geometry of the camera relative to the robot, we can mathematically determine the coordinates of the cone relative to the robot. This will inform the robot how far away it is from the cone which is a first step in making the robot follow the cone.
 
