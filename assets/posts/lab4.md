@@ -54,8 +54,8 @@ The robot visualizes the cone through use of the ZED camera and OpenCV transform
 
 Our image mask node listens to `/zed/rgb/image_rect_color` topic and performs transforms to the image so it can be used by the cone detection algorithms (described in the next section). First, we use OpenCV to convert images from a raw byte array to a multidimensional numpy array. Then, because the camera is mounted upside down, we use OpenCV to rotate the image 180 degree. Finally, we mask the picture to the region corresponding to what appears on the floor 1-2 meters in front of the robot. This cropping simplifies detection of the cone, so irrelevant features in the background will not interfere with color matching. Finally, we broadcast this new image topic `masked_image_topic` as a numpy message of an Image, which is then processed by the cone detection algorithms.
 
-<span>![**Raw Camera Image**](assets/images/lab4/Raw_Camera_Image.png =400x300)</span>
-<span>![**Masked Image**](assets/images/lab4/Masked_Image.png =400x300)</span>
+<span>![Raw Camera Image](assets/images/lab4/Raw_Camera_Image.png =400x300)</span>
+<span>![Masked Image](assets/images/lab4/Masked_Image.png =400x300)</span>
 
 ## Detect the Cone (Rectangle Finder) - Sabina and Marek
 
@@ -69,8 +69,8 @@ We first attempted to use SIFT to detect the cone. The algorithm takes in the tr
 
 After much testing, we realized that SIFT works pretty badly at identifying features on the cone. Because of how homogenous the cone looked, SIFT had difficulty finding actual features to match on the cone. At most, SIFT would be able to identify 4 or 5 good feature matches of the cone, which was definitely not enough matches to draw a bounding box.
 
-<span class="image main">![](assets/images/lab4/SIFT_Feature_Matching_Cone.png)</span>
-<span class="image main">![](assets/images/lab4/SIFT_Features_Cone.png)</span>
+<span>![](assets/images/lab4/SIFT_Feature_Matching_Cone.png =800x300)</span>
+<span>![](assets/images/lab4/SIFT_Features_Cone.png =800x300)</span>
 
 Out of curiosity (and mainly to make sure that it wasn’t a bug in our code that was causing SIFT to fail), we used a different set of image data to verify that SIFT was indeed working correctly. We used images of Honey Oats Cereal as the new template and training images. As shown in the image below, SIFT was able to accurate identify many features in the Honey Oats Cereal and correctly draw a bounding box around the major features of the cereal box.
 
