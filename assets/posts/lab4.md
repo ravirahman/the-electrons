@@ -6,20 +6,28 @@ Lab 4
   * ROS Architecture Overview
   * Visualize the Cone (Image Mask)
   * Detect the Cone (Rectangle Finder)
+  
      Overview and Motivations
      SIFT/RANSAC
      Template Matching
      Color Segmentation
      Actual Implementation (Rectangle Finder)
+     
   * Locate the Cone (Coordinate Transform)
+  
      Overview and Motivations
      Approach
+     
   * Robot Parking
+  
      Overview and Motivation
      Approach
+     
   * Line Following (Pure Pursuit)
+  
      Overview and Motivation
      Approach
+     
   * Team Workflow Updates
   * Lessons Learned
 
