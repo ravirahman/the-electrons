@@ -6,20 +6,20 @@ Lab 4
 1. ROS Architecture Overview
 2. Visualize the Cone (Image Mask)
 3. Detect the Cone (Rectangle Finder)
-..* Overview and Motivations
-..* SIFT/RANSAC
-..* Template Matching
-..* Color Segmentation
-..* Actual Implementation (Rectangle Finder)
+  * Overview and Motivations
+  * SIFT/RANSAC
+  * Template Matching
+  * Color Segmentation
+  * Actual Implementation (Rectangle Finder)
 4.  Locate the Cone (Coordinate Transform)
-..* Overview and Motivations
-..* Approach
+  * Overview and Motivations
+  * Approach
 5. Robot Parking
-..* Overview and Motivation
-..* Approach
+  * Overview and Motivation
+  * Approach
 6. Line Following (Pure Pursuit)
-..* Overview and Motivation
-..* Approach
+  * Overview and Motivation
+  * Approach
 7. Team Workflow Updates
 8. Lessons Learned
 
@@ -76,13 +76,13 @@ INSERT TEMPLATE MATCH FAILURE
 
 Finally, Marek utilized color segmentation to find the boundary of a cone using its HSV values. This was the only algorithm for which the staff provided no starter code. The process was as follows:
 
-..* find HSV values corresponding to pixel coordinates
-..* experimentally set HSV bounds that would capture the color of the cone in various lighting situations
-..* create a bitmask- sets pixel values to 1 if the HSV values were **not** in our desired range, and sets them to 0 otherwise
-..* utilize an erode function to get rid of noise
-..* use dilate function to fill the holes left by the erode function
-..* use boundingRect function to find the coordinates of a rectangle that fits all the points on the bitmask
-..* draw the rectangle/bounding box
+  * find HSV values corresponding to pixel coordinates
+  * experimentally set HSV bounds that would capture the color of the cone in various lighting situations
+  * create a bitmask- sets pixel values to 1 if the HSV values were **not** in our desired range, and sets them to 0 otherwise
+  * utilize an erode function to get rid of noise
+  * use dilate function to fill the holes left by the erode function
+  * use boundingRect function to find the coordinates of a rectangle that fits all the points on the bitmask
+  * draw the rectangle/bounding box
 
 Taking into account inconsistent lighting conditions, we defined a range of acceptable HSV values for each orange and a yellowish orange. We defined the range (0, 150, 150) to (18, 255, 255) to describe orange and the range (26, 180, 180) to (32, 255, 255) to describe yellowish orange. The erode function utilized two iterations with a 3x3 kernel and the dilate function utilized 7 iterations with a 3x3 kernel. This method performed very well, passing all the test cases. An example of its bounding box can be seen below. We decided to employ this algorithm moving forward since it was the most accurate and most consistent.
 
@@ -128,8 +128,8 @@ The robot parking algorithm makes the robot locate an orange cone, drive towards
 
 The robot_parking package uses the real-world x-y coordinates of the target point, and uses the current distance, current angle, and specified parking goal distance to calculate the new speed and new angle. Robot parking uses a simple PD controller, using the following calculations:
 
-..* new_speed = k_d * (current_distance - goal_distance)
-..* new_angle = k_theta * current_angle
+  * new_speed = k_d * (current_distance - goal_distance)
+  * new_angle = k_theta * current_angle
 
 The updated speed and angle parameters are then published to the ROS Ackermann Drive topic `/vesc/ackermann_cmd_mux/input/navigation` to drive the car.
 
