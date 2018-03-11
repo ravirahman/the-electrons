@@ -54,8 +54,8 @@ The robot visualizes the cone through use of the ZED camera and OpenCV transform
 
 Our image mask node listens to `/zed/rgb/image_rect_color` topic and performs transforms to the image so it can be used by the cone detection algorithms (described in the next section). First, we use OpenCV to convert images from a raw byte array to a multidimensional numpy array. Then, because the camera is mounted upside down, we use OpenCV to rotate the image 180 degree. Finally, we mask the picture to the region corresponding to what appears on the floor 1-2 meters in front of the robot. This cropping simplifies detection of the cone, so irrelevant features in the background will not interfere with color matching. Finally, we broadcast this new image topic `masked_image_topic` as a numpy message of an Image, which is then processed by the cone detection algorithms.
 
-<span>![](assets/images/lab4/Raw_Camera_Image.png =400x300)</span>
-<span>![](assets/images/lab4/Masked_Image.png =400x300)</span>
+<span>![**Raw Camera Image**](assets/images/lab4/Raw_Camera_Image.png =400x300)</span>
+<span>![**Masked Image**](assets/images/lab4/Masked_Image.png =400x300)</span>
 
 ## Detect the Cone (Rectangle Finder) - Sabina and Marek
 
