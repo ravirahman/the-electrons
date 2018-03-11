@@ -69,15 +69,15 @@ We first attempted to use SIFT to detect the cone. The algorithm takes in the tr
 
 After much testing, we realized that SIFT works pretty badly at identifying features on the cone. Because of how homogenous the cone looked, SIFT had difficulty finding actual features to match on the cone. At most, SIFT would be able to identify 4 or 5 good feature matches of the cone, which was definitely not enough matches to draw a bounding box.
 
-<span>![](assets/images/lab4/SIFT_Feature_Matching_Cone.png =800x300)</span>
-<span>![](assets/images/lab4/SIFT_Features_Cone.png =800x300)</span>
+<span>![SIFT Feature Matching Cone](assets/images/lab4/SIFT_Feature_Matching_Cone.png =800x300)</span>
+<span>![SIFT Features Cone](assets/images/lab4/SIFT_Features_Cone.png =800x300)</span>
 
 Out of curiosity (and mainly to make sure that it wasn’t a bug in our code that was causing SIFT to fail), we used a different set of image data to verify that SIFT was indeed working correctly. We used images of Honey Oats Cereal as the new template and training images. As shown in the image below, SIFT was able to accurate identify many features in the Honey Oats Cereal and correctly draw a bounding box around the major features of the cereal box.
 
 The results from applying SIFT on cone and honey oats cereal box images showed us that although SIFT works very well in images with many corner features, it does not work well for images with mainly homogenous features. We concluded that it was probably best not use SIFT to detect the cone/line for the purposes of this lab.
 
-<span class="image main">![](assets/images/lab4/SIFT_Features_Cereal.png)</span>
-<span class="image main">![](assets/images/lab4/SIFT_Bounding_Box.png)</span>
+<span>![SIFT Features Cereal](assets/images/lab4/SIFT_Features_Cereal.png =800x300)</span>
+<span>![SIFT Bounding Box](assets/images/lab4/SIFT_Bounding_Box.png =800x300)</span>
 
 ### Template Matching
 
@@ -85,8 +85,8 @@ The second method we attempted to use for cone detection was template matching. 
 
 It was interesting to see the different cone detection algorithms available, and analyze what makes them work/not work in certain situations. For the template matching method, the success of the algorithm depended on the type of matching/error detection algorithm used (ie. ccoeff, ccorr, sqdiff). Each of these methods still failed some test cases, but we found that the ccorr error detection algorithm did the best (aka. failed the least test cases) in finding the cone.
 
-<span class="image main">![](assets/images/lab4/Template_Match_Success.png)</span>
-<span class="image main">![](assets/images/lab4/Template_Match_Failure.png)</span>
+<span>![Template Match Success](assets/images/lab4/Template_Match_Success.png =800x300)</span>
+<span>![Template Match Failure](assets/images/lab4/Template_Match_Failure.png =800x300)</span>
 
 ### Color Segmentation
 
@@ -108,7 +108,7 @@ INSERT SUCCESS IMAGE HERE
 
 After testing the three cone detection methods, we found that color segmentation was the most reliable at detecting the cone, and thus used this method in our actual implementation for detecting the cone and lines in robot_parking and line_following.The rectangle finder node finds the cone from the masked image using color segmentation. It listens to the masked_image_topic and converts the image from RGB to HSV. HSV coloring simplies color matching, since oranges of similar hue will be grouped together. We use OpenCV.inRange to identify the coordinates for all orange in the image. We then use a weighted average to determine the middle of the cone, so that extraneous noise is virtually ignored when computing the center of the cone. We then draw and publish the bounding box to rectangle_finder_image_output_topic (for visualization purposes) as well as the center of the cone as ROS Point message to the bounding_box topic (for use in coordinate transformation and path planning).
 
-<span class="image main">![](assets/images/lab4/Bounding_Box.png)</span>
+<span>![Bounding Box](assets/images/lab4/Bounding_Box.png =600x600)</span>
 
 ## Locate the Cone (Coordinate Transform) - Kolby, Jerry, Sabina, Ravi
 
@@ -120,17 +120,17 @@ With only the location of the cone in the reference frame of the image, the robo
 
 The approach taken for this section was purely mathematical. The equation for converting from robot to pixel coordinates is shown below. Note that this results in a set of *homogeneous* coordinates of a pixel in the image.
 
-<span class="image main">![](assets/images/lab4/coord_trans_equation.png)</span>
+<span class="image main">![Coordinate Transform Equation](assets/images/lab4/coord_trans_equation.png)</span>
 
-The 3x3 matrix shown is known as the intrinsic camera matrix. Kolby obtained the values for this matrix by observing the calibration settings for our zed camera. The 3x4 matrix is known as the extrinsic matrix, which represents rotation and translation between the robot and camera coordinate frames. Consult the figure below to see how these coordinate frames differ.
+The 3x3 matrix shown is known as the intrinsic camera matrix. We obtained the values for this matrix by observing the calibration settings for our zed camera. The 3x4 matrix is known as the extrinsic matrix, which represents rotation and translation between the robot and camera coordinate frames. Consult the figure below to see how these coordinate frames differ.
 
-<span class="image main">![](assets/images/lab4/robot_coord_cam.png)</span>
+<span class="image main">![Robot and Camera Coordinate Frames](assets/images/lab4/robot_cam_coord.png)</span>
 
 The following relationships are clear from the image: the positive x-axis of the robot corresponds to the positive z-axis of the camera, the positive y-axis of the robot corresponds to the negative x-axis of the camera, and the positive z-axis of the robot corresponds to the negative y-axis of the camera. This information determines the rotational portion of the extrinsic matrix. Taking the center of the rear axle as the origin of the robot coordinate frame, we measured the translation of the camera lens to complete the extrinsic matrix.
 
 We now have what we need to go from robot coordinates to pixel coordinates, but this is not what we want; and at this point, we cannot invert this matrix product to solve for the robot coordinates because this product is invertible. This is where another matrix, which we referred to as the floor_to_world_matrix, came into play. Jerry identified a 4x3 matrix that converts 2-D coordinates on the floor (an assumption that the cone will always be on the floor) to 3-D coordinates. This matrix, when right-multiplied with the product of the intrinsic and extrinsic matrices, yields an invertible 3x3 matrix. Now right-multiplying the vector of pixel coordinates with this inverted matrix yields a vector of homogeneous coordinates in the robot frame, and we convert these to cartesian coordinates by simply dividing this vector by its last element.
 
-<span class="image main">![](assets/images/lab4/coord_trans_code.png)</span>
+<span class="image main">![Coordinate Transform Code Snippet](assets/images/lab4/coord_trans_code.png)</span>
 
 ## Robot Parking - Sabina and Jerry
 
@@ -162,7 +162,7 @@ The last task of this lab was to create an algorithm which makes the robot follo
 
 We implemented the Pure Pursuit algorithm to follow an orange tape line on the ground. Pure Pursuit is an algorithm in which we assume the robot moves in a manner similar to a bicycle, and calculate the angle required for the robot to turn smoothly in an arc to reach a desired target point.
 
-<span class="image main">![](assets/images/lab4/pure_pursuit_geometry.png)</span>
+<span>![Pure Pursuit Geometry](assets/images/lab4/pure_pursuit_geometry.png =800x300)</span>
 
 To find the target point, in typical implementations of the Pure Pursuit algorithm, one would find a point on the line a certain "lookahead" distance ahead, but for simplicity, we simply mask off most of the camera image except for a section which would roughly correspond to the desired lookahead distance and run the cone detection algorithm. Given a target point, we find the desired turning angle using the bicycle model, and calculate the desired driving speed based on the turn radius, so that we drive more slowly on sharper turns.
 
@@ -173,7 +173,7 @@ INSERT VIDEO OF CIRCULAR SUCCESS
 
 We added a battery pack and Raspberry PI ethernet bridge to our router, so we are not limited to locations with wall outlets and network jacks when working on the robot. We also published the racecar_ws folder to github, with all packages configured as submodules. We have a script that automatically pulls the latest code (on the master branch) from github, so our robot code and virtual machine code stay in sync. This time investment simplified debugging for this lab and future labs.
 
-<span class="image main">![](assets/images/lab4/router.jpg)</span>
+<span>![Router](assets/images/lab4/router.jpg =800x300)</span>
 
 ## Lessons Learned - Electrons
 
