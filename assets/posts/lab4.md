@@ -3,26 +3,26 @@ Lab 4
 
 ## Table of Contents
 
-General Overview and Approach
-ROS Architecture Overview
-Visualize the Cone (Image Mask)
-Detect the Cone (Rectangle Finder)
++ General Overview and Approach
++ ROS Architecture Overview
++ Visualize the Cone (Image Mask)
++ Detect the Cone (Rectangle Finder)
     - Overview and Motivation
     - SIFT/RANSAC
     - Template Matching
     - Color Segmentation
     - Actual Implementation
-Locate the Cone (Coordinate Transform)
++ Locate the Cone (Coordinate Transform)
     - Overview and Motivation
     - Approach
-Robot Parking
++ Robot Parking
     - Overview and Motivation
     - Approach
-Line Following (Pure Pursuit)
++ Line Following (Pure Pursuit)
     - Overview and Motivation
     - Approach
-Team Workflow Updates
-Lessons Learned  
++ Team Workflow Updates
++ Lessons Learned
 
 ## General Overview and Approach - Kolby
 
