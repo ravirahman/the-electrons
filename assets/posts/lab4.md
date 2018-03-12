@@ -22,7 +22,7 @@ Lab 4
        - Overview and Motivation
        - Approach
 8. Team Workflow Updates  
-9. Lessons Learned  
+9. Lessons Learned
 
 ## General Overview and Approach - Kolby
 
@@ -32,12 +32,12 @@ This lab came right on the heels of the wall following and safety controller lab
 
 <span class="image main">![](assets/images/lab4/ROS_Architecture.png)</span>
 <center>**Figure 4.1: General ROS architecture flow**</center>
-
+  
 The above figure illustrates our ROS pipeline that links together the various components to enable parking and line following. First, the Image Masking node subscribes to the Zed Camera and publishes a masked image. The Rectangle Finder node subscribes to the masked image topic and publishes a bounding box and target point within the image. The Coordinate Transform node subscribes to the bounding box topic and converts the target point from image pixels to real-world coordinates. The Robot Parking and Pure Pursuit nodes subscribe to a topic where real-world target coordinates are published, and in turn directly publishes the driving commands. We use a launch file to launch all the necessary nodes at once when running robot parking and line following.
 
 <span class="image main">![](assets/images/lab4/ROS_Flow_Example.png)</span>
 <center>**Figure 4.2: Specific ROS Architecture flow example**</center>
-
+  
 Our biggest challenge was integrating these coordinates together. We tested all packages individually using mock data. However, when combing these packages into one pipeline, we realized our specifications were not consistent, and that mock data didn’t represent real-world conditions. We had to adjust ROS topic names and data types so they were consistent. We also needed to adjust parameter values, such as the coordinates in the transformation matrix or orange color of the cone, to reflect robot and testing conditions. Finally, we confirmed that our code worked as expected.
 
 ## Visualize the Cone (Image Mask) - Sabina and Ravi
