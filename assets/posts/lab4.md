@@ -177,8 +177,8 @@ The robot_parking package uses the real-world x-y coordinates of the target poin
 
 The updated speed and angle parameters are then published to the ROS Ackermann Drive topic `/vesc/ackermann_cmd_mux/input/navigation` to drive the car.
 
-INSERT VIDEO OF CAR STOPPING 1 METER AWAY
-INSERT VIDEO OF CAR FOLLOWING CONE
+[![Robot Parking](assets/images/lab4/robot_parking.png)](https://youtu.be/CEDcssmEmWA "Robot Parking")
+[![Cone Following](assets/images/lab4/cone_following.png](https://youtu.be/0JsqiUC1mjM "Cone Following")
 
 ## Line Following (Pure Pursuit) - Jerry
 
