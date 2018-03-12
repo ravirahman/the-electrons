@@ -43,9 +43,13 @@ Lessons Learned
 
 <span class="image main">![](assets/images/lab4/ROS_Architecture.png)</span>
 
+**General ROS architecture flow**
+
 The above figure illustrates our ROS pipeline that links together the various components to enable parking and line following. First, the Image Masking node subscribes to the Zed Camera and publishes a masked image. The Rectangle Finder node subscribes to the masked image topic and publishes a bounding box and target point within the image. The Coordinate Transform node subscribes to the bounding box topic and converts the target point from image pixels to real-world coordinates. The Robot Parking and Pure Pursuit nodes subscribe to a topic where real-world target coordinates are published, and in turn directly publishes the driving commands. We use a launch file to launch all the necessary nodes at once when running robot parking and line following.
 
 <span class="image main">![](assets/images/lab4/ROS_Flow_Example.png)</span>
+
+**Specific ROS Architecture flow**
 
 Our biggest challenge was integrating these coordinates together. We tested all packages individually using mock data. However, when combing these packages into one pipeline, we realized our specifications were not consistent, and that mock data didn’t represent real-world conditions. We had to adjust ROS topic names and data types so they were consistent. We also needed to adjust parameter values, such as the coordinates in the transformation matrix or orange color of the cone, to reflect robot and testing conditions. Finally, we confirmed that our code worked as expected.
 
@@ -143,15 +147,21 @@ The approach taken for this section was purely mathematical. The equation for co
 
 <span class="image main">![Coordinate Transform Equation](assets/images/lab4/coord_trans_equation.png)</span>
 
+**Equation used to find homogeneous form of pixel coordinates from camera matrix, extrinsic matrix, and real world coordinates**
+
 The 3x3 matrix shown is known as the intrinsic camera matrix. We obtained the values for this matrix by observing the calibration settings for our zed camera. The 3x4 matrix is known as the extrinsic matrix, which represents rotation and translation between the robot and camera coordinate frames. Consult the figure below to see how these coordinate frames differ.
 
 <span class="image main">![Robot and Camera Coordinate Frames](assets/images/lab4/robot_cam_coord.png)</span>
+
+**Coordinate frames of the robot and its camera**
 
 The following relationships are clear from the image: the positive x-axis of the robot corresponds to the positive z-axis of the camera, the positive y-axis of the robot corresponds to the negative x-axis of the camera, and the positive z-axis of the robot corresponds to the negative y-axis of the camera. This information determines the rotational portion of the extrinsic matrix. Taking the center of the rear axle as the origin of the robot coordinate frame, we measured the translation of the camera lens to complete the extrinsic matrix.
 
 We now have what we need to go from robot coordinates to pixel coordinates, but this is not what we want; and at this point, we cannot invert this matrix product to solve for the robot coordinates because this product is invertible. This is where another matrix, which we referred to as the floor_to_world_matrix, came into play. Jerry identified a 4x3 matrix that converts 2-D coordinates on the floor (an assumption that the cone will always be on the floor) to 3-D coordinates. This matrix, when right-multiplied with the product of the intrinsic and extrinsic matrices, yields an invertible 3x3 matrix. Now right-multiplying the vector of pixel coordinates with this inverted matrix yields a vector of homogeneous coordinates in the robot frame, and we convert these to cartesian coordinates by simply dividing this vector by its last element.
 
 <span class="image main">![Coordinate Transform Code Snippet](assets/images/lab4/coord_trans_code.png)</span>
+
+**Snippet of code used to perform the coordinate transformation**
 
 ## Robot Parking - Sabina and Jerry
 
@@ -185,7 +195,7 @@ We implemented the Pure Pursuit algorithm to follow an orange tape line on the g
 
 <span>![Pure Pursuit Geometry](assets/images/lab4/pure_pursuit_geometry.png =950x600)</span>
 
-**Figure taken from [this paper from the DARPA grand challenge](https://www.ri.cmu.edu/pub_files/2009/2/Automatic_Steering_Methods_for_Autonomous_Automobile_Path_Tracking.pdf)
+**Figure taken from [this paper from the DARPA grand challenge](https://www.ri.cmu.edu/pub_files/2009/2/Automatic_Steering_Methods_for_Autonomous_Automobile_Path_Tracking.pdf). Shows the desired steering angle given current orientation and distance from target point**
 
 To find the target point, in typical implementations of the Pure Pursuit algorithm, one would find a point on the line a certain "lookahead" distance ahead, but for simplicity, we simply mask off most of the camera image except for a section which would roughly correspond to the desired lookahead distance and run the cone detection algorithm. Given a target point, we find the desired turning angle using the bicycle model, and calculate the desired driving speed based on the turn radius, so that we drive more slowly on sharper turns.
 
@@ -197,6 +207,8 @@ INSERT VIDEO OF CIRCULAR SUCCESS
 We added a battery pack and Raspberry PI ethernet bridge to our router, so we are not limited to locations with wall outlets and network jacks when working on the robot. We also published the racecar_ws folder to github, with all packages configured as submodules. We have a script that automatically pulls the latest code (on the master branch) from github, so our robot code and virtual machine code stay in sync. This time investment simplified debugging for this lab and future labs.
 
 <span>![Router](assets/images/lab4/router.jpg =950x450)</span>
+
+**Wireless router modification**
 
 ## Lessons Learned - Electrons
 
