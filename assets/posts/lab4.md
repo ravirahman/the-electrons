@@ -103,17 +103,7 @@ It was interesting to see the different cone detection algorithms available, and
 
 ### Color Segmentation
 
-Finally, Marek utilized color segmentation to find the boundary of a cone using its HSV values. This was the only algorithm for which the staff provided no starter code. The process was as follows:
-
-  * find HSV values corresponding to pixel coordinates
-  * experimentally set HSV bounds that would capture the color of the cone in various lighting situations
-  * create a bitmask- sets pixel values to 1 if the HSV values were **not** in our desired range, and sets them to 0 otherwise
-  * utilize an erode function to get rid of noise
-  * use dilate function to fill the holes left by the erode function
-  * use boundingRect function to find the coordinates of a rectangle that fits all the points on the bitmask
-  * draw the rectangle/bounding box
-
-Taking into account inconsistent lighting conditions, we defined a range of acceptable HSV values for each orange and a yellowish orange. We defined the range (0, 150, 150) to (18, 255, 255) to describe orange and the range (26, 180, 180) to (32, 255, 255) to describe yellowish orange. The erode function utilized two iterations with a 3x3 kernel and the dilate function utilized 7 iterations with a 3x3 kernel. This method performed very well, passing all the test cases. An example of its bounding box can be seen below. We decided to employ this algorithm moving forward since it was the most accurate and most consistent.
+The third method we used for cone detection was color segmentation. This method searches for the cone using its color value. Once all the pixels matching a particular color value are found, the smallest rectangle that fits all those pixels is drawn as the bounding box. In order to create a more robust cone detection algorithm, RGB (Red, green, blue) images were transformed into HSV (hue, saturation, value) images using the OpenCV function BGR2HSV. HSV images are much less sensitive to fluctuations in brightness and color which make them more useful for color matching purposes. The HSV values of the cone were then experimentally determined to set an upper and lower bound that encompassed the color range of the cone. Using these two bounds, a binary filter was applied on the image returning a black or white pixel for HSV values outside or inside the bounds respectively. This created a black and white “mask” that highlighted the area containing the cone. In order to separate the cone shape from random noise, the mask was filtered using the OpenCV erode function which uses an n-sized filter to delete isolated pixels within the size of the filter. We used a 3x3 pixel-sized filter and ran two iterations to ensure a clean mask. Once our mask was filtered, we used the OpenCV dilate function to fill in gaps and increase the size of our supposed cone. This function uses the same method as erode whilst creating pixels instead of deleting them. We experimentally determined that 5 iterations of the dilate function gave us the best results. Once the mask was filtered and dilated, the OpenCV rectangle function was used to find the coordinates of a rectangle containing all points in the mask. This was our bounding box that contained the cone. We found this method to be the most reliable for locating the cone. Using our test cases as a metric, color segmentation was able to locate every cone in the test images with an accuracy metric of ~85%.
 
 <center><span>![Color Segmentation](assets/images/lab4/color_segmentation.png =800x200)</span></center>
 
