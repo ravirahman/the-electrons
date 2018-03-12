@@ -3,26 +3,26 @@ Lab 4
 
 ## Table of Contents
 
-+ General Overview and Approach
-+ ROS Architecture Overview
-+ Visualize the Cone (Image Mask)
-+ Detect the Cone (Rectangle Finder)
+General Overview and Approach
+ROS Architecture Overview
+Visualize the Cone (Image Mask)
+Detect the Cone (Rectangle Finder)
     - Overview and Motivation
     - SIFT/RANSAC
     - Template Matching
     - Color Segmentation
     - Actual Implementation
-+ Locate the Cone (Coordinate Transform)
+Locate the Cone (Coordinate Transform)
     - Overview and Motivation
     - Approach
-+ Robot Parking
+Robot Parking
     - Overview and Motivation
     - Approach
-+ Line Following (Pure Pursuit)
+Line Following (Pure Pursuit)
     - Overview and Motivation
     - Approach
-+ Team Workflow Updates
-+ Lessons Learned
+Team Workflow Updates
+Lessons Learned  
 
 ## General Overview and Approach - Kolby
 
@@ -179,7 +179,7 @@ We implemented the Pure Pursuit algorithm to follow an orange tape line on the g
 <center><span>![Pure Pursuit Geometry](assets/images/lab4/pure_pursuit_geometry.png =950x600)</span></center>
 
 <center>**Figure 4.15: Figure taken from [this paper from the DARPA grand challenge](https://www.ri.cmu.edu/pub_files/2009/2/Automatic_Steering_Methods_for_Autonomous_Automobile_Path_Tracking.pdf). Shows the desired steering angle given current orientation and distance from target point**</center>
-  
+
 To find the target point, in typical implementations of the Pure Pursuit algorithm, one would find a point on the line a certain "lookahead" distance ahead, but for simplicity, we simply mask off most of the camera image except for a section which would roughly correspond to the desired lookahead distance and run the cone detection algorithm. Given a target point, we find the desired turning angle using the bicycle model, and calculate the desired driving speed based on the turn radius, so that we drive more slowly on sharper turns.
 
 <center>[![Simple Line Follower](assets/images/lab4/simple_line_follow.png =600x400)](https://youtu.be/r_twc_SNtNc "Simple Line Following")</center>
