@@ -59,11 +59,11 @@ Our image mask node listens to `/zed/rgb/image_rect_color` topic and performs tr
 
 <center><span>![Raw Camera Image](assets/images/lab4/Raw_Camera_Image.png =475x500)</span></center>
 
-<center>**Raw Camera Image**</center>
+<center>**Figure 4.3: Raw Camera Image**</center>
 
 <center><span>![Masked Image](assets/images/lab4/Masked_Image.png =475x500)</span></center>
 
-<center>**Bottom: Masked Image**</center>
+<center>**Figure 4.4: Masked Image**</center>
 
 
 ## Detect the Cone (Rectangle Finder) - Sabina and Marek
@@ -80,11 +80,11 @@ After much testing, we realized that SIFT works pretty badly at identifying feat
 
 <center><span>![SIFT Feature Matching Cone](assets/images/lab4/SIFT_Feature_Matching_Cone.png =700x500)</span></center>
 
-<center>**Top: SIFT Feature Matching of Cone**</center>
+<center>**Figure 4.5: SIFT Feature Matching of Cone**</center>
 
 <center><span>![SIFT Features Cone](assets/images/lab4/SIFT_Features_Cone.png =700x500)</span></center>
 
-<center>**Bottom: SIFT Features of Cone**</center>
+<center>**Figure 4.6: SIFT Features of Cone**</center>
 
 Out of curiosity (and mainly to make sure that it wasn’t a bug in our code that was causing SIFT to fail), we used a different set of image data to verify that SIFT was indeed working correctly. We used images of Honey Oats Cereal as the new template and training images. As shown in the image below, SIFT was able to accurate identify many features in the Honey Oats Cereal and correctly draw a bounding box around the major features of the cereal box.
 
@@ -92,11 +92,11 @@ The results from applying SIFT on cone and honey oats cereal box images showed u
 
 <center><span>![SIFT Features Cereal](assets/images/lab4/SIFT_Features_Cereal.png =600x500)</span></center>
 
-<center>**Top: SIFT Features of Cereal Box**</center>
+<center>**Figure 4.7: SIFT Features of Cereal Box**</center>
 
 <center><span>![SIFT Bounding Box](assets/images/lab4/SIFT_Bounding_Box.png =600x500)</span></center>
 
-<center>**Bottom: SIFT Bounding Box of Cereal Box**</center>
+<center>**Figure 4.8: SIFT Bounding Box of Cereal Box**</center>
 
 ### Template Matching
 
@@ -106,11 +106,11 @@ It was interesting to see the different cone detection algorithms available, and
 
 <center><span>![Template Match Success](assets/images/lab4/Template_Match_Success.png =600x500)</span></center>
 
-<center>**Top: Template Matching Success**</center>
+<center>**Figure 4.9: Template Matching Success**</center>
 
 <center><span>![Template Match Failure](assets/images/lab4/Template_Match_Failure.png =600x500)</span></center>
 
-<center>**Bottom: Template Matching Failure**</center>
+<center>**Figure 4.10: Template Matching Failure**</center>
 
 ### Color Segmentation
 
@@ -134,7 +134,7 @@ After testing the three cone detection methods, we found that color segmentation
 
 <center><span>![Bounding Box](assets/images/lab4/Bounding_Box.png =700x500)</span></center>
 
-<center>**Above: Bounding box of cone with bottom center identified**</center>
+<center>**Figure 4.11: Bounding box of cone with bottom center identified**</center>
 
 ## Locate the Cone (Coordinate Transform) - Kolby, Jerry, Sabina, Ravi
 
@@ -148,13 +148,13 @@ The approach taken for this section was purely mathematical. The equation for co
 
 <span class="image main">![Coordinate Transform Equation](assets/images/lab4/coord_trans_equation.png)</span>
 
-<center>**Equation used to find homogeneous form of pixel coordinates from camera matrix, extrinsic matrix, and real world coordinates**</center>
+<center>**Figure 4.12: Equation used to find homogeneous form of pixel coordinates from camera matrix, extrinsic matrix, and real world coordinates**</center>
 
 The 3x3 matrix shown is known as the intrinsic camera matrix. We obtained the values for this matrix by observing the calibration settings for our zed camera. The 3x4 matrix is known as the extrinsic matrix, which represents rotation and translation between the robot and camera coordinate frames. Consult the figure below to see how these coordinate frames differ.
 
 <span class="image main">![Robot and Camera Coordinate Frames](assets/images/lab4/robot_cam_coord.png)</span>
 
-<center>**Coordinate frames of the robot and its camera**</center>
+<center>**Figure 4.13: Coordinate frames of the robot and its camera**</center>
 
 The following relationships are clear from the image: the positive x-axis of the robot corresponds to the positive z-axis of the camera, the positive y-axis of the robot corresponds to the negative x-axis of the camera, and the positive z-axis of the robot corresponds to the negative y-axis of the camera. This information determines the rotational portion of the extrinsic matrix. Taking the center of the rear axle as the origin of the robot coordinate frame, we measured the translation of the camera lens to complete the extrinsic matrix.
 
@@ -192,7 +192,7 @@ We implemented the Pure Pursuit algorithm to follow an orange tape line on the g
 
 <center><span>![Pure Pursuit Geometry](assets/images/lab4/pure_pursuit_geometry.png =950x600)</span></center>
 
-<center>**Figure taken from [this paper from the DARPA grand challenge](https://www.ri.cmu.edu/pub_files/2009/2/Automatic_Steering_Methods_for_Autonomous_Automobile_Path_Tracking.pdf). Shows the desired steering angle given current orientation and distance from target point**</center>
+<center>**Figure 4.14: Figure taken from [this paper from the DARPA grand challenge](https://www.ri.cmu.edu/pub_files/2009/2/Automatic_Steering_Methods_for_Autonomous_Automobile_Path_Tracking.pdf). Shows the desired steering angle given current orientation and distance from target point**</center>
 
 To find the target point, in typical implementations of the Pure Pursuit algorithm, one would find a point on the line a certain "lookahead" distance ahead, but for simplicity, we simply mask off most of the camera image except for a section which would roughly correspond to the desired lookahead distance and run the cone detection algorithm. Given a target point, we find the desired turning angle using the bicycle model, and calculate the desired driving speed based on the turn radius, so that we drive more slowly on sharper turns.
 
@@ -205,7 +205,7 @@ We added a battery pack and Raspberry PI ethernet bridge to our router, so we ar
 
 <center><span>![Router](assets/images/lab4/router.jpg =950x450)</span></center>
 
-<center>**Wireless router modification**</center>
+<center>**Figure 4.15: Wireless router modification**</center>
 
 ## Lessons Learned - Electrons
 
