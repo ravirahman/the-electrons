@@ -197,7 +197,7 @@ We implemented the Pure Pursuit algorithm to follow an orange tape line on the g
 To find the target point, in typical implementations of the Pure Pursuit algorithm, one would find a point on the line a certain "lookahead" distance ahead, but for simplicity, we simply mask off most of the camera image except for a section which would roughly correspond to the desired lookahead distance and run the cone detection algorithm. Given a target point, we find the desired turning angle using the bicycle model, and calculate the desired driving speed based on the turn radius, so that we drive more slowly on sharper turns.
 
 <center>[![Simple Line Follower](assets/images/lab4/simple_line_follow.png =600x400)](https://youtu.be/r_twc_SNtNc "Simple Line Following")</center>
-<center>[![Circular Line Follower](assets/images/lab4/complex_line_following.png =600x400](https://youtu.be/m5QCN0QVLhM "Circular Line Following")</center>
+<center>[![Circular Line Follower](assets/images/lab4/complex_line_follow.png =600x400](https://youtu.be/m5QCN0QVLhM "Circular Line Following")</center>
 
 ## Team Workflow Updates - Ravi
 
