@@ -60,6 +60,7 @@ Our image mask node listens to `/zed/rgb/image_rect_color` topic and performs tr
 <span>![Masked Image](assets/images/lab4/Masked_Image.png =475x500)</span>
 
    **Top: Raw Camera Image**
+   
    **Bottom: Masked Image**
 
 
@@ -79,6 +80,7 @@ After much testing, we realized that SIFT works pretty badly at identifying feat
 <span>![SIFT Features Cone](assets/images/lab4/SIFT_Features_Cone.png =700x500)</span>
 
    **Top: SIFT Feature Matching of Cone**
+   
    **Bottom: SIFT Features of Cone**
 
 Out of curiosity (and mainly to make sure that it wasn’t a bug in our code that was causing SIFT to fail), we used a different set of image data to verify that SIFT was indeed working correctly. We used images of Honey Oats Cereal as the new template and training images. As shown in the image below, SIFT was able to accurate identify many features in the Honey Oats Cereal and correctly draw a bounding box around the major features of the cereal box.
@@ -89,6 +91,7 @@ The results from applying SIFT on cone and honey oats cereal box images showed u
 <span>![SIFT Bounding Box](assets/images/lab4/SIFT_Bounding_Box.png =600x500)</span>
 
    **Top: SIFT Features of Cereal Box**
+   
    **Bottom: SIFT Bounding Box of Cereal Box**
 
 ### Template Matching
@@ -101,6 +104,7 @@ It was interesting to see the different cone detection algorithms available, and
 <span>![Template Match Failure](assets/images/lab4/Template_Match_Failure.png =600x500)</span>
 
    **Top: Template Matching Success**
+   
    **Bottom: Template Matching Failure**
 
 ### Color Segmentation
@@ -123,7 +127,7 @@ INSERT SUCCESS IMAGE HERE
 
 After testing the three cone detection methods, we found that color segmentation was the most reliable at detecting the cone, and thus used this method in our actual implementation for detecting the cone and lines in robot_parking and line_following.The rectangle finder node finds the cone from the masked image using color segmentation. It listens to the masked_image_topic and converts the image from RGB to HSV. HSV coloring simplies color matching, since oranges of similar hue will be grouped together. We use OpenCV.inRange to identify the coordinates for all orange in the image. We then use a weighted average to determine the middle of the cone, so that extraneous noise is virtually ignored when computing the center of the cone. We then draw and publish the bounding box to rectangle_finder_image_output_topic (for visualization purposes) as well as the center of the cone as ROS Point message to the bounding_box topic (for use in coordinate transformation and path planning).
 
-<span>![Bounding Box](assets/images/lab4/Bounding_Box.png =950x700)</span>
+<span>![Bounding Box](assets/images/lab4/Bounding_Box.png =700x500)</span>
 
 **Above: Bounding box of cone with bottom center identified**
 
