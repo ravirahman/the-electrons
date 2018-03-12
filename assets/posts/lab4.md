@@ -115,7 +115,7 @@ Finally, Marek utilized color segmentation to find the boundary of a cone using 
 
 Taking into account inconsistent lighting conditions, we defined a range of acceptable HSV values for each orange and a yellowish orange. We defined the range (0, 150, 150) to (18, 255, 255) to describe orange and the range (26, 180, 180) to (32, 255, 255) to describe yellowish orange. The erode function utilized two iterations with a 3x3 kernel and the dilate function utilized 7 iterations with a 3x3 kernel. This method performed very well, passing all the test cases. An example of its bounding box can be seen below. We decided to employ this algorithm moving forward since it was the most accurate and most consistent.
 
-<center><span>![Color Segmentation](assets/images/lab4/color_segmentation.png =600x500)</span></center>
+<center><span>![Color Segmentation](assets/images/lab4/color_segmentation.png =800x200)</span></center>
 
 <center>**Figure 4.11: Color Segmentation Success**</center>
 
