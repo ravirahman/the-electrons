@@ -185,6 +185,8 @@ We implemented the Pure Pursuit algorithm to follow an orange tape line on the g
 
 <span>![Pure Pursuit Geometry](assets/images/lab4/pure_pursuit_geometry.png =950x600)</span>
 
+**Figure taken from [this paper from the DARPA grand challenge](https://www.ri.cmu.edu/pub_files/2009/2/Automatic_Steering_Methods_for_Autonomous_Automobile_Path_Tracking.pdf)
+
 To find the target point, in typical implementations of the Pure Pursuit algorithm, one would find a point on the line a certain "lookahead" distance ahead, but for simplicity, we simply mask off most of the camera image except for a section which would roughly correspond to the desired lookahead distance and run the cone detection algorithm. Given a target point, we find the desired turning angle using the bicycle model, and calculate the desired driving speed based on the turn radius, so that we drive more slowly on sharper turns.
 
 INSERT VIDEO OF SIMPLE SUCCESS
