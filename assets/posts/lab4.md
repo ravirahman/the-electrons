@@ -54,6 +54,7 @@ Our image mask node listens to `/zed/rgb/image_rect_color` topic and performs tr
 <span>![Masked Image](assets/images/lab4/Masked_Image.png =475x300)</span>
 
 **Top: Raw Camera Image**
+
 **Bottom: Masked Image**
 
 
