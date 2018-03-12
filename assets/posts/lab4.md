@@ -45,11 +45,13 @@ Lessons Learned
 
 <center>**General ROS architecture flow**</center>
 
+
 The above figure illustrates our ROS pipeline that links together the various components to enable parking and line following. First, the Image Masking node subscribes to the Zed Camera and publishes a masked image. The Rectangle Finder node subscribes to the masked image topic and publishes a bounding box and target point within the image. The Coordinate Transform node subscribes to the bounding box topic and converts the target point from image pixels to real-world coordinates. The Robot Parking and Pure Pursuit nodes subscribe to a topic where real-world target coordinates are published, and in turn directly publishes the driving commands. We use a launch file to launch all the necessary nodes at once when running robot parking and line following.
 
 <span class="image main">![](assets/images/lab4/ROS_Flow_Example.png)</span>
 
 <center>**Specific ROS Architecture flow example**</center>
+
 
 Our biggest challenge was integrating these coordinates together. We tested all packages individually using mock data. However, when combing these packages into one pipeline, we realized our specifications were not consistent, and that mock data didn’t represent real-world conditions. We had to adjust ROS topic names and data types so they were consistent. We also needed to adjust parameter values, such as the coordinates in the transformation matrix or orange color of the cone, to reflect robot and testing conditions. Finally, we confirmed that our code worked as expected.
 
@@ -161,10 +163,6 @@ The 3x3 matrix shown is known as the intrinsic camera matrix. We obtained the va
 The following relationships are clear from the image: the positive x-axis of the robot corresponds to the positive z-axis of the camera, the positive y-axis of the robot corresponds to the negative x-axis of the camera, and the positive z-axis of the robot corresponds to the negative y-axis of the camera. This information determines the rotational portion of the extrinsic matrix. Taking the center of the rear axle as the origin of the robot coordinate frame, we measured the translation of the camera lens to complete the extrinsic matrix.
 
 We now have what we need to go from robot coordinates to pixel coordinates, but this is not what we want; and at this point, we cannot invert this matrix product to solve for the robot coordinates because this product is invertible. This is where another matrix, which we referred to as the floor_to_world_matrix, came into play. Jerry identified a 4x3 matrix that converts 2-D coordinates on the floor (an assumption that the cone will always be on the floor) to 3-D coordinates. This matrix, when right-multiplied with the product of the intrinsic and extrinsic matrices, yields an invertible 3x3 matrix. Now right-multiplying the vector of pixel coordinates with this inverted matrix yields a vector of homogeneous coordinates in the robot frame, and we convert these to cartesian coordinates by simply dividing this vector by its last element.
-
-<span class="image main">![Coordinate Transform Code Snippet](assets/images/lab4/coord_trans_code.png)</span>
-
-<center>**Snippet of code used to perform the coordinate transformation**</center>
 
 ## Robot Parking - Sabina and Jerry
 
