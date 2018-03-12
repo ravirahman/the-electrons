@@ -42,14 +42,12 @@ Lessons Learned
 ## ROS Architecture Overview - Sabina and Ravi
 
 <span class="image main">![](assets/images/lab4/ROS_Architecture.png)</span>
-
 <center>**General ROS architecture flow**</center>
 
 
 The above figure illustrates our ROS pipeline that links together the various components to enable parking and line following. First, the Image Masking node subscribes to the Zed Camera and publishes a masked image. The Rectangle Finder node subscribes to the masked image topic and publishes a bounding box and target point within the image. The Coordinate Transform node subscribes to the bounding box topic and converts the target point from image pixels to real-world coordinates. The Robot Parking and Pure Pursuit nodes subscribe to a topic where real-world target coordinates are published, and in turn directly publishes the driving commands. We use a launch file to launch all the necessary nodes at once when running robot parking and line following.
 
 <span class="image main">![](assets/images/lab4/ROS_Flow_Example.png)</span>
-
 <center>**Specific ROS Architecture flow example**</center>
 
 
