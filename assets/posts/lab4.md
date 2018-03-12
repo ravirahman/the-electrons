@@ -172,8 +172,8 @@ The robot parking algorithm makes the robot locate an orange cone, drive towards
 
 The robot_parking package uses the real-world x-y coordinates of the target point, and uses the current distance, current angle, and specified parking goal distance to calculate the new speed and new angle. Robot parking uses a simple PD controller, using the following calculations:
 
-* $$new\_speed = k_{d} * (current\_distance - goal\_distance)$$
-* $$ new\_angle = k_{theta} * current\_angle$$
+<center>$$new\textunderscore speed = k_{d} * (current\textunderscore distance - goal\textunderscore distance)$$</center>
+<center>$$ new\textunderscore angle = k_{theta} * current\textunderscore angle$$</center>
 
 The updated speed and angle parameters are then published to the ROS Ackermann Drive topic `/vesc/ackermann_cmd_mux/input/navigation` to drive the car.
 
