@@ -24,7 +24,7 @@ Lab 4
 + Team Workflow Updates
 + Lessons Learned
 
-## General Overview and Approach
+## General Overview and Approach - Kolby
 
 This lab came right on the heels of the wall following and safety controller lab. The complexity was increased a bit for this assignment, which focused on visual servoing. From object detection algorithms all the way to line following, the lab this week taught us how to make the robot detect an object or point of interest and continually follow it. The lab consisted of 4 sections, so we decided to tackle each one in subteams of one or two people. We noticed early on that robot parking and line following would have very similar structure, both using a lot of the code developed in the first two sections (cone detection and cone localization). Therefore we were able to parallelize the work and simply perform an integration of the parts at the end. Over the course of the week we expanded our knowledge of ROS structure, especially the communication between nodes, as well as the power of modularity. Some challenges did arise, but they were all learning experiences.
 
