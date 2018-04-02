@@ -35,7 +35,11 @@ Our system consists of multiple interacting parts: sensory data, a map of Stata 
 <center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monty Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
 
 ### Initialization
-Our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively. We initialize our the position of particles in a normal distribution centered at the received position and a 1 meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternative, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation.
+Our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively. We initialize our the position of particles in a normal distribution centered at the received position and a 1 meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternative, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation. An example of this can be seen in the figure below.
+
+<center>**Particle Filter Local Initialization**<br /><span>![Particle Filter Local Initialization](assets/images/lab6/PFLocalInit.png)</span></center>
+
+<center>**Figure 6.3**: *Diagram illustrating particle initialization. We initialize particles in a Gaussian around a clicked point in Rviz.*</center>
 
 ### Resampling Particles
 
@@ -55,17 +59,17 @@ When implementing the particle filter, we a) modeled the random noise in the mot
 
 ### Using Randomness to Account for Noise in Odometry
 
-As a part of the particle filter algorithm, we use a Monte Carlo approach to account for noise in the odometry measurements, in which we use randomness when choosing the distance and angle each particle moves by. For each particle, we independently select the distance to move the particle from a log-normal distribution or normal distribution, and select the angle to rotate the particle from a Gaussian distribution, both centered based on the data from odometry. Once we select the distance and angle to move each particle by, we move the particles by the chosen distance in the direction each particle was previously facing, then we rotate each particle by the chosen angle. See Figure 6.3 for a visualization.
+As a part of the particle filter algorithm, we use a Monte Carlo approach to account for noise in the odometry measurements, in which we use randomness when choosing the distance and angle each particle moves by. For each particle, we independently select the distance to move the particle from a log-normal distribution or normal distribution, and select the angle to rotate the particle from a Gaussian distribution, both centered based on the data from odometry. Once we select the distance and angle to move each particle by, we move the particles by the chosen distance in the direction each particle was previously facing, then we rotate each particle by the chosen angle. See Figure 6.4 for a visualization.
 
 <center><span>![Motion Model](assets/images/lab6/MotionModelDiagram.png)</span></center>
 
-<center>**Figure 6.3: For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data (see below). Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle.**</center>
+<center>**Figure 6.4: For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data (see below). Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle.**</center>
 
-We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. This is because we expect that if the odometry indicates the robot is moving forward, the robot is unlikely to actually be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine the direction the robot is moving by comparing the direction of movement reported by the odometry to the robot's facing angle determined by the odometry. The formulas we use to determine the distance to move each particle are in Figure 6.4.
+We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. This is because we expect that if the odometry indicates the robot is moving forward, the robot is unlikely to actually be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine the direction the robot is moving by comparing the direction of movement reported by the odometry to the robot's facing angle determined by the odometry. The formulas we use to determine the distance to move each particle are in Figure 6.5.
 
 <center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =900x346)</span></center>
 
-<center>**Figure 6.4: How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.**</center>
+<center>**Figure 6.5: How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.**</center>
 
 We draw the angle to rotate each particle simply from a normal distribution centered on the angle change reported by the odometry, with standard deviation given by the covariance matrix reported by the odometry, but increased by a factor of 1.5 (which we determined testing with the autograder). However, sometimes this noise is too much; we clamp the standard deviation of the Gaussian with an upper bound of 0.5 radians, chosen so that it is very improbable for the noise to be \\(\pi\\), which can cause the inferred pose to spontaneously reverse direction in the middle of a long hallway.
 
@@ -82,7 +86,7 @@ We add all these components together to compute the total probability of measuri
 
 <center><span>![Sensor Model Visualization](assets/images/lab6/SensorModelVisualization.png =528x417)</span></center>
 
-<center>**Figure 6.5: INSERT CAPTION.**</center>
+<center>**Figure 6.6: INSERT CAPTION.**</center>
 
 ### Efficient Implementation with RangeLibC on the GPU
 
@@ -119,7 +123,7 @@ Because these low error measurements would support path following, we did not at
 
 <center>[![Particle Filter Simulator](assets/images/lab6/Lab6Sim.png =560x320)](https://youtu.be/NIbuZocztWo "Particle Filter in Simulation")</center>
 
-<center>**Figure 6.6: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
+<center>**Figure 6.7: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
 
 ### Particle Filter Localization in Robot: Downtick in Performance
 
@@ -129,7 +133,7 @@ These accuracy measurements indicate the general reliability of particle filter 
 
 <center>[![Particle Filter Robot](assets/images/lab6/)]( "Particle Filter on Robot")</center>
 
-<center>**Figure 6.7: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
+<center>**Figure 6.8: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
 
 ## Lessons Learned: Tuning Noise is a Tall Task - Kolby, Marek
 
