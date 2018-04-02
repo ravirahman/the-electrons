@@ -17,7 +17,7 @@ These accuracy measurements indicate the reliability of particle filter localiza
 
 ## Introduction - Ravi, Kolby, and Sabina
 
-<center><span>![System Diagram](assets/images/lab6/SystemDiagram.png =671x431)</span></center>
+<center><span>![System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
 
 <center>**Figure 6.1: INSERT CAPTION.**</center>
 
@@ -29,7 +29,7 @@ We implemented a particle filter to perform localization. The particle filter fi
 
 ## Particle Filter Algorithm - Sabina
 
-<center><span>![Particle Filter System Diagram](assets/images/lab6/ParticleFilter.png =550x500)</span></center>
+<center><span>![Particle Filter System Diagram](assets/images/lab6/ParticleFilter.png)</span></center>
 
 <center>**Figure 6.2: Particle filter system diagram showing the order of events and flow of information in our particle filter algorithm.**</center>
 
