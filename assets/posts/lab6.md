@@ -104,11 +104,7 @@ Tracking more particles or sampling more laser measurements lower the frequency 
 
 ### Initial Development and Autograding
 
-<<<<<<< HEAD
 We first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bugfixes and some parameter tuning, the best score we were able to get was \\(0.91\\), with \\(2400\\) particles and \\(54\\) laser measurement samples.
-=======
-When we first implemented the particle filter, we first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bug fixes and some parameter tuning, the best score we were able to get was 0.91, with 2400 particles and 54 laser measurement samples.
->>>>>>> a1b18b4494ecd6bf8bc691bd86cd392ff7288ad4
 
 ### Particle Filter Localization on Simulator: Our Algorithm Showed Great Performance
 
