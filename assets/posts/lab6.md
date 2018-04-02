@@ -30,51 +30,58 @@ Our system consists of multiple interacting parts: sensory data, a map of Stata 
 
 ## Particle Filter Algorithm - Sabina
 
+We first describe the particle filter in generality. Figure 6.2 provides an overview of the algorithm.
+
 <center>**Particle Filter Pipeline**<br /><span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
 
-<center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monty Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
+<center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monte Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
 
 ### Initialization
-<center>**Particle Filter Local Initialization**<br /><span>![Particle Filter Local Initialization](assets/images/lab6/InitialParticles.png)</span></center>
-<center>**Figure 6.3**: *Screesnshot showing the initial poses (red vectors) after clicking a location in RViz. Positions were drawn from a normal distribution cenetered at the clicked point and with a standard deviation of \\(1m\\). Orientations were drawn from a uniform distribution.*
-</center>
-<br />
-<br />
-Our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively. We initialize our the position of particles in a normal distribution centered at the received position and a `1` meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternative, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation. An example of this can be seen in the figure above.
+
+In local initialization, which we assume for the purposes of this lab, the initial robot location is provided to the algorithm, which initializes particles near this robot location. In order to be robust to errors in the initial robot location, the algorithm initializes the particles with some noise instead of using the exact provided robot location.
 
 ### Resampling Particles
 
-The algorithm samples a new batch of particles based on the weights of the particles computed in the previous timestep. This allows the filter to discard particles deemed to be unlikely, which will not be resampled. Note that the newly resampled particles have uniform weight; the weights in the previous timestep are now reflected in the frequencies of the resampled particles.
+At the beginning of each timestep, the algorithm samples a new batch of particles based on the weights of the particles computed in the previous timestep. This allows the filter to discard particles deemed to be unlikely, which will not be resampled. Note that the newly resampled particles have uniform weight; the weights in the previous timestep are now reflected in the frequencies of the resampled particles.
 
 ### Motion Model
 
-The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise. See **Using Randomness to Account for Noise in Odometry** section in **Particle Filter Implementation** for more implementation details.
+After particles are resampled, the motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise. See **Using Randomness to Account for Noise in Odometry** section in **Particle Filter Implementation** for more implementation details.
 
 ### Sensor Model
 
-The algorithm uses a sensor model to update the particle weights given the measured laser scan data and a provided map. First, raycast is performed from each particle in the map to determine the ground truth observations we would expect from the particle's pose. The algorithm randomly samples a subset of the laser measurements and computes the probability based on the sensor model that each particle observed these measurements based on the ground truth distances from raycasting . By Bayes, since the particles all have uniform probability (due to resampling), the probability that a particle observes the measured laser scan data is the same as the probability, given the laser scan data, that the particle reflects the true pose of the robot. The algorithm then assigns these probabilities as the weights of each particle. See **Accounting for Laser Scan Noise with our Sensor Model** section in **Particle Filter Implementation** for more implementation details.
+After the motion model updates the poses of each particle, the algorithm uses a sensor model to update the particle weights given the measured laser scan data and a provided map. First, raycast is performed from each particle in the map to determine the ground truth observations we would expect from the particle's pose. The algorithm randomly samples a subset of the laser measurements and computes the probability based on the sensor model that each particle observed these measurements based on the ground truth distances from raycasting . By Bayes's Rule, since the particles all have uniform probability (due to resampling), the probability that a particle observes the measured laser scan data is the same as the probability, given the laser scan data, that the particle reflects the true pose of the robot. The algorithm then assigns these probabilities as the weights of each particle. See the **Accounting for Laser Scan Noise with our Sensor Model** section in **Particle Filter Implementation** for more implementation details.
 
 ## Particle Filter Implementation - Jerry
 
-When implementing the particle filter, we a) modeled the random noise in the motion and sensor models, b) wrote efficient code, and c) iteratively chose the number of particles and laser measurement samples to use.
+This section how we, when implementing the particle filter, a) modeled the random noise in initialization as well as the motion and sensor models, b) wrote efficient code, and c) iteratively chose the number of particles and laser measurement samples to use.
+
+### Initializing Particles Given Approximate Initial Position
+When our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively, we initialize our particles around this pose or point in a normal distribution. The position of the particles are sampled from a normal distribution centered at the received position and a `1` meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternatively, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation. An example of initialization can be seen in Figure 6.3 below. We made no attempt at global initialization; in the absence of an initial pose or point, all particles are initialized to \\((0, 0)\\).
+
+<br />
+<br />
+<center>**Particle Filter Local Initialization**<br /><span>![Particle Filter Local Initialization](assets/images/lab6/InitialParticles.png)</span></center>
+<center>**Figure 6.3**: *Screesnshot showing the initial poses (red vectors) after clicking a location in RViz. Positions were drawn from a normal distribution cenetered at the clicked point and with a standard deviation of \\(1m\\). Orientations were drawn from a uniform distribution.*
+</center>
 
 ### Using Randomness to Account for Noise in Odometry
 
-<center><span>![Motion Model](assets/images/lab6/MotionModelDiagram.png)</span></center>
-
-<center>**Figure 6.4**: *For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data. Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle.*</center>
-
 As a part of the particle filter algorithm, we use a Monte Carlo approach to account for noise in the odometry measurements. We use randomness when choosing the change in distances and angles.
 
-For each particle, we independently select the distance to move the particle from a log-normal distribution or normal distribution. We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. If the odometry indicates the robot is moving forward, we expect the robot is unlikely to actually be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine robot's movement direction by comparing the robot's change in position with the orientation reported by odometry.
-
-Then, we select the angle to rotate the particle from a Gaussian distribution, centered on the change orientation from odometry. Once we draw the change in distance and angle from the repsective distributions, we update the particle pose.
+For each particle, we independently select the distance to move the particle from a log-normal distribution or normal distribution. We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. If the odometry indicates the robot is moving forward, we expect the robot is unlikely to be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine the robot's movement direction by comparing the robot's change in position with the orientation reported by odometry. Figure 6.4 provides the equations we use for these calculations.
 
 <center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =900x346)</span></center>
 
-<center>**Figure 6.5**: *How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.*</center>
+<center>**Figure 6.4**: *How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.*</center>
 
-We draw the angle to rotate each particle simply from a normal distribution centered on the angle change reported by the odometry. The covariance matrix reported by odometry porivdes standard deviation measusmrents. We scale these values by \\(1.5\\) (determined by testing against the autograder), clamped at an upper bound of \\(0.5 rad\\). We chose this value becaues it is very improbable for the noise to be \\(\pi\\), which can cause the inferred pose to spontaneously reverse direction in the middle of a long hallway.
+We sample the angle to rotate each particle from a normal distribution centered on the angle change reported by the odometry. The covariance matrix reported by odometry provides standard deviation measurements. We scale these values by \\(1.5\\) (determined by testing against the autograder), clamped at an upper bound of \\(0.5 rad\\). We chose this clamping value becaues it is very improbable for the sampled noise to be \\(\pi\\), which can cause the inferred pose to spontaneously reverse direction in the middle of a long hallway.
+
+Figure 6.5 provides an example of the complete pose updating process.
+
+<center><span>![Motion Model](assets/images/lab6/MotionModelDiagram.png)</span></center>
+
+<center>**Figure 6.5**: *For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data. Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle. If the robot is detected as not moving or moving backwards, the distance is instead drawn from a normal distribution or negative log-normal distribution instead (not shown).*</center>
 
 ### Accounting for Laser Scan Noise with our Sensor Model
 
@@ -85,7 +92,7 @@ Following the lab handout, we construct a 4-part sensor model to specify the pro
    3. We represent the possibility the laser may miss or reflect, assigning a probability \\(0.08\\) to the maximum possible measurement. 
    4. We represent the possibility of a random measurement, assigning a total probability of \\(0.05\\) to this case.
 
-We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of \\(\frac{12}{num\\\_laser\\\_samples}\\). \\(num\\\_laser\\\_samples\\) is the number of laser measurements we make from each particle, which comes out to about \\(\frac{1}{6}\\). This reduction in liklihood ensures that if many laser measurements  all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
+We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of \\(\frac{12}{num\\\_laser\\\_samples}\\). \\(num\\\_laser\\\_samples\\) is the number of laser measurements we make from each particle; the squashing exponent comes out to \(\frac{1}{6}\\) for 72 samples. Squashing ensures that if many laser measurements all report related errors, e.g. due to many laser measurements hitting the same unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder; we did not find it necessary to re-tune them for the real robot. Figure 6.6 provides a visualization of our final, normalized sensor model.
 
 <center><span>![Sensor Model Visualization](assets/images/lab6/SensorModelVisualization.png =528x417)</span></center>
 
@@ -97,7 +104,7 @@ We used the `rangelibc` library with GPU enabled to write an efficient implement
 
 ### Number of Particles vs Laser Scans
 
-Tracking more particles or sampling more laser measurements lower the frequency but imporve results. We optimized this tradeoff by choosing particle and sampled laser measurement counts to maximize empirical accuracy at the minimum required speed. The time cost of raycasting, which is the slowest component of our code, is scales with \\(O(|\text{particles}| * |\text{laser samples}|)\\). A slight error in the robot position can cause a big difference in the laser measurements, for example when there are complex obstacles arranged close together. Hence, it is important to use many particles to get as close to the true position as possible. Conversely, when there are relatively few features such as in a hallway, it is important to take many laser measurements in order to see these features so that the robot can determine which particles are the most likely. Originally, we tuned the particles \\(\times\\) laser measurements to run at \\(40Hz\\) on the autograder, then tried different ratios of particles to laser measurements, and found that \\(2400\\) particles and \\(54\\) laser measurement samples performs the best on the autograder. When we moved to working on the robot, because the Velodyne laser scanner only publishes at \\(20Hz\\), we were able to increase the number of particles to \\(4000\\) and number of laser samples to \\(72\\); these numbers were chosen to keep the proportions similar to those on the autograder.
+There is a performance tradeoff where using more particles or sampling more laser measurements gives better results from the particle filter at the cost of speed; we chose how many particles and sampled laser measurements to use to maximize empirical accuracy at the minimum required speed. The time cost of raycasting, which is the slowest component of our code, scales with \\(O(|\text{particles}| * |\text{laser samples}|)\\). A slight error in the robot position can cause a big difference in the laser measurements, for example when there are complex obstacles arranged close together. Hence, it is important to use many particles to get as close to the true position as possible. Conversely, when there are relatively few features such as in a hallway, it is important to take many laser measurements in order to see the few features which exist so that the robot can determine which particles are the most likely. Originally, we tuned the particles \\(\times\\) laser measurements to run at \\(40Hz\\) on the autograder, then tried different ratios of particles to laser measurements, and found that \\(2400\\) particles and \\(54\\) laser measurement samples performs the best on the autograder. When we moved to working on the robot, because the Velodyne laser scanner only publishes at \\(20Hz\\), we were able to increase the number of particles to \\(4000\\) and number of laser samples to \\(72\\); these numbers were chosen to keep the proportions similar to those on the autograder.
 
 
 ## Evaluation - Ravi
