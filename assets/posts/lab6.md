@@ -109,7 +109,7 @@ There is a performance tradeoff where using more particles or sampling more lase
 
 ### Initial Development and Autograding
 
-We first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bugfixes and some parameter tuning, the best score we were able to get was \\(0.91\\), with \\(2400\\) particles and \\(54\\) laser measurement samples.
+We first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bug fixes and some parameter tuning, the best score we were able to get was \\(0.91\\), with \\(2400\\) particles and \\(54\\) laser measurement samples.
 
 ### Particle Filter Localization on Simulator: Our Algorithm Showed Great Performance
 
@@ -140,7 +140,7 @@ We then tested the particle filter running at \\(20hz\\) with \\(72\\) laser sam
 These accuracy measurements indicate the general reliability of particle filter localization and its likely usefulness with path following, though more work will need to be done to localize in featureless hallways.
 
 <center>**Particle Filter on Robot**
-<iframe width="560" height="315" src="https://www.youtube.com/embed/NIbuZocztWo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/RobK9O0yZCo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
 <center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for \\(114\\) of the \\(120\\) seconds (\\(95\\%\\)).*</center>
 
 <center>**Inferred vs Actual Trail**<br /><span>![Inferred vs Actual Trail](assets/images/lab6/InferredActualTrail.png)</span></center>
