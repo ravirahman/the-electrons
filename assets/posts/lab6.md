@@ -9,9 +9,9 @@ Localization -- using sensor data and a map to determine pose (location and orie
 
 We developed a particle filter and LIDAR-based localization module. Each particle represents a possible pose of the robot. For each particle, its initial pose and associated probability is drawn from a gaussian distribution centered at the robot’s known position and orientation. On each timestep, we update the poses using odometry data with uncertainty and the associated probabilities using LIDAR scan data. Finally, we return the pose with the highest probability. 
 
-We initially tested on the simulator with 2400 particles and 54 laser samples per update at 40hz ($$\Delta t = 0.025s$$). We measured absolute average errors of  $$0.043m$$ for position and $$ 0.017 rad$$ for orientation against odometry data, which is perfectly accurate in the simulator.
+We initially tested on the simulator with 2400 particles and 54 laser samples per update at 40hz ($\Delta t = 0.025s$). We measured absolute average errors of $0.043m$ for position and $ 0.017 rad$ for orientation against odometry data, which is perfectly accurate in the simulator.
 
-Next, we tested on the actual robot with 4000 particles and 72 laser samples per update at 20hz ($$ \Delta t = 0.05s$$), the same frequency of the Velodyne LIDAR. We measured that our method was qualitatively accurate for ______ of the 120 second test run (___%).
+Next, we tested on the actual robot with 4000 particles and 72 laser samples per update at 20hz ($\Delta t = 0.05s$), the same frequency of the Velodyne LIDAR. We measured that our method was qualitatively accurate for ______ of the 120 second test run (___%).
 
 These accuracy measurements indicate the reliability of particle filter localization and its likely usefulness in path following and the high-speed race.
 
@@ -54,22 +54,22 @@ As a part of the particle filter algorithm, we use a Monte Carlo approach to acc
 
 We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. This is because we expect that if the odometry indicates the robot is moving forward, the robot is unlikely to actually be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine the direction the robot is moving by comparing the direction of movement reported by the odometry to the robot's facing angle determined by the odometry. The formulas we use to determine the distance to move each particle are in [FIGURE].
 
-<center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =475x500)</span></center>
+<center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =800x500)</span></center>
 
-<center>**Figure NUM: How we draw the distances $$d$$ to move each particle from the odometry data. The odometry data provides us with a pose $$(x, y, \theta)$ (computed from dead reckoning) and a covariance matrix $$\Sigma$$. From the pose, we compute $\Delta x, \Delta y$, the differences in the $x$ and $y$ coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using $$\Sigma$$. We then draw the distances to move each particle based on these computations.**</center>
+<center>**Figure NUM: How we draw the distances $d$ to move each particle from the odometry data. The odometry data provides us with a pose $(x, y, \theta)$ (computed from dead reckoning) and a covariance matrix $\Sigma$. From the pose, we compute $\Delta x, \Delta y$, the differences in the $x$ and $y$ coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using $\Sigma$. We then draw the distances to move each particle based on these computations.**</center>
 
-We draw the angle to rotate each particle simply from a normal distribution centered on the angle change reported by the odometry, with standard deviation given by the covariance matrix reported by the odometry, but increased by a factor of 1.5 (which we determined testing with the autograder). However, sometimes this noise is too much; we clamp the standard deviation of the Gaussian with an upper bound of 0.5 radians, chosen so that it is very improbable for the noise to be $$\pi$$, which can cause the inferred pose to spontaneously reverse direction in the middle of a long hallway.
+We draw the angle to rotate each particle simply from a normal distribution centered on the angle change reported by the odometry, with standard deviation given by the covariance matrix reported by the odometry, but increased by a factor of 1.5 (which we determined testing with the autograder). However, sometimes this noise is too much; we clamp the standard deviation of the Gaussian with an upper bound of 0.5 radians, chosen so that it is very improbable for the noise to be $\pi$, which can cause the inferred pose to spontaneously reverse direction in the middle of a long hallway.
 
 #### Accounting for Laser Scan Noise with our Sensor Model
 
-Following the lab handout, we construct a 4-part sensor model to specify the probability of measuring a distance $$r$$ with the laser given a ground truth distance $$d$$, because noise or unexpected obstacles can cause the laser to not report the true distance.
+Following the lab handout, we construct a 4-part sensor model to specify the probability of measuring a distance $r$ with the laser given a ground truth distance $d$, because noise or unexpected obstacles can cause the laser to not report the true distance.
 
-   1. We represent the possibility that the laser may measure the correct distance, but with some noise, using a Gaussian centered at $$d$$, of standard deviation 4 pixels (about 20cm).
-   2. We represent the possibility the laser may hit an intervening unknown obstacle, with a sloped line where the probability of measuring distance 0 is half the peak height of the Gaussian in part 1, and the probability decreases linearly to 0 at the ground truth distance $$d$$.
-   3. We represent the possibility the laser may miss or reflect, assigning a probability $$0.08$$ to the maximum possible measurement. 
-   4. We represent the possibility of a random measurement, assigning a total probability of $$0.05$$ to this case.
+   1. We represent the possibility that the laser may measure the correct distance, but with some noise, using a Gaussian centered at $d$, of standard deviation 4 pixels (about 20cm).
+   2. We represent the possibility the laser may hit an intervening unknown obstacle, with a sloped line where the probability of measuring distance 0 is half the peak height of the Gaussian in part 1, and the probability decreases linearly to 0 at the ground truth distance $d$.
+   3. We represent the possibility the laser may miss or reflect, assigning a probability $0.08$ to the maximum possible measurement. 
+   4. We represent the possibility of a random measurement, assigning a total probability of $0.05$ to this case.
 
-We add all these components together to compute the total probability of measuring a distance $$r$$. This probability is then "squashed" to the power of $$12 / \texttt{num\_laser\_samples}$$, where $$\texttt{num\_laser\_samples}$$ is the number of laser measurements we make from each particle, which comes out to about $$⅙$$. This is so that if we take many laser measurements which all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
+We add all these components together to compute the total probability of measuring a distance $r$. This probability is then "squashed" to the power of $12 / \texttt{num\_laser\_samples}$, where $\texttt{num\_laser\_samples}$ is the number of laser measurements we make from each particle, which comes out to about $⅙$. This is so that if we take many laser measurements which all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
 
 [INSERT IMAGE of sensor model visualization]
 
@@ -90,12 +90,12 @@ There is a performance tradeoff where using more particles or sampling more lase
 We first evaluated our particle filter on the simulator, where the ground truth odometry is perfectly accurate. Hence, at each timestep, we could compute the absolute difference between the inferred pose and the actual pose.
 
 When running at 10 hz with 4000 particles and 72 laser samples per timestep, we recorded error of:
-   - Position: $$0.092m$$
-   - Orientation: $$0.0275 rad$$
+   - Position: $0.092m$
+   - Orientation: $0.0275 rad$
    
 We then increased the frequency to 40 hz and reduced the number of particles and laser samples to 2400 and 54, respectively, per update. This reduced absolute average error to:
-   - Position: $$0.043m$$
-   - Orientation: $$0.017 rad$$
+   - Position: $0.043m$
+   - Orientation: $0.017 rad$
 
 Because these low error measurements would support path following, we did not attempt to optimize further. 
 
