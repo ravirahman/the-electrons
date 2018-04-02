@@ -17,27 +17,25 @@ These accuracy measurements indicate the reliability of particle filter localiza
 
 ## Introduction - Ravi, Kolby, and Sabina
 
-<center><span>![System Diagram](assets/images/lab6/ =800x500)</span></center>
+<center><span>![System Diagram](assets/images/lab6/)</span></center>
 
-<center>**Figure 6.1: INSERT CAPTION.**</center>
+<center>**Figure 6.1**: *INSERT CAPTION.*</center>
 
 Localization -- the use of sensor data with a map to determine the pose of the robot relative to the environment -- enables high-speed path following. When the robot knows its pose, it can then calculate its error relative to where it should be headed, and adjust its trajectory accordingly. We intend to use path following for the autonomous race. As such, we need fast and accurate localization.
 
-We implemented a particle filter to perform localization. The particle filter first uses odometry to intuit the robot's change in position since the last time step. It then uses Laser scans from the LIDAR, along with a map of the environment, to reassess the probability distribution associated with the estimated poses. The most likely pose is extracted from this distribution, and then the whole process repeats.
+We implemented a particle filter to perform localization. Also known as Monte Carlo Localization (MCL), the particle filter maintains a constant number of weighted “particles” to represent the possible poses of the robot in a given environment. At each timestep, it first uses odometry to intuit the robot's change in position since the last time step. It then uses Laser scans from the LIDAR, along with a map of the environment, to reassess the probability distribution associated with the estimated poses. The most likely pose is extracted from this distribution, and then the whole process repeats.
 <br />
 <br />
 
 ## Particle Filter Algorithm - Sabina
 
-<center><span>![Particle Filter System Diagram](assets/images/lab6/ParticleFilter.png =800x500)</span></center>
+<center><span>![Particle Filter System Diagram](assets/images/lab6/ParticleFilter.png)</span></center>
 
-<center>**Figure 6.2: Particle filter system diagram showing the order of events and flow of information in our particle filter algorithm.**</center>
+<center>**Figure 6.2**: *Diagram illustrating components of Particle Filter/Monty Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*
+</center>
 
-The particle filter (also known as Monte Carlo Localization (MCL)) algorithm, localizes the robot. It maintains a constant number of weighted “particles” to represent the possible poses of the robot in a given environment. These particles are updated at each timestep based on odometry and LIDAR data collected by the robot. At each timestep, MCL:
-   1. Resamples the particles based on the weights computed in the previous timestep
-   2. Moves each particle's pose using the motion model
-   3. Updates each particle's weight using the sensor model.
-   
+### Initialization
+TODO - Sabina
 
 ### Resampling
 
