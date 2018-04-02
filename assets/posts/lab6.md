@@ -34,7 +34,7 @@ We first describe the particle filter in generality. Figure 6.2 provides an over
 
 <center>**Particle Filter Pipeline**<br /><span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
 
-<center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monte Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
+<center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monte Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
 
 ### Initialization
 
@@ -62,7 +62,7 @@ When our algorithm receives an initial pose or initial position from either the 
 <br />
 <br />
 <center>**Particle Filter Local Initialization**<br /><span>![Particle Filter Local Initialization](assets/images/lab6/InitialParticles.png)</span></center>
-<center>**Figure 6.3**: *Screesnshot showing the initial poses (red vectors) after clicking a location in RViz. Positions were drawn from a normal distribution cenetered at the clicked point and with a standard deviation of \\(1m\\). Orientations were drawn from a uniform distribution.*
+<center>**Figure 6.3**: *Screenshot showing the initial poses (red vectors) after clicking a location in RViz. Positions were drawn from a normal distribution centered at the clicked point and with a standard deviation of \\(1m\\). Orientations were drawn from a uniform distribution.*
 </center>
 ### Using Randomness to Account for Noise in Odometry
 
@@ -74,7 +74,7 @@ For each particle, we independently select the distance to move the particle fro
 
 <center>**Figure 6.4**: *How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.*</center>
 
-We sample the angle to rotate each particle from a normal distribution centered on the angle change reported by the odometry. The covariance matrix reported by odometry provides standard deviation measurements. We scale these values by \\(1.5\\) (determined by testing against the autograder), clamped at an upper bound of \\(0.5 rad\\). We chose this clamping value becaues it is very improbable for the sampled noise to be \\(\pi\\), which can cause the inferred pose to spontaneously reverse direction in the middle of a long hallway.
+We sample the angle to rotate each particle from a normal distribution centered on the angle change reported by the odometry. The covariance matrix reported by odometry provides standard deviation measurements. We scale these values by \\(1.5\\) (determined by testing against the autograder), clamped at an upper bound of \\(0.5 rad\\). We chose this clamping value because it is very improbable for the sampled noise to be \\(\pi\\), which can cause the inferred pose to spontaneously reverse direction in the middle of a long hallway.
 
 Figure 6.5 provides an example of the complete pose updating process.
 
