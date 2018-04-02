@@ -143,7 +143,7 @@ These accuracy measurements indicate the general reliability of particle filter 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/RobK9O0yZCo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
 <center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for \\(114\\) of the \\(120\\) seconds (\\(95\\%\\)).*</center>
 
-<center>**Inferred vs Actual Trail**<br /><span>![Inferred vs Actual Trail](assets/images/lab6/InferredActualTrail.png)</span></center>
+<center>**Inferred vs Actual Trail**<br /><span>![Inferred vs Actual Trail](assets/images/lab6/InferredActualTrail.png =450x450)</span></center>
 <center>**Figure 6.9**: *This diagram shows the inferred trail in red in the area where the localization diverged in the test run shown in Figure 6.9, and compares it to a hand-drawn actual trail. We see that the localization overshot the corner but was otherwise correct.*</center>
 
 ## Lessons Learned: Tuning Noise is a Tall Task - Kolby, Marek
