@@ -46,7 +46,7 @@ The algorithm samples a new batch of particles based on the weights of the parti
 
 #### Motion Model
 
-The motion model takes the given odometry data, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. First, the change in pose is calculated using odometry data taken from the wheels. Using dead reckoning, the linear displacement and angular change can be calculated by comparing the odometry between the current and previous timesteps. Random noise is then added to each of the particles based on the movement computed. See Implementation section for more implementation details. 
+The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise. See Implementation section for more details.
 
 #### Sensor Model
 
