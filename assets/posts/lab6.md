@@ -17,9 +17,10 @@ These accuracy measurements indicate the reliability of particle filter localiza
 
 ## Introduction - Ravi, Kolby, and Sabina
 
-<center><span>![System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
 
-<center>**Figure 6.1**: *Diagram illustrating an overview of our system architecture. Laser scan and odometry data, along with a map of the Stata basement and information published about the initial pose, are input to the particle filter. The particle filter algorithm outputs an inferred pose as well as visualization of the robot's localization.*</center>
+<center>**Particle Filter Localization System Diagram**<span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
+
+<center>**Figure 6.1**: **Diagram illustrating an overview of our system architecture. The robot provides laser and odometry sensor data. Combining this data with a known map of the environment and the initial pose, the particle filter calculates an inferred pose for the robot. Odometry data is passed to RViz for visualization.*</center>
 
 Localization -- the use of sensor data with a map to determine the pose of the robot relative to the environment -- enables high-speed path following. When the robot knows its pose, it can then calculate its error relative to where it should be headed, and adjust its trajectory accordingly. We intend to use path following for the autonomous race. As such, we need fast and accurate localization.
 
@@ -29,25 +30,24 @@ We implemented a particle filter to perform localization. Also known as Monte Ca
 
 ## Particle Filter Algorithm - Sabina
 
-<center><span>![Particle Filter System Diagram](assets/images/lab6/ParticleFilter.png)</span></center>
+<center>**Figure 6.2**: *Diagram illustrating components of Particle Filter/Monte Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
 
-<center>**Figure 6.2**: *Diagram illustrating components of Particle Filter/Monte Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*
-</center>
+<center>**Particle Filter Pipeline**<span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
 
 ### Initialization
 TODO - Sabina
 
-### Resampling
+### Resampling Particles
 
-The algorithm samples a new batch of particles based on the weights of the particles computed in the previous timestep. This allows the filter to discard particles deemed to be unlikely, which will not be resampled. Note that the newly resampled particles have uniform weight; the weights in the previous timestep are now reflected in the frequencies of the resampled particles.
+The algorithm samples a new batch of particles based on the weights of the particles computed in the previous timestep. Hence, the  filter discards (and does not resample) unlikely particles, whereas more likely particles are selected multiple times. Note that the newly resampled particles have uniform weight; the weights in the previous timestep are now reflected in the frequencies of the resampled particles.
 
 ### Motion Model
 
-The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise. See Implementation section for more details.
+The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. It then calculates a pose displacement distribution by comparing the odometry between the current and previous timesteps. Each particle is translated by this displacement and perturbed with random noise from this distribution.
 
 ### Sensor Model
 
-The sensor model updates the particle weights given the collected laser scan data. First, raycast is performed on each particle to determine the ground truth. The ground truth is compared to the actual laser scan data using the sensor model lookup table. The sensor model outputs the probabilities of each particle actually observing the data. By Bayes, since the particles all have uniform probability (due to resampling), this output probability represents the updated weight of each particle. See Implementation section for more implementation details. 
+The sensor model updates the particle weights given the collected laser scan data. First, the model performs a raycast on each particle to determine the ground truth. Then, it compares the ground truth to the actual laser scan data using the sensor model lookup table. The sensor model outputs the probabilities of each particle actually observing the data. By Bayes, since the particles all have uniform probability (due to resampling), this output probability represents the updated weight of each particle. 
 
 ## Particle Filter Implementation - Jerry
 
