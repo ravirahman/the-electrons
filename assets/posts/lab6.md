@@ -17,7 +17,6 @@ These accuracy measurements indicate the reliability of particle filter localiza
 
 ## Introduction - Ravi, Kolby, and Sabina
 
-
 <center>**Particle Filter Localization System Diagram**<span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
 
 <center>**Figure 6.1**: **Diagram illustrating an overview of our system architecture. The robot provides laser and odometry sensor data. Combining this data with a known map of the environment and the initial pose, the particle filter calculates an inferred pose for the robot. Odometry data is passed to RViz for visualization.*</center>
