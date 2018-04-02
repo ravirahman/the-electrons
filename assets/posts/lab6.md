@@ -108,11 +108,13 @@ After autograding, we quantitatively evaluated our particle filter on the simula
 We first ran with 2400 particles and 54 laser measurement samples per update at 40 hz. We recorded average absolute error of:
    - Position: \\(0.043m\\)
    - Orientation: \\(0.017 rad\\)
+   
 This error is very low; for example, the position error is only a fraction of the width of the robot. 
 
 After some experimentation on the actual robot, we increased the number of particles to 4000 and the number of laser measurement samples to 72. Because the computer we ran the simulation on had no GPU, we were only running at 10Hz compared to the 20Hz on the robot. We recorded error of:
    - Position: \\(0.092m\\)
    - Orientation: \\(0.0275 rad\\)
+   
 It is surprising that increasing the number of particles and laser measurement samples led to increased error; we attribute this to the decreased publish rate, where the inferred odometry becomes out-of-date before it is published.
 
 Because these low error measurements would support path following, we did not attempt to optimize further. The performance of our particle filter ran in simulation can be seen in the video below.
