@@ -89,7 +89,7 @@ We add all these components together to compute the total probability of measuri
 
 <center><span>![Sensor Model Visualization](assets/images/lab6/SensorModelVisualization.png =528x417)</span></center>
 
-<center>**Figure 6.6: INSERT CAPTION.**</center>
+<center>**Figure 6.6**: *Our precomputed sensor model (after squashing and normalization), showing the probability of measuring a distance given the ground truth distance.*</center>
 
 ### Efficient Implementation with RangeLibC on the GPU
 
@@ -108,7 +108,8 @@ We first ran the particle filter in simulation as a qualitative sanity check bef
 
 ### Particle Filter Localization on Simulator: Our Algorithm Showed Great Performance
 
-<center>[![Particle Filter Simulator](assets/images/lab6/)]( "Particle Filter in Simulation")</center>
+<center>**Particle Filter Simulation**
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NIbuZocztWo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
 
 <center>**Figure 6.7**: *The above video shows our particle filter localization running at \\(10hz\\) in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: \\(0.093m\\))*</center>
 
@@ -128,21 +129,15 @@ It is surprising that increasing the number of particles and laser measurement s
 
 Because these low error measurements would support path following, we did not attempt to optimize further. The performance of our particle filter ran in simulation can be seen in the video below.
 
-<center>**Particle Filter Simulation**
-<iframe width="560" height="315" src="https://www.youtube.com/embed/NIbuZocztWo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
-
-<center>**Figure 6.7**: *The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: \\(0.093m\\))*</center>
 
 ### Particle Filter Localization in Robot: Downtick in Performance
-<center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).*</center>
+<center>**Particle Filter on Robot**
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NIbuZocztWo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
+<center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).*</center>
 
-We then tested the particle filter running at 20hz with 72 laser samples per update and 4000 particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitativelycompute error. Instead, we measured that our method was qualitatively accurate for ______ of the 120 second test run (___%). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways.
+We then tested the particle filter running at \\(20hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitativelycompute error. Instead, we measured that our method was qualitatively accurate for \\(___\\) of the 120 second test run (\\(___%\\)). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways.
 
-These accuracy measurements indicate the general reliability of particle filter localization and its likely usefulness with path following, though more work will need to be done to localize in featureless hallways. The performance of our particle filter ran on the robot can be seen in the video below.
-
-<center>[![Particle Filter Robot](assets/images/lab6/)]( "Particle Filter on Robot")</center>
-
-<center>**Figure 6.8: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
+These accuracy measurements indicate the general reliability of particle filter localization and its likely usefulness with path following, though more work will need to be done to localize in featureless hallways.
 
 ## Lessons Learned: Tuning Noise is a Tall Task - Kolby, Marek
 
@@ -152,4 +147,4 @@ When it comes to optimizing the code, instrumentation and thinking deeply about 
 
 ## Future Work: Speed and Robustness - Marek
 
-To build upon our work on localization, we will attempt to make our particle filter run faster on the robot. Although it is currently running at our desired speed of 20hz, decreasing runtime will allow us to increase the number of laser scans and particles making our localization more accurate. In addition to decreasing runtime, our current noise models could be improved. Because of a bias in our current noise model, the robot's inferred pose moves faster than the actual robot. Although we are robust to this in the presence of features which help pin down the robot's location, improvements are desirable to decrease the likelihood of our localization failing in long, uniform hallways. As demonstrated in our video (insert figure number here), our localization is relatively robust to random obstacles and deviations from the map. However, our robot struggled when approaching closed doors which otherwise appeared open on the map. Although not strictly necessary for the race, being able to recognize closed doorways without confusing our localization would be a welcome improvement.
+To build upon our work on localization, we will attempt to make our particle filter run faster on the robot. Although it is currently running at our desired speed of 20hz, decreasing runtime will allow us to increase the number of laser scans and particles making our localization more accurate. In addition to decreasing runtime, our current noise models could be improved. Because of a bias in our current noise model, the robot's inferred pose moves faster than the actual robot. Although we are robust to this in the presence of features which help pin down the robot's location, improvements are desirable to decrease the likelihood of our localization failing in long, uniform hallways. As demonstrated in our video, our localization is relatively robust to random obstacles and deviations from the map. However, our robot struggled when approaching closed doors which otherwise appeared open on the map. Although not strictly necessary for the race, being able to recognize closed doorways without confusing our localization would be a welcome improvement.
