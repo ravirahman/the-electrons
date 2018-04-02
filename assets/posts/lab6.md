@@ -117,7 +117,7 @@ It is surprising that increasing the number of particles and laser measurement s
 
 Because these low error measurements would support path following, we did not attempt to optimize further. The performance of our particle filter ran in simulation can be seen in the video below.
 
-<center>[![Particle Filter Simulator](assets/images/lab6/Lab6Sim.png)](https://youtu.be/NIbuZocztWo "Particle Filter in Simulation")</center>
+<center>[![Particle Filter Simulator](assets/images/lab6/Lab6Sim.png =560x320)](https://youtu.be/NIbuZocztWo "Particle Filter in Simulation")</center>
 
 <center>**Figure 6.6: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
 
