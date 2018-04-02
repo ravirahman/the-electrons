@@ -69,7 +69,7 @@ Following the lab handout, we construct a 4-part sensor model to specify the pro
    3. We represent the possibility the laser may miss or reflect, assigning a probability \\(0.08\\) to the maximum possible measurement. 
    4. We represent the possibility of a random measurement, assigning a total probability of \\(0.05\\) to this case.
 
-We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of \\(12/ `num\_laser\_samples`\\), where `num\_laser\_samples` is the number of laser measurements we make from each particle, which comes out to about \\(1/6\\). This is so that if we take many laser measurements which all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
+We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of \frac{12}{ `num\_laser\_samples`}, where `num\_laser\_samples` is the number of laser measurements we make from each particle, which comes out to about \\(1/6\\). This is so that if we take many laser measurements which all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
 
 [INSERT IMAGE of sensor model visualization]
 
