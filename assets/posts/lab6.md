@@ -19,7 +19,7 @@ These accuracy measurements indicate the reliability of particle filter localiza
 
 <center><span>![System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
 
-<center>**Figure 6.1**: *INSERT CAPTION.*</center>
+<center>**Figure 6.1**: *Diagram illustrating an overview of our system architecture. Laser scan and odometry data, along with a map of the Stata basement and information published about the initial pose, are input to the particle filter. The particle filter algorithm outputs an inferred pose as well as visualization of the robot's localization.*</center>
 
 Localization -- the use of sensor data with a map to determine the pose of the robot relative to the environment -- enables high-speed path following. When the robot knows its pose, it can then calculate its error relative to where it should be headed, and adjust its trajectory accordingly. We intend to use path following for the autonomous race. As such, we need fast and accurate localization.
 
