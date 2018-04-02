@@ -20,7 +20,7 @@ These accuracy measurements indicate the reliability of particle filter localiza
 
 <center>**Particle Filter Localization System Diagram**<span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
 
-<center>**Figure 6.1**: *Diagram illustrating the components of Particle Filter Localization. The robot provides laser and odometry sensor data. Combining this data with a map of the environment and the known initial pose, the particle filter calculates an inferred pose for the robot.*</center>
+<center>**Figure 6.1**: **Diagram illustrating an overview of our system architecture. The robot provides laser and odometry sensor data. Combining this data with a known map of the environment and the initial pose, the particle filter calculates an inferred pose for the robot. Odometry data is passed to RViz for visualization.*</center>
 
 Localization -- the use of sensor data with a map to determine the pose of the robot relative to the environment -- enables high-speed path following. When the robot knows its pose, it can then calculate its error relative to where it should be headed, and adjust its trajectory accordingly. We intend to use path following for the autonomous race. As such, we need fast and accurate localization.
 
@@ -63,13 +63,13 @@ When our algorithm receives an initial pose or initial position from the /initia
 
 As a part of the particle filter algorithm, we use a Monte Carlo approach to account for noise in the odometry measurements, in which we use randomness when choosing the distance and angle each particle moves by. For each particle, we independently select the distance to move the particle from a log-normal distribution or normal distribution, and select the angle to rotate the particle from a Gaussian distribution, both centered based on the data from odometry. Once we select the distance and angle to move each particle by, we move the particles by the chosen distance in the direction each particle was previously facing, then we rotate each particle by the chosen angle. See Figure 6.3 for a visualization.
 
-<center><span>![Motion Model](assets/images/lab6/ =800x350)</span></center>
+<center><span>![Motion Model](assets/images/lab6/)</span></center>
 
 <center>**Figure 6.3: For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data (see below). Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle.**</center>
 
 We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. This is because we expect that if the odometry indicates the robot is moving forward, the robot is unlikely to actually be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine the direction the robot is moving by comparing the direction of movement reported by the odometry to the robot's facing angle determined by the odometry. The formulas we use to determine the distance to move each particle are in Figure 6.4.
 
-<center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =800x350)</span></center>
+<center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png)</span></center>
 
 <center>**Figure 6.4: How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.**</center>
 
@@ -86,7 +86,7 @@ Following the lab handout, we construct a 4-part sensor model to specify the pro
 
 We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of 12/num\_laser\_samples, where num\_laser\_samples is the number of laser measurements we make from each particle, which comes out to about \\(\frac{1}{6}\\). This is so that if we take many laser measurements which all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
 
-<center><span>![Sensor Model Visualization](assets/images/lab6/ =800x500)</span></center>
+<center><span>![Sensor Model Visualization](assets/images/lab6/)</span></center>
 
 <center>**Figure 6.5: INSERT CAPTION.**</center>
 
@@ -101,7 +101,7 @@ There is a performance tradeoff where using more particles or sampling more lase
 
 ## Evaluation - Ravi
 
-<center>[![Particle Filter Simulator](assets/images/lab6/ =600x400)]( "Particle Filter in Simulation")</center>
+<center>[![Particle Filter Simulator](assets/images/lab6/)]( "Particle Filter in Simulation")</center>
 
 <center>**Figure 6.6: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
 
@@ -117,7 +117,7 @@ We then increased the frequency to 40 hz and reduced the number of particles and
 
 Because these low error measurements would support path following, we did not attempt to optimize further. 
 
-<center>[![Particle Filter Robot](assets/images/lab6/ =600x400)](https:// "Particle Filter on Robot")</center>
+<center>[![Particle Filter Robot](assets/images/lab6/)](https:// "Particle Filter on Robot")</center>
 
 <center>**Figure 6.7: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
 
@@ -127,9 +127,9 @@ These accuracy measurements indicate the reliability of particle filter localiza
 
 ## Lessons Learned - Kolby, Marek
 
-This lab required much tuning and testing, so most of our conclusions resonate along those lines. For starters, we found that noise could be tricky to introduce into our model and had to be done so appropriately. Introducing too little or too much noise had direct implications on our performance, such as being unable to recover after getting slightly off track or spontaneously turning around in the middle of a hallway. Related to this, when the laser data is noisy, it is important that the motion model is correct; when the laser data is noisy and the motion model is not correct, the inferred position can be wildly unpredictable, especially in the presence of unmapped obstacles. 
+This lab required a lot of tuning and optimization, so most of our lessons resonate along those lines. For starters, we found that noise could be tricky to introduce into our model and had to be done so appropriately. Introducing too little or too much noise had direct implications on our performance. If we added too little, our robot was unable to recover after getting slightly off track. If we added too much, our robot would spontaneously turning around in the middle of a hallway. Related to this, we learned a lot about the importance of the laser scan and motion model information. When traveling down a long, uniform hallway, it was important for our motion model to be accurate as the laser scan data did little to tell us where we are. However, laser scan data was important for localizing in feature rich areas by helping us find the robots relation to corners and pillars. 
 
-When it comes to testing, instrumentation and thinking deeply about how the code works is more effective than blindly changing parameters. A lot of time was spent arbitrarily changing parameters and running the simulation to see the change's effect, but it was not until we stopped to think about the code that considerable progress was made. Also when testing, it is important to understand the testing procedure. For example, the rosbags that we first collected ended up not being useful because we neglected to record the robot's starting location.
+When it comes to optimizing the code, instrumentation and thinking deeply about how the code works is more effective than blindly changing parameters. A lot of time was spent arbitrarily changing parameters and running the simulation to see the change's effect, but it was not until we stopped to think about the code that considerable progress was made.
 
 ## Future Work - Marek
 
