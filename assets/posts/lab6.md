@@ -56,6 +56,10 @@ The sensor model updates the particle weights given the collected laser scan dat
 
 In this section, we discuss areas in which we used our discretion in implementing the particle filter--how we modelled the random noise in the motion and sensor models, how we wrote our code to run efficiently, and how we chose the number of particles and laser measurement samples to use.
 
+#### Local Initialization of Particles from Rviz Input
+
+When our algorithm receives an initial pose or initial position from the /initial\_pose or /clicked\_point topics in rviz, we initialize our particles around this pose or point in a normal distribution. The position of the particles are sampled from a normal distribution centered at the received position, with standard deviation 1 meter (chosen arbitrarily). If our algorithm received a pose, the orientation of the particles are sampled from a normal distribution from the received orientation; otherwise, if it only received a point, the orientation of the particles are distributed uniformly in a circle. Initializing our particles in this way makes the initialization of our particle filter robust to errors in the initial point.
+
 #### Using Randomness to Account for Noise in Odometry
 
 As a part of the particle filter algorithm, we use a Monte Carlo approach to account for noise in the odometry measurements, in which we use randomness when choosing the distance and angle each particle moves by. For each particle, we independently select the distance to move the particle from a log-normal distribution or normal distribution, and select the angle to rotate the particle from a Gaussian distribution, both centered based on the data from odometry. Once we select the distance and angle to move each particle by, we move the particles by the chosen distance in the direction each particle was previously facing, then we rotate each particle by the chosen angle. See Figure 6.3 for a visualization.
