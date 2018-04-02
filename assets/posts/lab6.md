@@ -15,12 +15,7 @@ These accuracy measurements indicate the reliability of particle filter localiza
 <br />
 <br />
 
-## Introduction - Ravi, Kolby, and Sabina
-
-
-<center>**Particle Filter Localization System Diagram**<span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
-
-<center>**Figure 6.1**: **Diagram illustrating an overview of our system architecture. The robot provides laser and odometry sensor data. Combining this data with a known map of the environment and the initial pose, the particle filter calculates an inferred pose for the robot. Odometry data is passed to RViz for visualization.*</center>
+## Introduction - Ravi and Kolby
 
 Localization -- the use of sensor data with a map to determine the pose of the robot relative to the environment -- enables high-speed path following. When the robot knows its pose, it can then calculate its error relative to where it should be headed, and adjust its trajectory accordingly. We intend to use path following for the autonomous race. As such, we need fast and accurate localization.
 
@@ -28,16 +23,23 @@ We implemented a particle filter to perform localization. Also known as Monte Ca
 <br />
 <br />
 
+## System Overview - Sabina
+
+<center>**Particle Filter Localization System Diagram**<br /><span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
+
+<center>**Figure 6.1**: *Diagram illustrating an overview of our system architecture. The robot provides laser and odometry sensor data. Combining this data with a known map of the environment and the initial pose, the particle filter calculates an inferred pose for the robot. Odometry data is passed to RViz for visualization.*</center>
+
+
 ## Particle Filter Algorithm - Sabina
 
 
-<center>**Particle Filter Pipeline**<span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
+<center>**Particle Filter Pipeline**<br /><span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
 
 <center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monty Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*
 </center>
 
 ### Initialization
-TODO - Sabina
+Our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively. We initialize our the position of particles in a normal distribution centered at the received position and a 1 meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternative, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation.
 
 ### Resampling Particles
 
@@ -49,15 +51,11 @@ The motion model takes the odometry data from the wheels of the robot, calculate
 
 ### Sensor Model
 
-The sensor model updates the particle weights given the collected laser scan data. First, the model performs a raycast on each particle to determine the ground truth. Then, it compares the ground truth to the actual laser scan data using the sensor model lookup table. The sensor model outputs the probabilities of each particle actually observing the data. By Bayes, since the particles all have uniform probability (due to resampling), this output probability represents the updated weight of each particle. 
+The sensor model updates the particle weights given the collected laser scan data. First, the model performs a raycast on each particle to determine the ground truth. Then, it compares the ground truth to the actual laser scan data using the sensor model lookup table which provides a distribution over \\(r : P(\text{actual distance}=r|\text{observed distance}) \\). The sensor model outputs the probability that any given particle represents the actual pose of the robot. By Bayes rule, since the particles all have initial uniform probability (due to resampling), this output probability represents the updated weight of each particle. 
 
 ## Particle Filter Implementation - Jerry
 
-In this section, we discuss areas in which we used our discretion in implementing the particle filter--how we modelled the random noise in the motion and sensor models, how we wrote our code to run efficiently, and how we chose the number of particles and laser measurement samples to use.
-
-### Local Initialization of Particles from Rviz Input
-
-When our algorithm receives an initial pose or initial position from the /initial\_pose or /clicked\_point topics in rviz, we initialize our particles around this pose or point in a normal distribution. The position of the particles are sampled from a normal distribution centered at the received position, with standard deviation 1 meter (chosen arbitrarily). If our algorithm received a pose, the orientation of the particles are sampled from a normal distribution from the received orientation; otherwise, if it only received a point, the orientation of the particles are distributed uniformly in a circle. Initializing our particles in this way makes the initialization of our particle filter robust to errors in the initial point.
+When implementing the particle filter, we a) modeled the random noise in the motion and sensor models, b) wrote efficient code, and c) iteratively chose the number of particles and laser measurement samples to use.
 
 ### Using Randomness to Account for Noise in Odometry
 
@@ -69,7 +67,7 @@ As a part of the particle filter algorithm, we use a Monte Carlo approach to acc
 
 We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. This is because we expect that if the odometry indicates the robot is moving forward, the robot is unlikely to actually be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine the direction the robot is moving by comparing the direction of movement reported by the odometry to the robot's facing angle determined by the odometry. The formulas we use to determine the distance to move each particle are in Figure 6.4.
 
-<center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png)</span></center>
+<center>**Distance Formula:**<br /><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png)</span></center>
 
 <center>**Figure 6.4: How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.**</center>
 
