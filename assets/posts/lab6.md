@@ -17,7 +17,7 @@ These accuracy measurements indicate the reliability of particle filter localiza
 
 ## Introduction - Ravi, Kolby, and Sabina
 
-<center><span>![System Diagram](assets/images/lab6/)</span></center>
+<center><span>![System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
 
 <center>**Figure 6.1**: *INSERT CAPTION.*</center>
 
@@ -48,7 +48,6 @@ The motion model takes the odometry data from the wheels of the robot, calculate
 ### Sensor Model
 
 The sensor model updates the particle weights given the collected laser scan data. First, raycast is performed on each particle to determine the ground truth. The ground truth is compared to the actual laser scan data using the sensor model lookup table. The sensor model outputs the probabilities of each particle actually observing the data. By Bayes, since the particles all have uniform probability (due to resampling), this output probability represents the updated weight of each particle. See Implementation section for more implementation details. 
-\ 
 
 ## Particle Filter Implementation - Jerry
 
