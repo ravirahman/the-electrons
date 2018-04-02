@@ -32,7 +32,6 @@ We implemented a particle filter to perform localization. Also known as Monte Ca
 
 ## Particle Filter Algorithm - Sabina
 
-
 <center>**Particle Filter Pipeline**<br /><span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
 
 <center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monty Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*
@@ -47,7 +46,7 @@ The algorithm samples a new batch of particles based on the weights of the parti
 
 ### Motion Model
 
-The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. It then calculates a pose displacement distribution by comparing the odometry between the current and previous timesteps. Each particle is translated by this displacement and perturbed with random noise from this distribution.
+The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise.
 
 ### Sensor Model
 
@@ -61,7 +60,7 @@ When implementing the particle filter, we a) modeled the random noise in the mot
 
 As a part of the particle filter algorithm, we use a Monte Carlo approach to account for noise in the odometry measurements, in which we use randomness when choosing the distance and angle each particle moves by. For each particle, we independently select the distance to move the particle from a log-normal distribution or normal distribution, and select the angle to rotate the particle from a Gaussian distribution, both centered based on the data from odometry. Once we select the distance and angle to move each particle by, we move the particles by the chosen distance in the direction each particle was previously facing, then we rotate each particle by the chosen angle. See Figure 6.3 for a visualization.
 
-<center><span>![Motion Model](assets/images/lab6/)</span></center>
+<center><span>![Motion Model](assets/images/lab6/MotionModelDiagram.png)</span></center>
 
 <center>**Figure 6.3: For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data (see below). Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle.**</center>
 
@@ -99,29 +98,39 @@ There is a performance tradeoff where using more particles or sampling more lase
 
 ## Evaluation - Ravi
 
+### Initial Development and Autograding
+
+When we first implemented the particle filter, we first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bugfixes and some parameter tuning, the best score we were able to get was 0.91, with 2400 particles and 54 laser measurement samples.
+
+### Particle Filter Localization on Simulator
+
 <center>[![Particle Filter Simulator](assets/images/lab6/)]( "Particle Filter in Simulation")</center>
 
 <center>**Figure 6.6: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
 
-We first evaluated our particle filter on the simulator, where the ground truth odometry is perfectly accurate. Hence, at each timestep, we could compute the absolute difference between the inferred pose and the actual pose.
+After autograding, we quantitatively evaluated our particle filter on the simulator, where the ground truth odometry is perfectly accurate and the laser data is not noisy. Hence, at each timestep, we computed the absolute difference between the inferred and actual position and the inferred and actual orientation. Evaluating on the simulator allows us to get a "best case" performance in a low-noise environment.
 
-When running at 10 hz with 4000 particles and 72 laser samples per timestep, we recorded error of:
-   - Position: \\(0.092m\\)
-   - Orientation: \\(0.0275 rad\\)
-   
-We then increased the frequency to 40 hz and reduced the number of particles and laser samples to 2400 and 54, respectively, per update. This reduced absolute average error to:
+We first ran with 2400 particles and 54 laser measurement samples per update at 40 hz. We recorded average absolute error of:
    - Position: \\(0.043m\\)
    - Orientation: \\(0.017 rad\\)
+This error is very low; for example, the position error is only a fraction of the width of the robot. 
 
-Because these low error measurements would support path following, we did not attempt to optimize further. 
+After some experimentation on the actual robot, we increased the number of particles to 4000 and the number of laser measurement samples to 72. Because the computer we ran the simulation on had no GPU, we were only running at 10Hz compared to the 20Hz on the robot. We recorded error of:
+   - Position: \\(0.092m\\)
+   - Orientation: \\(0.0275 rad\\)
+It is surprising that increasing the number of particles and laser measurement samples led to increased error; we attribute this to the decreased publish rate, where the inferred odometry becomes out-of-date before it is published.
+
+Because these low error measurements would support path following, we did not attempt to optimize further.
+
+### Particle Filter Localization in Robot
 
 <center>[![Particle Filter Robot](assets/images/lab6/)](https:// "Particle Filter on Robot")</center>
 
 <center>**Figure 6.7: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
 
-We then tested particle filter running at 20hz with 72 laser samples per update and 4000 particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitatively compute error. Instead, we quantitatively measured that our method was qualitatively accurate for ______ of the 120 second test run (___%).
+We then tested the particle filter running at 20hz with 72 laser samples per update and 4000 particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitativelycompute error. Instead, we measured that our method was qualitatively accurate for ______ of the 120 second test run (___%). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways.
 
-These accuracy measurements indicate the reliability of particle filter localization and its likely usefulness in path following.
+These accuracy measurements indicate the general reliability of particle filter localization and its likely usefulness with path following, though more work will need to be done to localize in featureless hallways.
 
 ## Lessons Learned - Kolby, Marek
 
