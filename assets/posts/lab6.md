@@ -100,27 +100,27 @@ We used the `rangelibc` library with GPU enabled to write an efficient implement
 Tracking more particles or sampling more laser measurements lower the frequency but imporve results. We optimized this tradeoff by choosing particle and sampled laser measurement counts to maximize empirical accuracy at the minimum required speed. The time cost of raycasting, which is the slowest component of our code, is scales with \\(O(|\text{particles}| * |\text{laser samples}|)\\). A slight error in the robot position can cause a big difference in the laser measurements, for example when there are complex obstacles arranged close together. Hence, it is important to use many particles to get as close to the true position as possible. Conversely, when there are relatively few features such as in a hallway, it is important to take many laser measurements in order to see these features so that the robot can determine which particles are the most likely. Originally, we tuned the particles \\(\times\\) laser measurements to run at \\(40Hz\\) on the autograder, then tried different ratios of particles to laser measurements, and found that \\(2400\\) particles and \\(54\\) laser measurement samples performs the best on the autograder. When we moved to working on the robot, because the Velodyne laser scanner only publishes at \\(20Hz\\), we were able to increase the number of particles to \\(4000\\) and number of laser samples to \\(72\\); these numbers were chosen to keep the proportions similar to those on the autograder.
 
 
-## Evaluation - Ravi
+## Evaluation - Ravi (Report and Lab); Marek (Lab)
 
 ### Initial Development and Autograding
 
-When we first implemented the particle filter, we first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bugfixes and some parameter tuning, the best score we were able to get was 0.91, with 2400 particles and 54 laser measurement samples.
+We first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bugfixes and some parameter tuning, the best score we were able to get was \\(0.91\\), with \\(2400\\) particles and \\(54\\) laser measurement samples.
 
 ### Particle Filter Localization on Simulator: Our Algorithm Showed Great Performance
 
 <center>[![Particle Filter Simulator](assets/images/lab6/)]( "Particle Filter in Simulation")</center>
 
-<center>**Figure 6.7: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
+<center>**Figure 6.7**: *The above video shows our particle filter localization running at \\(10hz\\) in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: \\(0.093m\\))*</center>
 
 After autograding, we quantitatively evaluated our particle filter on the simulator, where the ground truth odometry is perfectly accurate and the laser data is not noisy. Hence, at each timestep, we computed the absolute difference between the inferred and actual position and the inferred and actual orientation. Evaluating on the simulator allows us to get a "best case" performance in a low-noise environment.
 
-We first ran with 2400 particles and 54 laser measurement samples per update at 40 hz. We recorded average absolute error of:
+We first ran with \\(2400\\) particles and \\(54\\) laser measurement samples per update at \\(40 hz\\). We recorded average absolute error of:
    - Position: \\(0.043m\\)
    - Orientation: \\(0.017 rad\\)
    
 This error is very low; for example, the position error is only a fraction of the width of the robot. 
 
-After some experimentation on the actual robot, we increased the number of particles to 4000 and the number of laser measurement samples to 72. Because the computer we ran the simulation on had no GPU, we were only running at 10Hz compared to the 20Hz on the robot. We recorded error of:
+After some experimentation on the actual robot, we increased the number of particles to \\(4000\\) and the number of laser measurement samples to \\(72\\). Because the computer we ran the simulation on had no GPU, we were only running at \\(10Hz\\) compared to the \\(20Hz\\) on the robot. We recorded error of:
    - Position: \\(0.092m\\)
    - Orientation: \\(0.0275 rad\\)
    
@@ -128,12 +128,13 @@ It is surprising that increasing the number of particles and laser measurement s
 
 Because these low error measurements would support path following, we did not attempt to optimize further. The performance of our particle filter ran in simulation can be seen in the video below.
 
-<center>[![Particle Filter Simulator](assets/images/lab6/Lab6Sim.png =560x320)](https://youtu.be/NIbuZocztWo "Particle Filter in Simulation")</center>
+<center>**Particle Filter Simulation**
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NIbuZocztWo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
 
-<center>**Figure 6.7: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
+<center>**Figure 6.7**: *The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: \\(0.093m\\))*</center>
 
 ### Particle Filter Localization in Robot: Downtick in Performance
-<center>**Figure 6.8: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
+<center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).*</center>
 
 We then tested the particle filter running at 20hz with 72 laser samples per update and 4000 particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitativelycompute error. Instead, we measured that our method was qualitatively accurate for ______ of the 120 second test run (___%). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways.
 
