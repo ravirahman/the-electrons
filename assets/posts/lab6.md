@@ -9,7 +9,7 @@ We developed a particle-filter and LIDAR-based localization module. Each particl
 
 We initially tested on the simulator with \\(2400\\) particles and \\(54\\) laser samples per update at \\(40 hz\\) (\\(Δt = 0.025s\\)). We measured absolute average errors of \\(0.043m\\) for position and \\(0.017 rad\\) for orientation against odometry data, which is perfectly accurate in the simulator.
 
-Next, we tested on the actual robot with \\(4000\\) particles and \\(72\\) laser samples per update at \\(20 hz\\) (\\(Δt = 0.05s\\)), the same frequency as the Velodyne LIDAR. We qualitatively measured that our method was accurate for \\(\\) of the \\(120\\) second test run (\\(___%\\)).
+Next, we tested on the actual robot with \\(4000\\) particles and \\(72\\) laser samples per update at \\(20 hz\\) (\\(Δt = 0.05s\\)), the same frequency as the Velodyne LIDAR. We qualitatively measured that our method was accurate for \\(114\\) of the \\(120\\) second test run (\\(95\\%\\)).
 
 These accuracy measurements indicate the reliability of particle filter localization and its likely usefulness in path following.
 <br />
@@ -138,9 +138,9 @@ Because these low error measurements would support path following, we did not at
 ### Particle Filter Localization in Robot: Downtick in Performance
 <center>**Particle Filter on Robot**
 <iframe width="560" height="315" src="https://www.youtube.com/embed/NIbuZocztWo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
-<center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).*</center>
+<center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for \\(114\\) of the \\(120\\) seconds (\\(95\\%\\)).*</center>
 
-We then tested the particle filter running at \\(20hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitatively compute error. Instead, we measured that our method was qualitatively accurate for \\(___\\) of the 120 second test run (\\(___%\\)). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways.
+We then tested the particle filter running at \\(20hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitatively compute error. Instead, we measured that our method was qualitatively accurate for \\(114\\) of the \\(120\\) second test run (\\(95\\%\\)). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways.
 
 These accuracy measurements indicate the general reliability of particle filter localization and its likely usefulness with path following, though more work will need to be done to localize in featureless hallways.
 
