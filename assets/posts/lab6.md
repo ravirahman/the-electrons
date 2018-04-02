@@ -108,10 +108,6 @@ When we first implemented the particle filter, we first ran the particle filter 
 
 ### Particle Filter Localization on Simulator: Our Algorithm Showed Great Performance
 
-<center>[![Particle Filter Simulator](assets/images/lab6/)]( "Particle Filter in Simulation")</center>
-
-<center>**Figure 6.7: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
-
 After autograding, we quantitatively evaluated our particle filter on the simulator, where the ground truth odometry is perfectly accurate and the laser data is not noisy. Hence, at each timestep, we computed the absolute difference between the inferred and actual position and the inferred and actual orientation. Evaluating on the simulator allows us to get a "best case" performance in a low-noise environment.
 
 We first ran with 2400 particles and 54 laser measurement samples per update at 40 hz. We recorded average absolute error of:
@@ -133,7 +129,6 @@ Because these low error measurements would support path following, we did not at
 <center>**Figure 6.7**: *The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)*</center>
 
 ### Particle Filter Localization in Robot: Downtick in Performance
-<center>**Figure 6.8: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
 
 We then tested the particle filter running at 20hz with 72 laser samples per update and 4000 particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitativelycompute error. Instead, we measured that our method was qualitatively accurate for ______ of the 120 second test run (___%). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways.
 
