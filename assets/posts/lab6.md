@@ -29,9 +29,9 @@ We implemented a particle filter to perform localization. Also known as Monte Ca
 
 ## Particle Filter Algorithm - Sabina
 
-<center>**Figure 6.2**: *Diagram illustrating components of Particle Filter/Monte Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
-
 <center>**Particle Filter Pipeline**<span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
+
+<center>**Figure 6.2**: *Diagram illustrating components of Particle Filter/Monte Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
 
 ### Initialization
 TODO - Sabina
