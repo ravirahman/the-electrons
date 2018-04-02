@@ -42,7 +42,7 @@ The particle filter algorithm, also known as the Monte Carlo Localization (MCL) 
 
 #### Resampling
 
-The algorithm resamples the M particles based on the weights computed in the previous timestep. Note that the newly resampled particles are all uniformly likely to be the robot at this point.
+The algorithm samples a new batch of particles based on the weights of the particles computed in the previous timestep. This allows the filter to discard particles deemed to be unlikely, which will not be resampled. Note that the newly resampled particles have uniform weight; the weights in the previous timestep are now reflected in the frequencies of the resampled particles.
 
 #### Motion Model
 
@@ -83,7 +83,7 @@ Following the lab handout, we construct a 4-part sensor model to specify the pro
 
 We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of \\(\frac{12}{\texttt{num\_laser\_samples}}\\), where \\(\texttt{num\_laser\_samples}\\) is the number of laser measurements we make from each particle, which comes out to about \\(\frac{1}{6}\\). This is so that if we take many laser measurements which all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
 
-<center><span>![INSERT IMAGE of sensor model visualization]</span></center>
+<center><span>![Sensor Model Visualization](assets/images/lab6/ =800x500)</span></center>
 
 <center>**Figure 6.5: INSERT CAPTION.**</center>
 
