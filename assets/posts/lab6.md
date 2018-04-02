@@ -36,9 +36,9 @@ The particle filter algorithm, also known as the Monte Carlo Localization (MCL) 
    2. It updates each particle's pose using the motion model
    3. It updates each particle's weight using the sensor model.
    
-<center><span>![Particle Filter System Diagram](assets/images/lab6/ =800x500)</span></center>
+<center><span>![Particle Filter System Diagram](assets/images/lab6/ParticleFilter.png =800x500)</span></center>
 
-<center>**Figure 6.2: INSERT CAPTION.**</center>
+<center>**Figure 6.2: Particle filter system diagram showing the order of events and flow of information in our particle filter algorithm.**</center>
 
 #### Resampling
 
@@ -85,7 +85,7 @@ Following the lab handout, we construct a 4-part sensor model to specify the pro
    3. We represent the possibility the laser may miss or reflect, assigning a probability \\(0.08\\) to the maximum possible measurement. 
    4. We represent the possibility of a random measurement, assigning a total probability of \\(0.05\\) to this case.
 
-We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of 12/`num_laser_samples`, where `num_laser_samples` is the number of laser measurements we make from each particle, which comes out to about \\(\frac{1}{6}\\). This is so that if we take many laser measurements which all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
+We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of \\(\frac{12}{`num_laser_samples`}\\), where `num_laser_samples` is the number of laser measurements we make from each particle, which comes out to about \\(\frac{1}{6}\\). This is so that if we take many laser measurements which all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
 
 <center><span>![Sensor Model Visualization](assets/images/lab6/ =800x500)</span></center>
 
