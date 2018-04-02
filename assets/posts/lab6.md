@@ -42,11 +42,11 @@ The algorithm samples a new batch of particles based on the weights of the parti
 
 ### Motion Model
 
-The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. It then calculates a pose displacement distribution by comparing the odometry between the current and previous timesteps. Each particle is translated by this displacement and perturbed with random noise from this distribution.
+The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise.
 
 ### Sensor Model
 
-The sensor model updates the particle weights given the collected laser scan data. First, the model performs a raycast on each particle to determine the ground truth. Then, it compares the ground truth to the actual laser scan data using the sensor model lookup table. The sensor model outputs the probabilities of each particle actually observing the data. By Bayes, since the particles all have uniform probability (due to resampling), this output probability represents the updated weight of each particle. 
+The algorithm uses a sensor model to update the particle weights given the measured laser scan data and a provided map. First, raycast is performed from each particle in the map to determine the ground truth observations we would expect from the particle's pose. The algorithm randomly samples a subset of the laser measurements and computes the probability based on the sensor model that each particle observed these measurements based on the ground truth distances from raycasting . By Bayes, since the particles all have uniform probability (due to resampling), the probability that a particle observes the measured laser scan data is the same as the probability, given the laser scan data, that the particle reflects the true pose of the robot. The algorithm then assigns these probabilities as the weights of each particle.
 
 ## Particle Filter Implementation - Jerry
 
