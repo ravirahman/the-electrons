@@ -57,7 +57,7 @@ After the motion model updates the poses of each particle, the algorithm uses a 
 This section how we, when implementing the particle filter, a) modeled the random noise in initialization as well as the motion and sensor models, b) wrote efficient code, and c) iteratively chose the number of particles and laser measurement samples to use.
 
 ### Initializing Particles Given Approximate Initial Position
-When our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively, we initialize our particles around this pose or point in a normal distribution. The position of the particles are sampled from a normal distribution centered at the received position and a `1` meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternatively, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation. An example of initialization can be seen in Figure 6.3 below. We made no attempt at global initialization; in the absence of an initial pose or point, all particles are initialized to \\((0, 0)\\).
+When our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively, we initialize our particles around this pose or point in a normal distribution. The position of the particles are sampled from a normal distribution centered at the received position and a \\(1\\) meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternatively, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation. An example of initialization can be seen in Figure 6.3 below. We made no attempt at global initialization; in the absence of an initial pose or point, all particles are initialized to \\((0, 0)\\).
 
 <br />
 <br />
@@ -70,7 +70,7 @@ As a part of the particle filter algorithm, we use a Monte Carlo approach to acc
 
 For each particle, we independently select the distance to move the particle from a log-normal distribution or normal distribution. We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. If the odometry indicates the robot is moving forward, we expect the robot is unlikely to be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine the robot's movement direction by comparing the robot's change in position with the orientation reported by odometry. Figure 6.4 provides the equations we use for these calculations.
 
-<center>**Distance Formulas**</br><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =900x346)</span></center>
+<center>**Distance Formulas**</br><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png)</span></center>
 
 <center>**Figure 6.4**: *How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.*</center>
 
@@ -139,9 +139,12 @@ We then tested the particle filter running at \\(20hz\\) with \\(72\\) laser sam
 
 These accuracy measurements indicate the general reliability of particle filter localization and its likely usefulness with path following, though more work will need to be done to localize in featureless hallways.
 
+<center>**Inferred vs Actual Trail**<br /><span>![Inferred vs Actual Trail](assets/images/lab6/InferredActualTrail.png)</span></center>
+<center>**Figure 6.8**: * *</center>
+
 <center>**Particle Filter on Robot**
 <iframe width="560" height="315" src="https://www.youtube.com/embed/NIbuZocztWo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
-<center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for \\(114\\) of the \\(120\\) seconds (\\(95\\%\\)).*</center>
+<center>**Figure 6.9**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for \\(114\\) of the \\(120\\) seconds (\\(95\\%\\)).*</center>
 
 ## Lessons Learned: Tuning Noise is a Tall Task - Kolby, Marek
 
