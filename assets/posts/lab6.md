@@ -37,7 +37,7 @@ Our system consists of multiple interacting parts: sensory data, a map of Stata 
 ### Initialization
 Our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively. We initialize our the position of particles in a normal distribution centered at the received position and a 1 meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternative, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation. An example of this can be seen in the figure below.
 
-<center>**Particle Filter Local Initialization**<br /><span>![Particle Filter Local Initialization](assets/images/lab6/PFLocalInit.png)</span></center>
+<center>**Particle Filter Local Initialization**<br /><span>![Particle Filter Local Initialization](assets/images/lab6/PFLocalInit.png =307x290)</span></center>
 
 <center>**Figure 6.3**: *Diagram illustrating particle initialization. We initialize particles in a Gaussian around a clicked point in Rviz.*</center>
 
