@@ -15,15 +15,13 @@ These accuracy measurements indicate the reliability of particle filter localiza
 <br />
 <br />
 
-## Introduction - Ravi and Kolby
+## Introduction - Ravi
 
-Localization -- the use of sensor data with a map to determine the pose of the robot relative to the environment -- enables high-speed path following. When the robot knows its pose, it can then calculate its error relative to where it should be headed, and adjust its trajectory accordingly. We intend to use path following for the autonomous race. As such, we need fast and accurate localization.
+We implemented a particle filter to perform localization--using sensor data with a map to determine the pose of the robot relative to the environment--in real time. Localization enables high-speed path following. When the robot knows its pose, it can then calculate its error relative to where it should be headed (i.e. a waypoint), and adjust its trajectory accordingly. We intend to use path following for the autonomous race. As such, we need fast and accurate localization.
 
-We implemented a particle filter to perform localization. Also known as Monte Carlo Localization (MCL), the particle filter maintains a constant number of weighted “particles” to represent the possible poses of the robot in a given environment. At each timestep, it first uses odometry to intuit the robot's change in position since the last time step. It then uses Laser scans from the LIDAR, along with a map of the environment, to reassess the probability distribution associated with the estimated poses. The most likely pose is extracted from this distribution, and then the whole process repeats.
-<br />
-<br />
+## System Overview - Kolby
 
-## System Overview - Sabina
+Our system consists of multiple interacting parts: sensory data, a map of Stata basement, a precomputed lookup table, and our particle filter algorithm, which uses the former parts to determine our most likely pose. The particle filter algorithm uses odometry messages to intuit how the robot has moved since the last time step. Laser scans from the LIDAR, along with the map and precomputed lookup table, are used in a submodule of the algorithm called RangeLibC to reassess the probability distribution associated with our location. The most likely pose is extracted from this distribution. This process is repeated, and can be seen in the figure below. 
 
 <center>**Particle Filter Localization System Diagram**<br /><span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
 
@@ -41,15 +39,15 @@ Our algorithm receives an initial pose or initial position from either the `/ini
 
 ### Resampling Particles
 
-The algorithm samples a new batch of particles based on the weights of the particles computed in the previous timestep. Hence, the  filter discards (and does not resample) unlikely particles, whereas more likely particles are selected multiple times. Note that the newly resampled particles have uniform weight; the weights in the previous timestep are now reflected in the frequencies of the resampled particles.
+The algorithm samples a new batch of particles based on the weights of the particles computed in the previous timestep. This allows the filter to discard particles deemed to be unlikely, which will not be resampled. Note that the newly resampled particles have uniform weight; the weights in the previous timestep are now reflected in the frequencies of the resampled particles.
 
 ### Motion Model
 
-The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise.
+The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise. See Implementation section for more implementation details.
 
 ### Sensor Model
 
-The sensor model updates the particle weights given the collected laser scan data. First, the model performs a raycast on each particle to determine the ground truth. Then, it compares the ground truth to the actual laser scan data using the sensor model lookup table which provides a distribution over \\(r : P(\text{actual distance}=r|\text{observed distance}) \\). The sensor model outputs the probability that any given particle represents the actual pose of the robot. By Bayes rule, since the particles all have initial uniform probability (due to resampling), this output probability represents the updated weight of each particle. 
+The algorithm uses a sensor model to update the particle weights given the measured laser scan data and a provided map. First, raycast is performed from each particle in the map to determine the ground truth observations we would expect from the particle's pose. The algorithm randomly samples a subset of the laser measurements and computes the probability based on the sensor model that each particle observed these measurements based on the ground truth distances from raycasting . By Bayes, since the particles all have uniform probability (due to resampling), the probability that a particle observes the measured laser scan data is the same as the probability, given the laser scan data, that the particle reflects the true pose of the robot. The algorithm then assigns these probabilities as the weights of each particle. See Implementation section for more implementation details.
 
 ## Particle Filter Implementation - Jerry
 
@@ -135,7 +133,7 @@ These accuracy measurements indicate the general reliability of particle filter 
 
 ## Lessons Learned: Tuning Noise is a Tall Task - Kolby, Marek
 
-This lab required a lot of tuning and optimization, so most of our lessons resonate along those lines. For starters, we found that noise could be tricky to introduce into our model and had to be done so appropriately. Introducing too little or too much noise had direct implications on our performance. If we added too little, our robot was unable to recover after getting slightly off track. If we added too much, our robot would spontaneously turning around in the middle of a hallway. Related to this, we learned a lot about the importance of the laser scan and motion model information. When traveling down a long, uniform hallway, it was important for our motion model to be accurate as the laser scan data did little to tell us where we are. However, laser scan data was important for localizing in feature rich areas by helping us find the robots relation to corners and pillars. 
+This lab required a lot of tuning and optimization, so most of our lessons resonate along those lines. For starters, we found that noise could be tricky to introduce into our model and had to be done so appropriately. Introducing too little or too much noise had direct implications on our performance. If we added too little, our robot was unable to recover after getting slightly off track. If we added too much, our robot would spontaneously turn around in the middle of a hallway. Related to this, we learned a lot about the importance of the laser scan and motion model information. When traveling down a long, uniform hallway, it was important for our motion model to be accurate as the laser scan data did little to tell us where we are. However, laser scan data was important for localizing in feature rich areas by helping us find the robots relation to corners and pillars. 
 
 When it comes to optimizing the code, instrumentation and thinking deeply about how the code works is more effective than blindly changing parameters. A lot of time was spent arbitrarily changing parameters and running the simulation to see the change's effect, but it was not until we stopped to think about the code that considerable progress was made.
 
