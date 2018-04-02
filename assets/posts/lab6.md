@@ -15,15 +15,13 @@ These accuracy measurements indicate the reliability of particle filter localiza
 <br />
 <br />
 
-## Introduction - Ravi and Kolby
+## Introduction - Ravi
 
-Localization -- the use of sensor data with a map to determine the pose of the robot relative to the environment -- enables high-speed path following. When the robot knows its pose, it can then calculate its error relative to where it should be headed, and adjust its trajectory accordingly. We intend to use path following for the autonomous race. As such, we need fast and accurate localization.
+We implemented a particle filter to perform localization--using sensor data with a map to determine the pose of the robot relative to the environment--in real time. Localization enables high-speed path following. When the robot knows its pose, it can then calculate its error relative to where it should be headed (i.e. a waypoint), and adjust its trajectory accordingly. We intend to use path following for the autonomous race. As such, we need fast and accurate localization.
 
-We implemented a particle filter to perform localization. Also known as Monte Carlo Localization (MCL), the particle filter maintains a constant number of weighted “particles” to represent the possible poses of the robot in a given environment. At each timestep, it first uses odometry to intuit the robot's change in position since the last time step. It then uses Laser scans from the LIDAR, along with a map of the environment, to reassess the probability distribution associated with the estimated poses. The most likely pose is extracted from this distribution, and then the whole process repeats.
-<br />
-<br />
+## System Overview - Kolby
 
-## System Overview - Sabina
+Our system consists of multiple interacting parts: sensory data, a map of Stata basement, a precomputed lookup table, and our particle filter algorithm, which uses the former parts to determine our most likely pose. The particle filter algorithm uses odometry messages to intuit how the robot has moved since the last time step. Laser scans from the LIDAR, along with the map and precomputed lookup table, are used in a submodule of the algorithm called RangeLibC to reassess the probability distribution associated with our location. The most likely pose is extracted from this distribution. This process is repeated, and can be seen in the figure below. 
 
 <center>**Particle Filter Localization System Diagram**<br /><span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
 
@@ -34,28 +32,27 @@ We implemented a particle filter to perform localization. Also known as Monte Ca
 
 <center>**Particle Filter Pipeline**<br /><span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
 
-<center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monty Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*
-</center>
+<center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monty Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
 
 ### Initialization
-<center>**Initial Particles**<br /><span>![Initial Particles](assets/images/lab6/InitialParticles.png)</span></center>
+<center>**Particle Filter Local Initialization**<br /><span>![Particle Filter Local Initialization](assets/images/lab6/InitialParticles.png)</span></center>
 <center>**Figure 6.3**: *Screesnshot showing the initial poses (red vectors) after clicking a location in RViz. Positions were drawn from a normal distribution cenetered at the clicked point and with a standard deviation of \\(1m\\). Orientations were drawn from a uniform distribution.*
 </center>
 <br />
 <br />
-Our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively. We initialize our the position of particles in a normal distribution centered at the received position and a 1 meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternative, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation.
+Our algorithm receives an initial pose or initial position from either the `/initial_pose` or the `/clicked_point` topics, respectively. We initialize our the position of particles in a normal distribution centered at the received position and a `1` meter standard deviation (chosen arbitrarily). If an `/initial_pose` is provided, the orientation of the particles are sampled from a normal distribution from the received orientation. Alternative, if given a `/clicked_point`, the orientation of the particles are distributed uniformly in a circle. This initialization method creates a particle filter robust to errors in the initial location and orientation. An example of this can be seen in the figure above.
 
 ### Resampling Particles
 
-The algorithm samples a new batch of particles based on the weights of the particles computed in the previous timestep. Hence, the  filter discards (and does not resample) unlikely particles, whereas more likely particles are selected multiple times. Note that the newly resampled particles have uniform weight; the weights in the previous timestep are now reflected in the frequencies of the resampled particles.
+The algorithm samples a new batch of particles based on the weights of the particles computed in the previous timestep. This allows the filter to discard particles deemed to be unlikely, which will not be resampled. Note that the newly resampled particles have uniform weight; the weights in the previous timestep are now reflected in the frequencies of the resampled particles.
 
 ### Motion Model
 
-The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise.
+The motion model takes the odometry data from the wheels of the robot, calculates the pose displacement, and applies the displacement as well as random noise to each particle pose. The pose displacement can be calculated by comparing the odometry between the current and previous timesteps. Following a Monte Carlo approach, each particle is translated using this displacement, then perturbed with random noise. See **Using Randomness to Account for Noise in Odometry** section in **Particle Filter Implementation** for more implementation details.
 
 ### Sensor Model
 
-The sensor model updates the particle weights given the collected laser scan data. First, the model performs a raycast on each particle to determine the ground truth. Then, it compares the ground truth to the actual laser scan data using the sensor model lookup table which provides a distribution over \\(r : P(\text{actual distance}=r|\text{observed distance}) \\). The sensor model outputs the probability that any given particle represents the actual pose of the robot. By Bayes rule, since the particles all have initial uniform probability (due to resampling), this output probability represents the updated weight of each particle. 
+The algorithm uses a sensor model to update the particle weights given the measured laser scan data and a provided map. First, raycast is performed from each particle in the map to determine the ground truth observations we would expect from the particle's pose. The algorithm randomly samples a subset of the laser measurements and computes the probability based on the sensor model that each particle observed these measurements based on the ground truth distances from raycasting . By Bayes, since the particles all have uniform probability (due to resampling), the probability that a particle observes the measured laser scan data is the same as the probability, given the laser scan data, that the particle reflects the true pose of the robot. The algorithm then assigns these probabilities as the weights of each particle. See **Accounting for Laser Scan Noise with our Sensor Model** section in **Particle Filter Implementation** for more implementation details.
 
 ## Particle Filter Implementation - Jerry
 
@@ -73,7 +70,7 @@ For each particle, we independently select the distance to move the particle fro
 
 Then, we select the angle to rotate the particle from a Gaussian distribution, centered on the change orientation from odometry. Once we draw the change in distance and angle from the repsective distributions, we update the particle pose.
 
-<center>**Distance Formula:**<br /><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png)</span></center>
+<center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =900x346)</span></center>
 
 <center>**Figure 6.5**: *How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.*</center>
 
@@ -90,7 +87,7 @@ Following the lab handout, we construct a 4-part sensor model to specify the pro
 
 We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of \\(\frac{12}{num\\\_laser\\\_samples}\\). \\(num\\\_laser\\\_samples\\) is the number of laser measurements we make from each particle, which comes out to about \\(\frac{1}{6}\\). This reduction in liklihood ensures that if many laser measurements  all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
 
-<center><span>![Sensor Model Visualization](assets/images/lab6/)</span></center>
+<center><span>![Sensor Model Visualization](assets/images/lab6/SensorModelVisualization.png =528x417)</span></center>
 
 <center>**Figure 6.6: INSERT CAPTION.**</center>
 
@@ -109,7 +106,7 @@ Tracking more particles or sampling more laser measurements lower the frequency 
 
 When we first implemented the particle filter, we first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bugfixes and some parameter tuning, the best score we were able to get was 0.91, with 2400 particles and 54 laser measurement samples.
 
-### Particle Filter Localization on Simulator
+### Particle Filter Localization on Simulator: Our Algorithm Showed Great Performance
 
 <center>[![Particle Filter Simulator](assets/images/lab6/)]( "Particle Filter in Simulation")</center>
 
@@ -120,31 +117,38 @@ After autograding, we quantitatively evaluated our particle filter on the simula
 We first ran with 2400 particles and 54 laser measurement samples per update at 40 hz. We recorded average absolute error of:
    - Position: \\(0.043m\\)
    - Orientation: \\(0.017 rad\\)
+   
 This error is very low; for example, the position error is only a fraction of the width of the robot. 
 
 After some experimentation on the actual robot, we increased the number of particles to 4000 and the number of laser measurement samples to 72. Because the computer we ran the simulation on had no GPU, we were only running at 10Hz compared to the 20Hz on the robot. We recorded error of:
    - Position: \\(0.092m\\)
    - Orientation: \\(0.0275 rad\\)
+   
 It is surprising that increasing the number of particles and laser measurement samples led to increased error; we attribute this to the decreased publish rate, where the inferred odometry becomes out-of-date before it is published.
 
-Because these low error measurements would support path following, we did not attempt to optimize further.
+Because these low error measurements would support path following, we did not attempt to optimize further. The performance of our particle filter ran in simulation can be seen in the video below.
 
-### Particle Filter Localization in Robot
+<center>[![Particle Filter Simulator](assets/images/lab6/Lab6Sim.png =560x320)](https://youtu.be/NIbuZocztWo "Particle Filter in Simulation")</center>
 
-<center>[![Particle Filter Robot](assets/images/lab6/)](https:// "Particle Filter on Robot")</center>
+<center>**Figure 6.7: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
 
+### Particle Filter Localization in Robot: Downtick in Performance
 <center>**Figure 6.8: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
 
 We then tested the particle filter running at 20hz with 72 laser samples per update and 4000 particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitativelycompute error. Instead, we measured that our method was qualitatively accurate for ______ of the 120 second test run (___%). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways.
 
-These accuracy measurements indicate the general reliability of particle filter localization and its likely usefulness with path following, though more work will need to be done to localize in featureless hallways.
+These accuracy measurements indicate the general reliability of particle filter localization and its likely usefulness with path following, though more work will need to be done to localize in featureless hallways. The performance of our particle filter ran on the robot can be seen in the video below.
 
-## Lessons Learned - Kolby, Marek
+<center>[![Particle Filter Robot](assets/images/lab6/)]( "Particle Filter on Robot")</center>
 
-This lab required a lot of tuning and optimization, so most of our lessons resonate along those lines. For starters, we found that noise could be tricky to introduce into our model and had to be done so appropriately. Introducing too little or too much noise had direct implications on our performance. If we added too little, our robot was unable to recover after getting slightly off track. If we added too much, our robot would spontaneously turning around in the middle of a hallway. Related to this, we learned a lot about the importance of the laser scan and motion model information. When traveling down a long, uniform hallway, it was important for our motion model to be accurate as the laser scan data did little to tell us where we are. However, laser scan data was important for localizing in feature rich areas by helping us find the robots relation to corners and pillars. 
+<center>**Figure 6.8: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
+
+## Lessons Learned: Tuning Noise is a Tall Task - Kolby, Marek
+
+This lab required a lot of tuning and optimization, so most of our lessons resonate along those lines. For starters, we found that noise could be tricky to introduce into our model and had to be done so appropriately. Introducing too little or too much noise had direct implications on our performance. If we added too little, our robot was unable to recover after getting slightly off track. If we added too much, our robot would spontaneously turn around in the middle of a hallway. Related to this, we learned a lot about the importance of the laser scan and motion model information. When traveling down a long, uniform hallway, it was important for our motion model to be accurate as the laser scan data did little to tell us where we are. However, laser scan data was important for localizing in feature rich areas by helping us find the robots relation to corners and pillars. 
 
 When it comes to optimizing the code, instrumentation and thinking deeply about how the code works is more effective than blindly changing parameters. A lot of time was spent arbitrarily changing parameters and running the simulation to see the change's effect, but it was not until we stopped to think about the code that considerable progress was made.
 
-## Future Work - Marek
+## Future Work: Speed and Robustness - Marek
 
-As is usually the case with coding and algorithms, we can strive to make our particle filter algorithm more efficient. We tried to vectorize as much as we could with numpy, but there were still some sections that we had to implement relatively inefficiently using for-loops. Additionally, our models for noise are a bit hacky. We added noise to our motion model using a Gaussian, the parameters of which were essentially guess-and-checked. Furthermore we took the lognormal of these values which resulted in a mean that was slightly off. In the future we would like to experiment with potentially more reasonable methods of factoring noise into our model. Finally, as mentioned earlier, we sometimes had sporadic behavior when the robot encountered an unmapped obstacle; detecting unmapped obstacles or deviations from the actual map is a challenge we would like to solve in order to improve our robot's performance.
+To build upon our work on localization, we will attempt to make our particle filter run faster on the robot. Although it is currently running at our desired speed of 20hz, decreasing runtime will allow us to increase the number of laser scans and particles making our localization more accurate. In addition to decreasing runtime, our current noise models could be improved. Because of a bias in our current noise model, the robot's inferred pose moves faster than the actual robot. Although we are robust to this in the presence of features which help pin down the robot's location, improvements are desirable to decrease the likelihood of our localization failing in long, uniform hallways. As demonstrated in our video (insert figure number here), our localization is relatively robust to random obstacles and deviations from the map. However, our robot struggled when approaching closed doors which otherwise appeared open on the map. Although not strictly necessary for the race, being able to recognize closed doorways without confusing our localization would be a welcome improvement.
