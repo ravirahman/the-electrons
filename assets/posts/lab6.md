@@ -60,7 +60,7 @@ When implementing the particle filter, we a) modeled the random noise in the mot
 
 ### Using Randomness to Account for Noise in Odometry
 
-<center><span>![Motion Model](assets/images/lab6/MotionModelDiagram.png)</span></center>
+<center>**Motion Model Diagram**</br><span>![Motion Model](assets/images/lab6/MotionModelDiagram.png)</span></center>
 
 <center>**Figure 6.4**: *For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data. Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle.*</center>
 
@@ -70,7 +70,7 @@ For each particle, we independently select the distance to move the particle fro
 
 Then, we select the angle to rotate the particle from a Gaussian distribution, centered on the change orientation from odometry. Once we draw the change in distance and angle from the repsective distributions, we update the particle pose.
 
-<center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =900x346)</span></center>
+<center>**Distance Formulas**</br><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =900x346)</span></center>
 
 <center>**Figure 6.5**: *How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.*</center>
 
@@ -87,7 +87,7 @@ Following the lab handout, we construct a 4-part sensor model to specify the pro
 
 We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of \\(\frac{12}{num\\\_laser\\\_samples}\\). \\(num\\\_laser\\\_samples\\) is the number of laser measurements we make from each particle, which comes out to about \\(\frac{1}{6}\\). This reduction in liklihood ensures that if many laser measurements  all report related errors, e.g. due to many laser measurements hitting an unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder.
 
-<center><span>![Sensor Model Visualization](assets/images/lab6/SensorModelVisualization.png =528x417)</span></center>
+<center>**Sensor Model Visualization**</br><span>![Sensor Model Visualization](assets/images/lab6/SensorModelVisualization.png =528x417)</span></center>
 
 <center>**Figure 6.6**: *Our precomputed sensor model (after squashing and normalization), showing the probability of measuring a distance given the ground truth distance.*</center>
 
@@ -104,7 +104,7 @@ Tracking more particles or sampling more laser measurements lower the frequency 
 
 ### Initial Development and Autograding
 
-When we first implemented the particle filter, we first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bugfixes and some parameter tuning, the best score we were able to get was 0.91, with 2400 particles and 54 laser measurement samples.
+When we first implemented the particle filter, we first ran the particle filter in simulation as a qualitative sanity check before optimizing our code for performance on the autograder. In simulation, we visualized the inferred pose of the robot and made sure it roughly tracked the true location of the robot given by the simulator itself. On the autograder, after various bug fixes and some parameter tuning, the best score we were able to get was 0.91, with 2400 particles and 54 laser measurement samples.
 
 ### Particle Filter Localization on Simulator: Our Algorithm Showed Great Performance
 
