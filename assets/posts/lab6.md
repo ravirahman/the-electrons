@@ -17,7 +17,7 @@ These accuracy measurements indicate the reliability of particle filter localiza
 
 ## Introduction - Ravi, Kolby, and Sabina
 
-<center>**Particle Filter Localization System Diagram**<span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
+<center><span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
 
 <center>**Figure 6.1**: **Diagram illustrating an overview of our system architecture. The robot provides laser and odometry sensor data. Combining this data with a known map of the environment and the initial pose, the particle filter calculates an inferred pose for the robot. Odometry data is passed to RViz for visualization.*</center>
 
@@ -29,7 +29,7 @@ We implemented a particle filter to perform localization. Also known as Monte Ca
 
 ## Particle Filter Algorithm - Sabina
 
-<center>**Particle Filter Pipeline**<span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
+<center><span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
 
 <center>**Figure 6.2**: *Diagram illustrating components of Particle Filter/Monte Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) Resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
 
