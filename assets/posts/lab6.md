@@ -134,17 +134,17 @@ Because these low error measurements would support path following, we did not at
 
 <center>**Figure 6.7**: *The above video shows our particle filter localization running at \\(10hz\\) in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: \\(0.093m\\))*</center>
 
-### Particle Filter Localization in Robot: Downtick in Performance
-We then tested the particle filter running at \\(20hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitatively compute error. Instead, we measured that our method was qualitatively accurate for \\(114\\) of the \\(120\\) second test run (\\(95\\%\\)). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways.
+### Particle Filter Localization in Robot: Generally Accurate, Diverges in Featureless Hallways
+We then tested the particle filter running at \\(20hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles on the actual robot. Unlike the simulator, we lacked a perfectly-accurate ground truth, so we could not quantitatively compute error. Instead, we measured that our method was qualitatively accurate for \\(114\\) of the \\(120\\)-second test run (\\(95\\%\\)). We noticed that the robot localized well in most situations, though the inferred pose diverged from the true pose of the robot in featureless hallways. Figure 6.8 is a video of the robot localizing while we drove it around the Stata basement during this test run. Figure 6.9 compares the inferred trajectory of the robot to a hand-drawn approximate actual trajectory of the robot where the localization briefly diverged from the true pose of the robot.
 
 These accuracy measurements indicate the general reliability of particle filter localization and its likely usefulness with path following, though more work will need to be done to localize in featureless hallways.
 
-<center>**Inferred vs Actual Trail**<br /><span>![Inferred vs Actual Trail](assets/images/lab6/InferredActualTrail.png)</span></center>
-<center>**Figure 6.8**: * *</center>
-
 <center>**Particle Filter on Robot**
 <iframe width="560" height="315" src="https://www.youtube.com/embed/NIbuZocztWo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
-<center>**Figure 6.9**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for \\(114\\) of the \\(120\\) seconds (\\(95\\%\\)).*</center>
+<center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for \\(114\\) of the \\(120\\) seconds (\\(95\\%\\)).*</center>
+
+<center>**Inferred vs Actual Trail**<br /><span>![Inferred vs Actual Trail](assets/images/lab6/InferredActualTrail.png)</span></center>
+<center>**Figure 6.9**: *This diagram shows the inferred trail in red in the area where the localization diverged in the test run shown in Figure 6.9, and compares it to a hand-drawn actual trail. We see that the localization overshot the corner but was otherwise correct.*</center>
 
 ## Lessons Learned: Tuning Noise is a Tall Task - Kolby, Marek
 
