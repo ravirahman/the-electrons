@@ -63,13 +63,13 @@ As a part of the particle filter algorithm, we use a Monte Carlo approach to acc
 
 <center><span>![Motion Model](assets/images/lab6/MotionModelDiagram.png)</span></center>
 
-<center>**Figure 6.4: For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data (see below). Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle.**</center>
+<center>**Figure 6.4**: *For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data (see below). Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle.*</center>
 
 We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. This is because we expect that if the odometry indicates the robot is moving forward, the robot is unlikely to actually be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine the direction the robot is moving by comparing the direction of movement reported by the odometry to the robot's facing angle determined by the odometry. The formulas we use to determine the distance to move each particle are in Figure 6.5.
 
 <center><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png =900x346)</span></center>
 
-<center>**Figure 6.5: How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.**</center>
+<center>**Figure 6.5**: *How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.*</center>
 
 We draw the angle to rotate each particle simply from a normal distribution centered on the angle change reported by the odometry, with standard deviation given by the covariance matrix reported by the odometry, but increased by a factor of 1.5 (which we determined testing with the autograder). However, sometimes this noise is too much; we clamp the standard deviation of the Gaussian with an upper bound of 0.5 radians, chosen so that it is very improbable for the noise to be \\(\pi\\), which can cause the inferred pose to spontaneously reverse direction in the middle of a long hallway.
 
@@ -86,7 +86,7 @@ We add all these components together to compute the total probability of measuri
 
 <center><span>![Sensor Model Visualization](assets/images/lab6/SensorModelVisualization.png =528x417)</span></center>
 
-<center>**Figure 6.6: INSERT CAPTION.**</center>
+<center>**Figure 6.6**: *Our precomputed sensor model (after squashing and normalization), showing the probability of measuring a distance given the ground truth distance.*</center>
 
 ### Efficient Implementation with RangeLibC on the GPU
 
@@ -123,7 +123,7 @@ Because these low error measurements would support path following, we did not at
 
 <center>[![Particle Filter Simulator](assets/images/lab6/Lab6Sim.png =560x320)](https://youtu.be/NIbuZocztWo "Particle Filter in Simulation")</center>
 
-<center>**Figure 6.7: The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)**</center>
+<center>**Figure 6.7**: *The above video shows our particle filter localization running at 10hz in a simulated environment. Red represents the inferred odometry; green represents the ground truth. The overlap illustrates the high level of accuracy of our implementation (average absolute error at each timestep: 0.093m)*</center>
 
 ### Particle Filter Localization in Robot: Downtick in Performance
 
@@ -133,7 +133,7 @@ These accuracy measurements indicate the general reliability of particle filter 
 
 <center>[![Particle Filter Robot](assets/images/lab6/)]( "Particle Filter on Robot")</center>
 
-<center>**Figure 6.8: The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).**</center>
+<center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at 20 hz with 72 laser samples per update and 4000 particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for __ of the 120 seconds (__%).*</center>
 
 ## Lessons Learned: Tuning Noise is a Tall Task - Kolby, Marek
 
