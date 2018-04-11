@@ -85,20 +85,20 @@ The first step in Pure Pursuit is to determine where the robot is along the path
 
 The lookahead point is found by intersecting the path with a circle centered at the robot's current location (\\(r= \text{lookahead distance}\\)), as described by [this algorithm](https://codereview.stackexchange.com/questions/86421/line-segment-to-circle-collision-algorithm/86428#86428). In particular, note that the path may intersect the circle multiple times. The lookahead point is defined as the first point on the path which is a specified "lookahead distance" away from the robot, and which is also after the robot's current location relative to the path.
 
-Because the path is composed of line segments, the problem reduces to intersecting a circle of the lookahead radius with line segments on the path. The figure and equations below (Figure 5) illustrate how to find the lookahead point \\(x\\) for an arbitrary path segment with endpoints \\(\vec{p_1}\\) and \\(\vec{p_2}\\). The path segment vector \\(\vec{v}\\) is defined as \\(\vec{p_2} - \vec{p_1}\\). The lookahead point will always be in terms of the starting point \\(\vec{p_1} + \vec{v}t\\) where \\(t\\) is a scaling factor from 0 to 1. In this case, the assumption is made that the current path line segment intercepts with our lookahead range. In the case where the segment is too short, the algorithm iterates to the next segment. In the case where the path is not within the lookahead range, the algorithm pursues the closest possible point on the path.
+Because the path is composed of line segments, the problem reduces to intersecting a circle of the lookahead radius with line segments on the path. The figure and equations below (Figure 5) illustrate how to find the lookahead point \\(x\\) for an arbitrary path segment with endpoints \\(\vec{m}\\) and \\(\vec{n}\\). The path segment vector \\(\vec{v}\\) is defined as \\(\vec{n} - \vec{m}\\). The lookahead point will always be in terms of the starting point \\(\vec{m} + \vec{v}t\\) where \\(t\\) is a scaling factor from 0 to 1. In this case, the assumption is made that the current path line segment intercepts with our lookahead range. In the case where the segment is too short, the algorithm iterates to the next segment. In the case where the path is not within the lookahead range, the algorithm pursues the closest possible point on the path.
 
 <center>**Figure 5: Circle-Line Intersection Mathematics**</br>
 ![Circle-Line Intersection Mathematics](assets/images/lab6/Circle_Line_Intersect.png)</br>
 ![Circle-Line Intersection Formulas](assets/images/lab6/Circle_Intersect_Formulas.png)</br>
 
 
-(1)  \\( |x-q| = r \\)</br>
-(2) \\(|m + tv − q| = r\\)</br>
+(1)  \\( |x-q| = r \\) </br>
+(2) \\(|m + tv − q| = r\\) </br>
 (3)  \\( (m + tv − q) · (m + tv − q) = r^2 \\)
 
-(4)  \\( at^2+bt+c = 0 \\), with:</br>
-(5)  \\( a = v·v \\)</br>
-(6)  \\( b = 2(v·(m−q)) \\)</br>
+(4)  \\( at^2+bt+c = 0 \\), with: </br>
+(5)  \\( a = v·v \\) </br>
+(6)  \\( b = 2(v·(m−q)) \\) </br>
 (7)  \\( c = m·m + q·q − 2m·q − r^2 \\)
 
 (8)  \\( t = \frac{-b+\sqrt{b^2 - 4ac}}{2a} \\)
@@ -234,7 +234,7 @@ Theta\* proved superior compared to RRT with its faster path computation (1.40s 
 
 ### Pure Pursuit Worked on Hand-made Trajectories - Ravi
 
-Hand-crafted trajectories enabled testing of the trajectory tracker before the path planner was completely implemented. The `build_trajectory` ROS node listens to the publish point topic from RVIZ, and saves the clicked points as ordered vertices in a polygon. This tool allows for manual path construction, which was used for preliminary testing of pure pursuit.
+Hand-crafted trajectories enabled testing of the trajectory tracker before the path planner was completely implemented. The `build\_trajectory` ROS node listens to the publish point topic from RVIZ, and saves the clicked points as ordered vertices in a polygon. This tool allows for manual path construction, which was used for preliminary testing of pure pursuit.
 
 In preliminary testing of pure pursuit, we focused on qualitatively ensuring the algorithm was implemented correctly. We did not have time to tune parameters, therefore a more rigorous quantitative evaluation was not necessary at this stage. By visualizing each stage of Pure Pursuit and testing the trajectory tracker in simulation on a hand-crafted trajectory, we were able to verify that the trajectory tracker correctly identified and turned towards the lookahead point.
 
