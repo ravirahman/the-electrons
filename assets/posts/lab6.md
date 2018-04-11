@@ -30,9 +30,9 @@ Path planning, using a map of the environment as well as a start and goal pose, 
 Trajectory tracking, implemented via Pure Pursuit, actuates the robot along this path. Pure Pursuit uses localization information (implemented in Lab 5) to repeatedly find a lookahead point on the piecewise linear trajectory, and then drives the robot towards this point.
 
 
-**Figure 1: System Architecture**
-![System Architecture](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/system_diagram.jpg)
-_The above figure illustrates the steps for path planning and trajectory tracking. First, start and goal poses are selected via rviz. Then, using the given map, Path Planning computes a trajectory. Finally, Trajectory Tracking computes and issues RACECAR drive commands._
+<center>**Figure 1: System Architecture**</br><span>
+![System Architecture](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/system_diagram.jpg)</span></br>
+_The above figure illustrates the steps for path planning and trajectory tracking. First, start and goal poses are selected via rviz. Then, using the given map, Path Planning computes a trajectory. Finally, Trajectory Tracking computes and issues RACECAR drive commands._</center>
 
 
 ## Path Planning - Ravi and Sabina
