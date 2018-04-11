@@ -233,7 +233,7 @@ Theta\* proved superior compared to RRT with its faster path computation (1.40s 
 
 ### Pure Pursuit Worked on Hand-made Trajectories - Ravi
 
-Hand-crafted trajectories enabled testing of the trajectory tracker before the path planner was completely implemented. The `build_trajectory` ROS node listens to the publish point topic from RVIZ, and saves the clicked points as ordered vertices in a polygon. This tool allows for manual path construction, which was used for preliminary testing of pure pursuit.
+Hand-crafted trajectories enabled testing of the trajectory tracker before the path planner was completely implemented. The `build\_trajectory` ROS node listens to the publish point topic from RVIZ, and saves the clicked points as ordered vertices in a polygon. This tool allows for manual path construction, which was used for preliminary testing of pure pursuit.
 
 In preliminary testing of pure pursuit, we focused on qualitatively ensuring the algorithm was implemented correctly. We did not have time to tune parameters, therefore a more rigorous quantitative evaluation was not necessary at this stage. By visualizing each stage of Pure Pursuit and testing the trajectory tracker in simulation on a hand-crafted trajectory, we were able to verify that the trajectory tracker correctly identified and turned towards the lookahead point.
 
