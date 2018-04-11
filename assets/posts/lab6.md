@@ -92,13 +92,13 @@ Because the path is composed of line segments, the problem reduces to intersecti
 
 
 (1)  \\( |x-q| = r \\)</br>
-(2)  \\( |m + t * v − q| = r \\)</br>
-(3)  \\( (m + t * v − q) · (m + t * v − q) = r^2 \\)
+(2)  \\( |m + tv − q| = r \\)</br>
+(3)  \\( (m + tv − q) · (m + tv − q) = r^2 \\)
 
 (4)  \\( at^2+bt+c = 0 \\), with:</br>
 (5)  \\( a = v·v \\)</br>
-(6)  \\( b = 2 * (v · (m−q)) \\)</br>
-(7)  \\( c = m · m + q · q − 2m · q − r^2 \\)
+(6)  \\( b = 2(v·(m−q)) \\)</br>
+(7)  \\( c = m·m + q·q − 2m·q − r^2 \\)
 
 (8)  \\( t = \frac{-b+\sqrt{b^2 - 4ac}}{2a} \\)
 
