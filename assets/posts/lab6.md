@@ -92,7 +92,7 @@ Because the path is composed of line segments, the problem reduces to intersecti
 
 
 (1)  \\( |x-q| = r \\)</br>
-(2) \\( |p1 +t v−q|=r \\)</br>
+(2) \\( |p_{1} +t v−q|=r \\)</br>
 (3)  \\( (p1 +t v−q)·(p1 +t v−q)=r^2 \\)
 
 (4)  \\( at^2+bt+c = 0 \\), with:</br>
@@ -102,7 +102,7 @@ Because the path is composed of line segments, the problem reduces to intersecti
 
 (8)  \\( t = \frac{-b+\sqrt{b^2 - 4ac}}{2a} \\)
 
-*The above figure illustrates deriving the lookahead point using geometric relationships given the inputs robot location \\(q\\), path segment \\(v\\) defined by endpoints \\(p_1\\) and \\(p_2\\), and lookahead distance \\(r\\). Equation 1 defines the relationship between the robot location and the lookahead point: the distance between the robot and the lookahead point will equal the length of the radius. Equation 2 rewrites this relationship in terms of the path segment starting point and vector multiplied by the scaling variable, \\(t\\). It states that point will be on the line segment. Equation 3 uses the definition of a dot product of a vector to expand the previous equation which can be rewritten in binomial form shown in Equation 4. The remaining equations solve for \\(t\\).*</center>
+*The above figure illustrates deriving the lookahead point using geometric relationships given the inputs robot location \\(q\\), path segment \\(v\\) defined by endpoints \\(p_{1}\\) and \\(p_{2}\\), and lookahead distance \\(r\\). Equation 1 defines the relationship between the robot location and the lookahead point: the distance between the robot and the lookahead point will equal the length of the radius. Equation 2 rewrites this relationship in terms of the path segment starting point and vector multiplied by the scaling variable, \\(t\\). It states that point will be on the line segment. Equation 3 uses the definition of a dot product of a vector to expand the previous equation which can be rewritten in binomial form shown in Equation 4. The remaining equations solve for \\(t\\).*</center>
 
 
 
