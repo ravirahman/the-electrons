@@ -23,6 +23,6 @@ function run(post, target) {
 run("assets/posts/about.md", "about")
 run("assets/posts/lab3.md", "lab3")
 run("assets/posts/lab4.md", "lab4")
+run("assets/posts/lab5.md", "lab5")
 run("assets/posts/lab6.md", "lab6")
-run("assets/posts/lab7.md", "lab7")
-run("assets/posts/lab8.md", "lab8")
+
