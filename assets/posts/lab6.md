@@ -125,7 +125,7 @@ After some experimentation on the actual robot, we increased the number of parti
    - Position: \\(0.092m\\)
    - Orientation: \\(0.0275 rad\\)
    
-It is surprising that increasing the number of particles and laser measurement samples led to increased error; we attribute this to the decreased publish rate, where the inferred odometry becomes out-of-date before it is published.
+It is surprising that increasing the number of particles and laser measurement samples led to increased error; we attribute this to the decreased publish rate, which decreases granularity of the motion model's updates and may result in more error in the motion model.
 
 Because these low error measurements would support path following, we did not attempt to optimize further. The performance of our particle filter ran in simulation can be seen in the video below in Figure 6.7.
 
