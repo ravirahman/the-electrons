@@ -30,8 +30,8 @@ Path planning, using a map of the environment as well as a start and goal pose, 
 Trajectory tracking, implemented via Pure Pursuit, actuates the robot along this path. Pure Pursuit uses localization information (implemented in Lab 5) to repeatedly find a lookahead point on the piecewise linear trajectory, and then drives the robot towards this point.
 
 
-<center>**Figure 1: System Architecture**</br><span>
-![System Architecture](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/system_diagram.jpg =520x310)</span></br>
+<center>**Figure 1: System Architecture**<br/><span>
+![System Architecture](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/system_diagram.jpg =520x310)</span><br/>
 _The above figure illustrates the steps for path planning and trajectory tracking. First, start and goal poses are selected via rviz. Then, using the given map, Path Planning computes a trajectory. Finally, Trajectory Tracking computes and issues RACECAR drive commands._</center>
 
 
@@ -43,8 +43,8 @@ We tested the Rapidly-exploring Random Trees (RRT) and Theta\* path planning alg
 RRT iteratively computes navigable paths through a stochastic process. It first adds the initial pose \\((x, y, \theta)\\) to a tree. Then, for each iteration \\(n\\), the algorithm randomly picks a unobstructed point \\(r\\) in the world. It then finds the closest poses already in the tree. For each closest pose \\(\vec{p}\\), it computes whether the RACECAR can drive along an arc between \\(\vec{p}\\) and \\(r\\). (See Figure 2 below for an illustration.) If so, RRT recursively repeats this calculation on the parents of \\(\vec{p}\\) to find the highest-level parent \\(\vec{q}\\) such that a navigable path exists. Given \\(\vec{q}\\), RRT then converts \\(r\\) to a pose. This pose is added to the tree beneath \\(\vec{q}\\). The last iteration \\(n\\) computes paths uses the destination instead of a randomly-selected point.
 
 
-<center>**Figure 2: Navigable (Left) and Obstructed (Right) RRT Paths**</br>
-![Navigable (Left) and Obstructed (Right) RRT Paths](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/rrt_paths.PNG)</br>
+<center>**Figure 2: Navigable (Left) and Obstructed (Right) RRT Paths**<br/>
+![Navigable (Left) and Obstructed (Right) RRT Paths](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/rrt_paths.PNG)<br/>
 _The above figures shows navigable (left) and obstructed (right) RRT paths for randomly selected points (green). The blue vector represents a nearest pose already in the tree. On the left, the purple pose would be added to the tree as a child of the blue pose. However, on the right, RRT would ignore the green point because of the obstructed path._</center>
 
 
@@ -60,8 +60,8 @@ A* is a best-first-search algorithm that finds shortest paths using Dijkstra's A
 
 Theta\* expands on A* by using line-of-sight to relax paths between nodes, which simplifies the path by removing unnecessary intermediate nodes. When adding vertices to the graph, it sets the parent to the furthest-back cell such that an unobstructed, line-of-sight path exists. This optimization allows for any angle \\(\theta : \tan^{-1}(\theta) \in \mathbb{Q}\\) and removes intermediate waypoints in a straight line.
 
-<center>**Figure 3: Theta\* Optimizations**</br>
-![Theta\* Optimizations](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastar.png =600x300)</br>
+<center>**Figure 3: Theta\* Optimizations**<br/>
+![Theta\* Optimizations](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastar.png =600x300)<br/>
  _The above figure illustrates an A*-based path (left) and the optimized Theta\*-based path (right). Whereas A* creates a connection between every individual node along the path, Theta\* only connects nodes when a shorter path with direct line-of-sight exists. [Image Credits](http://aigamedev.com/static/tutorials/aap-pathcompare2D.png)_</center>
 
 
@@ -70,8 +70,8 @@ Theta\* expands on A* by using line-of-sight to relax paths between nodes, which
  
 Trajectory tracking follows a given path via a pure pursuit controller. This controller 1) determines the RACECAR's position relative to the path based on the closest point, 2) computes a lookahead point on the path a given distance away from the robot, and 3) accelerates towards the lookahead point. 
 
-<center>**Figure 4: Pure Pursuit**</br>
-![Pure Pursuit](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/pure_pursuit.jpg =550x360)</br>
+<center>**Figure 4: Pure Pursuit**<br/>
+![Pure Pursuit](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/pure_pursuit.jpg =550x360)<br/>
 
 *The above figure illustrates the pure pursuit algorithm. On each timestep, it first finds a "lookahead" point on the trajectory a specified distance away from the robot. Then, Ackermann steering commands are issued to navigate towards this point.*</center>
 
@@ -87,9 +87,9 @@ The lookahead point is found by intersecting the path with a circle centered at 
 
 Because the path is composed of line segments, the problem reduces to intersecting a circle of the lookahead radius with line segments on the path. The figure and equations below (Figure 5) illustrate how to find the lookahead point \\(x\\) for an arbitrary path segment with endpoints \\(\vec{m}\\) and \\(\vec{n}\\). The path segment vector \\(\vec{v}\\) is defined as \\(\vec{n} - \vec{m}\\). The lookahead point will always be in terms of the starting point \\(\vec{m} + \vec{v}t\\) where \\(t\\) is a scaling factor from 0 to 1. In this case, the assumption is made that the current path line segment intercepts with our lookahead range. In the case where the segment is too short, the algorithm iterates to the next segment. In the case where the path is not within the lookahead range, the algorithm pursues the closest possible point on the path.
 
-<center>**Figure 5: Circle-Line Intersection Mathematics**</br>
-![Circle-Line Intersection Mathematics](assets/images/lab6/Circle_Line_Intersect.png)</br>
-![Circle-Line Intersection Formulas](assets/images/lab6/Circle_Intersect_Formulas.png =380x200)</br>
+<center>**Figure 5: Circle-Line Intersection Mathematics**<br/>
+![Circle-Line Intersection Mathematics](assets/images/lab6/Circle_Line_Intersect.png)<br/>
+![Circle-Line Intersection Formulas](assets/images/lab6/Circle_Intersect_Formulas.png =380x200)<br/>
 
 *The above figure illustrates deriving the lookahead point using geometric relationships given the inputs robot location \\(q\\), path segment \\(v\\) defined by endpoints \\(m\\) and \\(n\\), and lookahead distance \\(r\\). Equation 1 defines the relationship between the robot location and the lookahead point: the distance between the robot and the lookahead point will equal the length of the radius. Equation 2 rewrites this relationship in terms of the path segment starting point and vector multiplied by the scaling variable, \\(t\\). It states that point will be on the line segment. Equation 3 uses the definition of a dot product of a vector to expand the previous equation which can be rewritten in binomial form shown in Equation 4. The remaining equations solve for \\(t\\).*</center>
 
@@ -98,13 +98,13 @@ Because the path is composed of line segments, the problem reduces to intersecti
 ### Following the Lookahead Point - Jerry
 After Pure Pursuit has found the lookahead point, it uses the bicycle Ackermann steering model to compute and issue motor commands so the robot turns smoothly towards the lookahead point (Step 3 in Figure 4 above). The algorithm first transforms the lookahead point, which was originally computed in the  map coordinate frame, to the coordinate frame of the robot. The Pure Pursuit algorithm then uses the following equations (derived from the bicycle Ackermann model) to determine the steering angle needed to turn in a smooth arc towards the lookahead point (Figure 6). The robot is then commanded to drive forward, turning by using the computed steering angle.
 
-<center>**Figure 6: Computing the Steering Angle**</br>
-\\(\text{Lookahead point}=(x, y)\\)</br>
-\\(\text{Wheelbase length }=l\\)</br>
-\\(\text{Distance to point }d=\sqrt{x^2 + y^2}\\)</br>
-\\(\text{Angle to lookahead point }\alpha = \tan^{-1}(y/x)\\)</br>
-\\(\text{Curvature radius }R = \frac{d}{2\sin \alpha}\\)</br>
-\\(\text{Steering angle }\theta = \frac{l}{R}\\)</br>
+<center>**Figure 6: Computing the Steering Angle**<br/>
+\\(\text{Lookahead point}=(x, y)\\)<br/>
+\\(\text{Wheelbase length }=l\\)<br/>
+\\(\text{Distance to point }d=\sqrt{x^2 + y^2}\\)<br/>
+\\(\text{Angle to lookahead point }\alpha = \tan^{-1}(y/x)\\)<br/>
+\\(\text{Curvature radius }R = \frac{d}{2\sin \alpha}\\)<br/>
+\\(\text{Steering angle }\theta = \frac{l}{R}\\)<br/>
 _The above figure illustrates computing the steering angle from the lookahead point. The algorithm is given the lookahead point \\((x, y)\\) and the distance \\(l\\) between the front and rear axles of the robot, or the *wheelbase length*, and the objective is to determine the steering angle \\(\theta\\) to turn in a smooth arc towards the lookahead point. As an intermediate calculation, the algorithm computes the radius of this arc, \\(R\\)._
 </center>
 
@@ -122,8 +122,8 @@ We accounted for the size of the robot through morphological dilation, and we ac
 ### Dilating the Map to Account for Robot Size - Kolby
 The impassable features on the map were dilated by 60cm to account for the fact that the robot is not a point, which is important because path planners, especially Theta\*, may produce paths which go very close to the wall. Furthermore, the Pure Pursuit algorithm cuts corners by nature, which can lead to a collision if the planned trajectory is very close to a corner. If the path planner thinks the obstacles and walls are thicker than they actually are, then the path returned should allow the robot to track the trajectory without hitting corners or obstacles. A map of Stata basement with this dilation is shown below, in Figure 7.
 
-<center>**Figure 7: Dilated Map of Stata Basement**</br>
-![Dilated Map of Stata Basement](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/dilated_map.jpg =325x430)</br>
+<center>**Figure 7: Dilated Map of Stata Basement**<br/>
+![Dilated Map of Stata Basement](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/dilated_map.jpg =325x430)<br/>
 The above figure shows the resulting map  from dilating the impassable regions in the Stata basement map by \\(0.6m\\). This is actually the dilated version of the map after it was manually edited to account for obstacles (see Figure 8 below).
 
 </center>
@@ -133,8 +133,8 @@ The above figure shows the resulting map  from dilating the impassable regions i
 Large unmarked obstacles in the Stata basement often prevented the robot from reaching the goal point, which led us to mark these obstacles on the map. All the unmarked obstacles were against the wall of the basement, and protruded from the wall by about a meter. Despite their unobtrusiveness, these obstacles often prevented our robot from reaching its destination because Theta\* generates the shortest path which is often very close to the wall, and therefore goes through these obstacles. We originally tried to apply morphological dilation to simply thicken the walls past the obstacles; however, we found that we had to use a dilation radius of 1.5 meters, which led some narrow corridors to be nearly or completely impassable. We finally realized that we could simply edit the provided map (see Figure 8 below); we made crude modifications in GIMP to mark the approximate locations of the obstacles, which allowed the robot to avoid them.
 
 
-<center>**Figure 8: Original (Left) and Hand-modified (Right) Stata basement map.**</br>
-![Comparision of Maps](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/maps_compared.PNG =750x450)</br>
+<center>**Figure 8: Original (Left) and Hand-modified (Right) Stata basement map.**<br/>
+![Comparision of Maps](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/maps_compared.PNG =750x450)<br/>
 _The above figure shows the enhancements to the TA-provided map of the Stata basement. We used GIMP to draw in obstacles by hand in the corridor on the left (circled in red)._
 </center>
 
@@ -146,8 +146,8 @@ The final implementation of RRT uses uniform random sampling over all possible p
 Bridge sampling, a method that picks unobstructed points surrounded by obstacles, failed to identify necessary waypoints, so we did not use this technique. Bridge sampling constructs a bridge over the sample, and checks to see if the "supports" are passable grid squares. While this method ignores examining unnecessary waypoints in free space, it also fails to identify waypoints at "T"-shaped intersections. These waypoints would be necessary to make the robot turn before the end of a hallway.
 
 
-<center>**Figure 9: Intersections where Bridge Sampling Worked (Green) and Failed (Orange)** </br>
-![Intersections where Bridge Sampling Worked and Failed](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/bridge_error.PNG =300x390)</br>
+<center>**Figure 9: Intersections where Bridge Sampling Worked (Green) and Failed (Orange)** <br/>
+![Intersections where Bridge Sampling Worked and Failed](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/bridge_error.PNG =300x390)<br/>
 
 *The above figure shows how bridge sampling would examine the green sample and discard the orange sample. The green sample's bridge intersects the boundry, whereas the orange's sample bridge is completely within the navigatable space. The blue dot represents the current robot position. The black line represents a found path. Therefore, it is unlikely the robot will take the first right turn.* </center>
 
@@ -161,8 +161,8 @@ A navigable circular trajectory required a minimum turn radius of \\(1.5m\\), me
 Paths between the start pose and destination point were scored by averaging the square of the turn radius, weighted by the circumference of the turn. This heuristic prioritized smoother paths, which the robot could then follow at higher speeds.
 
 
-<center>**Figure 10: Simulated RRT Path Planning**</br>
-![Intersections where Bridge Sampling Worked and Failed](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/rrt.png =390x490)</br>
+<center>**Figure 10: Simulated RRT Path Planning**<br/>
+![Intersections where Bridge Sampling Worked and Failed](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/rrt.png =390x490)<br/>
 *The above figure shows the RRT-found path (green) between the start and end vertices. It took 48 seconds to find this path. Observe that RRT preferred using the top hallway over using the middle hallway because the turns required are smoother.*</center>
 
 ### Theta\* - Sabina
@@ -181,8 +181,8 @@ In-line-of-sight allows Theta\* to simplify the path by discarding intermediate 
 
 The implementation of Theta\* publishes several visualization messages. The start and end points are selected using Pose Estimate and Nav Goal tools respectively on rviz. The start point is visualized as a green sphere, and the goal point is visualized as a red sphere. The nodes searched via the search algorithm are visualized as small grey dots. As shown by the expansion direction of the grey dots, the Theta\* heuristic successfully biases the search area towards the goal point. The final trajectory path (blue line) is shown via blue segments drawn between “waypoints” (red dots) along the path.
 
-<center>**Figure 11: Sample Run of Theta\***</br>
-![Sample Run of Theta\*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastarpath.png =450x550)</br>
+<center>**Figure 11: Sample Run of Theta\***<br/>
+![Sample Run of Theta\*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastarpath.png =450x550)<br/>
 *The above diagram illustrates a sample path from Theta\*. It took 7.47s to compute*</center>
 
 #### Optimizing Theta Star
@@ -210,8 +210,8 @@ After making these changes, we performed additional parameter tuning to improve 
 The abbreviated ROS architecture, showing the entire pathway from the sensor inputs to the drive command outputs, is shown below in Figure 12.
 
   
-<center>**Figure 12: Abbreviated ROS Architecture**</br>
-![Abbreviated ROS Architecture*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/ros_architecture.jpg =450x500)</br>
+<center>**Figure 12: Abbreviated ROS Architecture**<br/>
+![Abbreviated ROS Architecture*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/ros_architecture.jpg =450x500)<br/>
 _This diagram shows the entirety of the pathway, from the sensor inputs to the drive commands issued to the motor. Each box represents a node; the arrows represent topics which nodes subscribe to or publish to. Some topic names have been omitted from the diagram for brevity. Where it is unclear what information is passed between nodes, the topics are labeled._</center>
 
 ## Evaluation
