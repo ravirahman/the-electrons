@@ -88,7 +88,7 @@ The lookahead point is found by intersecting the path with a circle centered at 
 Because the path is composed of line segments, the problem reduces to intersecting a circle of the lookahead radius with line segments on the path. The figure and equations below (Figure 5) illustrate how to find the lookahead point \\(x\\) for an arbitrary path segment with endpoints \\(\vec{p_1}\\) and \\(\vec{p_2}\\). The path segment vector \\(\vec{v}\\) is defined as \\(\vec{p_2} - \vec{p_1}\\). The lookahead point will always be in terms of the starting point \\(\vec{p_1} + \vec{v}t\\) where \\(t\\) is a scaling factor from 0 to 1. In this case, the assumption is made that the current path line segment intercepts with our lookahead range. In the case where the segment is too short, the algorithm iterates to the next segment. In the case where the path is not within the lookahead range, the algorithm pursues the closest possible point on the path.
 
 <center>**Figure 5: Circle-Line Intersection Mathematics**</br>
-![Circle-Line Intersection Mathematics](https://i.stack.imgur.com/69nSy.png)</center>
+![Circle-Line Intersection Mathematics](https://i.stack.imgur.com/69nSy.png)
 
 
 (1)  \\(\ |x-q| = r\\)</br>
@@ -102,7 +102,7 @@ Because the path is composed of line segments, the problem reduces to intersecti
 
 (8)  \\(\ t = \frac{-b+\sqrt{b^2 - 4ac}}{2a}\\)
 
-<center>*The above figure illustrates deriving the lookahead point using geometric relationships given the inputs robot location \\(q\\), path segment \\(v\\) defined by endpoints \\(p_1\\) and \\(p_2\\), and lookahead distance \\(r\\). Equation 1 defines the relationship between the robot location and the lookahead point: the distance between the robot and the lookahead point will equal the length of the radius. Equation 2 rewrites this relationship in terms of the path segment starting point and vector multiplied by the scaling variable, \\(t\\). It states that point will be on the line segment. Equation 3 uses the definition of a dot product of a vector to expand the previous equation which can be rewritten in binomial form shown in Equation 4. The remaining equations solve for \\(t\\).*</center>
+*The above figure illustrates deriving the lookahead point using geometric relationships given the inputs robot location \\(q\\), path segment \\(v\\) defined by endpoints \\(p_1\\) and \\(p_2\\), and lookahead distance \\(r\\). Equation 1 defines the relationship between the robot location and the lookahead point: the distance between the robot and the lookahead point will equal the length of the radius. Equation 2 rewrites this relationship in terms of the path segment starting point and vector multiplied by the scaling variable, \\(t\\). It states that point will be on the line segment. Equation 3 uses the definition of a dot product of a vector to expand the previous equation which can be rewritten in binomial form shown in Equation 4. The remaining equations solve for \\(t\\).*</center>
 
 
 
