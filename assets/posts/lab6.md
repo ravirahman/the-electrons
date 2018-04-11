@@ -91,14 +91,14 @@ Because the path is composed of line segments, the problem reduces to intersecti
 ![Circle-Line Intersection Mathematics](https://i.stack.imgur.com/69nSy.png)
 
 
-$$(1)  |x-q| = r$$</br>
-$$(2) |p\_1 +t v−q|=r$$</br>
-(3)  \\(\ (p_1 +t v−q)·(p_1 +t v−q)=r^2\\)
+(1)  \\(|x-q| = r\\)</br>
+(2) \\(|p1 +t v−q|=r\\)</br>
+(3)  \\(\ (p1 +t v−q)·(p1 +t v−q)=r^2\\)
 
 (4)  \\(\ at^2+bt+c = 0\\), with:</br>
 (5)  \\(\ a = v·v\\)</br>
-(6)  \\(\ b = 2(v·(p 1 −q))\\)</br>
-(7)  \\(\ c = p_1 ·p_1 +q·q−2p_1 ·q−r^2\\)
+(6)  \\(\ b = 2(v·(p1 −q))\\)</br>
+(7)  \\(\ c = p1 ·p1 +q·q−2p1 ·q−r^2\\)
 
 (8)  \\(\ t = \frac{-b+\sqrt{b^2 - 4ac}}{2a}\\)
 
