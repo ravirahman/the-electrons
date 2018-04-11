@@ -40,7 +40,7 @@ We tested the Rapidly-exploring Random Trees (RRT) and Theta\* path planning alg
 
 
 ### RRT - Ravi
-RRT iteratively computes navigatable paths through a stochastic process. It first adds the initial pose \\((x, y, \theta)\\) to a tree. Then, for each iteration \\(n\\), the algorithm randomly picks a unobstructed point \\(r\\) in the world. It then finds the closest poses already in the tree. For each closest pose \\(\vec{p}\\), it computes whether the RACECAR can drive along an arc between \\(\vec{p}\\) and \\(r\\). (See Figure 2 below for an illustration.) If so, RRT recursively repeats this calculation on the parents of \\(\vec{p}\\) to find the highest-level parent \\(\vec{q}\\) such that a navigable path exists. Given \\(\vec{q}\\), RRT then converts \\(r\\) to a pose. This pose is added to the tree beneath \\(\vec{q}\\). The last iteration \\(n\\) computes paths uses the destination instead of a randomly-selected point.
+RRT iteratively computes navigable paths through a stochastic process. It first adds the initial pose \\((x, y, \theta)\\) to a tree. Then, for each iteration \\(n\\), the algorithm randomly picks a unobstructed point \\(r\\) in the world. It then finds the closest poses already in the tree. For each closest pose \\(\vec{p}\\), it computes whether the RACECAR can drive along an arc between \\(\vec{p}\\) and \\(r\\). (See Figure 2 below for an illustration.) If so, RRT recursively repeats this calculation on the parents of \\(\vec{p}\\) to find the highest-level parent \\(\vec{q}\\) such that a navigable path exists. Given \\(\vec{q}\\), RRT then converts \\(r\\) to a pose. This pose is added to the tree beneath \\(\vec{q}\\). The last iteration \\(n\\) computes paths uses the destination instead of a randomly-selected point.
 
 
 **Figure 2: Navigable (Left) and Obstructed (Right) RRT Paths**
@@ -85,7 +85,7 @@ The first step in Pure Pursuit is to determine where the robot is along the path
 
 The lookahead point is found by intersecting the path with a circle centered at the robot's current location (\\(r= \text{lookahead distance}\\)), as described by [this algorithm](https://codereview.stackexchange.com/questions/86421/line-segment-to-circle-collision-algorithm/86428#86428). In particular, note that the path may intersect the circle multiple times. The lookahead point is defined as the first point on the path which is a specified "lookahead distance" away from the robot, and which is also after the robot's current location relative to the path.
 
-Because the path is composed of line segments, the problem reduces to intersecting a circle of the lookahead radius with line segments on the path. The figure and equations below (Figure 5) illustrate how to find the lookahead point \\(x\\) for an arbitrary path segment with endpoints \\(\vec{p_1}\\) and \\(\vec{p_2}\\). The path segment vector \\(\vec{v}\\) is defined as \\(\vec{p_2} - \vec{p_1}\\). The lookahead point will always be in terms of the starting point \\(\vec{p_1} + \vec{v}t\\) where \\(t\\) is a scaling factor from 0 to 1. In this case, the assumption is made that the current obsereve path line segment intercepts with our lookahed range. In the case where the segment is too short, the algorithm iterates to the next segment. In the case where the path is not within the lookahead range, the algorithm pursues the closest possible point on the path.
+Because the path is composed of line segments, the problem reduces to intersecting a circle of the lookahead radius with line segments on the path. The figure and equations below (Figure 5) illustrate how to find the lookahead point \\(x\\) for an arbitrary path segment with endpoints \\(\vec{p_1}\\) and \\(\vec{p_2}\\). The path segment vector \\(\vec{v}\\) is defined as \\(\vec{p_2} - \vec{p_1}\\). The lookahead point will always be in terms of the starting point \\(\vec{p_1} + \vec{v}t\\) where \\(t\\) is a scaling factor from 0 to 1. In this case, the assumption is made that the current path line segment intercepts with our lookahead range. In the case where the segment is too short, the algorithm iterates to the next segment. In the case where the path is not within the lookahead range, the algorithm pursues the closest possible point on the path.
 
 **Figure 5: Circle-Line Intersection Mathematics**
 ![Circle-Line Intersection Mathematics](https://i.stack.imgur.com/69nSy.png)
@@ -154,7 +154,7 @@ _The above figure shows the enhancements to the TA-provided map of the Stata bas
 ### RRT - Ravi
 The final implementation of RRT uses uniform random sampling over all possible positions, \\(1500\\) vertices, and examines 10 nearest poses for random sample (and 60 nearest poses for the goal). With these settings, RRT found paths in \\(33.44s\\) \\((\sigma = 43.33s))\\) with a \\(70\%\\) success rate over \\(10\\) randomized trials (failed trials timed out at 120 seconds). These settings maximized the success rate and resulted in smooth paths while minimizing computation time.
 
-Bridge sampling, a method that picks unobstructed points surrounded by obstacles, failed to identify necessary waypoints, so we did not use this technique. Bridge sampling constructs a bridge over the sample, and checks to see if the "supports" are passable grid squares. While this method ignores examining unnecessarry waypoints in free space, it also fails to identify waypoints at "T"-shaped intersections. These waypoints would be necessary to make the robot turn before the end of a hallway.
+Bridge sampling, a method that picks unobstructed points surrounded by obstacles, failed to identify necessary waypoints, so we did not use this technique. Bridge sampling constructs a bridge over the sample, and checks to see if the "supports" are passable grid squares. While this method ignores examining unnecessary waypoints in free space, it also fails to identify waypoints at "T"-shaped intersections. These waypoints would be necessary to make the robot turn before the end of a hallway.
 
 
 **Figure 9: Intersections where Bridge Sampling Worked (Green) and Failed (Orange)** 
@@ -163,13 +163,13 @@ Bridge sampling, a method that picks unobstructed points surrounded by obstacles
 *The above figure shows how bridge sampling would examine the green sample and discard the orange sample. The green sample's bridge intersects the boundry, whereas the orange's sample bridge is completely within the navigatable space. The blue dot represents the current robot position. The black line represents a found path. Therefore, it is unlikely the robot will take the first right turn.* 
 
 
-Instead of bridge sampiling, uniform sampling with parent traversal found efficient paths. Uniform sampling could construct paths that backtrack or unnecessarily loop in free space. To avoid this pitfall, parent traversal connects each sample with the most senior navigable ancestor of the closest verticies. This optimiziation eliminates inefficient paths in free space (the primary benefit of bridge sampling) while also exploring all paths in the map.
+Instead of bridge sampling, uniform sampling with parent traversal found efficient paths. Uniform sampling could construct paths that backtrack or unnecessarily loop in free space. To avoid this pitfall, parent traversal connects each sample with the most senior navigable ancestor of the closest vertices. This optimization eliminates inefficient paths in free space (the primary benefit of bridge sampling) while also exploring all paths in the map.
 
 
 A navigable circular trajectory required a minimum turn radius of \\(1.5m\\), measured by the sharpest curve the RACECAR could sustain, along with an obstacle-free trajectory on the dilated map. Map cells every \\(\frac{2.0}{r}\\) units along the trajectory were checked for obstacles.
 
 
-Paths between the start pose and destination point were scored by averaging the square of the turn radius, weighted by the curcumfrence of the turn. This heuristic prioritized smoother paths, which the robot could then follow at higher speeds.
+Paths between the start pose and destination point were scored by averaging the square of the turn radius, weighted by the circumference of the turn. This heuristic prioritized smoother paths, which the robot could then follow at higher speeds.
 
 
 **Figure 10: Simulated RRT Path Planning**
@@ -222,8 +222,8 @@ The abbreviated ROS architecture, showing the entire pathway from the sensor inp
 
   
 **Figure 12: Abbreviated ROS Architecture**
-![Abberviated ROS Architecture*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/ros_architecture.jpg)
-_This diagram shows the entirety of the pathway, from the sensor inputs to the drive commands issued to the motor. Each box represents a node; the arrows represent topics which nodes subscribe to or publish to. Some topic names have been omitted from the diagram for brevity. Where it is unclear what information is passed between nodes, the topics are labelled._
+![Abbreviated ROS Architecture*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/ros_architecture.jpg)
+_This diagram shows the entirety of the pathway, from the sensor inputs to the drive commands issued to the motor. Each box represents a node; the arrows represent topics which nodes subscribe to or publish to. Some topic names have been omitted from the diagram for brevity. Where it is unclear what information is passed between nodes, the topics are labeled._
 
 ## Evaluation
 
@@ -283,4 +283,4 @@ On a broader note, our team learned that there's a right tool for every job. Due
 
 To make our robot more robust to various scenarios, we would like to implement dynamic lookahead and speed changes. Dynamic lookahead changes, in terms of pure pursuit, would allow us to shorten the lookahead distance around sharp turns but increase it on long and straight hallways. Dynamic speed changes would work in a similar fashion. 
 
-We believe general improvements to our RRT algorithm are possible and plan to spend some time optimizing it, because RRT tends to produce navigatable paths, which may be important for the race. Any reduction of the time necessary to plan a path, or an improvement in reliability of finding a path, would be a welcome improvement.
+We believe general improvements to our RRT algorithm are possible and plan to spend some time optimizing it, because RRT tends to produce navigable paths, which may be important for the race. Any reduction of the time necessary to plan a path, or an improvement in reliability of finding a path, would be a welcome improvement.
