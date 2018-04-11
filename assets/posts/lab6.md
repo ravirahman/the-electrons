@@ -6,9 +6,9 @@ Lab 6 - Path Planning and Following
 Path Planning and Trajectory Tracking enable the RACECAR to autonomously compute and follow paths, given a starting pose, destination point, and a map. 
 
 
-For path planning,  algorithms --Rapidly-exploring Random Trees (RRT) and [Theta Star](http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/) (Theta*), a variant of A* -- were tested. Between these options, Theta* proved superior compared to RRT with its faster path computation (1.40s vs 33.44s), higher success rate (100% vs 70%), and shorter yet pursuable paths over 10 sample trials.
+For path planning,  algorithms --Rapidly-exploring Random Trees (RRT) and [Theta Star](http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/) (Theta\*), a variant of A* -- were tested. Between these options, Theta\* proved superior compared to RRT with its faster path computation (1.40s vs 33.44s), higher success rate (100% vs 70%), and shorter yet pursuable paths over 10 sample trials.
 
-A Pure Pursuit implementation for trajectory tracking, with Theta* path planning, achieved a  tracking error of 0.10m while following the path.
+A Pure Pursuit implementation for trajectory tracking, with Theta\* path planning, achieved a  tracking error of 0.10m while following the path.
   
 Completion of this lab enables the RACECAR to race autonomously.
 
@@ -24,7 +24,7 @@ Path planning and trajectory tracking enable the RACECAR to drive autonomously a
 
 The RACECAR uses a path planner to compute a trajectory, then uses a trajectory tracker to follow the trajectory.
 
-Path planning, using a map of the environment as well as a start and goal pose, returns a piecewise linear trajectory of piecewise linear paths for the RACECAR to follow. Two algorithms -- Rapidly-exploring random trees (RRT) and  [Theta Star](http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/) (Theta*), a variant of A* -- were tested for trajectory tracking.
+Path planning, using a map of the environment as well as a start and goal pose, returns a piecewise linear trajectory of piecewise linear paths for the RACECAR to follow. Two algorithms -- Rapidly-exploring random trees (RRT) and  [Theta Star](http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/) (Theta\*), a variant of A* -- were tested for trajectory tracking.
 
 
 Trajectory tracking, implemented via Pure Pursuit, actuates the robot along this path. Pure Pursuit uses localization information (implemented in Lab 5) to repeatedly find a lookahead point on the piecewise linear trajectory, and then drives the robot towards this point.
@@ -36,7 +36,7 @@ _The above figure illustrates the steps for path planning and trajectory trackin
 
 
 ## Path Planning - Ravi and Sabina
-We tested the Rapidly-exploring Random Trees (RRT) and Theta* path planning algorithms; RRT returns navigable paths, whereas Theta* returns shortest paths (determined by a heuristic).
+We tested the Rapidly-exploring Random Trees (RRT) and Theta\* path planning algorithms; RRT returns navigable paths, whereas Theta\* returns shortest paths (determined by a heuristic).
 
 
 ### RRT - Ravi
@@ -53,16 +53,16 @@ Finally, RRT returns the best path from the options ending at the goal, if such 
 Specifications for navigable paths, heuristics for the best path, and iteration and randomness parameters are detailed in the implementation section.
 
 
-### Theta* - Ravi and Sabina
-Theta*, an A*-based search algorithm, computes any-angle shortest paths in a discrete grid by relaxing neighbor constraints, applying heuristics to bias search nodes, and checking for line-of-sight between nodes. 
+### Theta\* - Ravi and Sabina
+Theta\*, an A*-based search algorithm, computes any-angle shortest paths in a discrete grid by relaxing neighbor constraints, applying heuristics to bias search nodes, and checking for line-of-sight between nodes. 
 
 A* is a best-first-search algorithm that finds shortest paths using Dijkstra's Algorithm and heuristics. A* works by visiting nodes in the graph starting with the start point. It then repeatedly examines the closest not-yet-examined nodes, and adds these nodes to the set of nodes to be examined. The search continues to expand outwards from the starting point until it reaches the goal. The use of heuristics enables A* to favor searching nodes that are closer to the goal node, potentially minimizing the search time. A* is guaranteed to find a shortest path from the start to goal node (if one such path exists).
 
-Theta* expands on A* by using line-of-sight to relax paths between nodes, which simplifies the path by removing unnecessary intermediate nodes. When adding vertices to the graph, it sets the parent to the furthest-back cell such that an unobstructed, line-of-sight path exists. This optimization allows for any angle \\(\theta : \tan^{-1}(\theta) \in \mathbb{Q}\\) and removes intermediate waypoints in a straight line.
+Theta\* expands on A* by using line-of-sight to relax paths between nodes, which simplifies the path by removing unnecessary intermediate nodes. When adding vertices to the graph, it sets the parent to the furthest-back cell such that an unobstructed, line-of-sight path exists. This optimization allows for any angle \\(\theta : \tan^{-1}(\theta) \in \mathbb{Q}\\) and removes intermediate waypoints in a straight line.
 
 **Figure 3: Theta\* Optimizations**
 ![Theta\* Optimizations](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastar.png)
- _The above figure illustrates an A*-based path (left) and the optimized Theta*-based path (right). Whereas A* creates a connection between every individual node along the path, Theta* only connects nodes when a shorter path with direct line-of-sight exists. [Image Credits](http://aigamedev.com/static/tutorials/aap-pathcompare2D.png)_
+ _The above figure illustrates an A*-based path (left) and the optimized Theta\*-based path (right). Whereas A* creates a connection between every individual node along the path, Theta\* only connects nodes when a shorter path with direct line-of-sight exists. [Image Credits](http://aigamedev.com/static/tutorials/aap-pathcompare2D.png)_
 
 
 
@@ -123,7 +123,7 @@ _The above figure illustrates computing the steering angle from the lookahead po
 # Implementation
 
 
-The implementation contains five integrated components: map modifications, two path planners (RRT and Theta*), the trajectory follower, and a particle filter localizer.
+The implementation contains five integrated components: map modifications, two path planners (RRT and Theta\*), the trajectory follower, and a particle filter localizer.
 
 
 ## Map modifications - Jerry, Kolby
@@ -131,7 +131,7 @@ The implementation contains five integrated components: map modifications, two p
 We accounted for the size of the robot through morphological dilation, and we accounted for the presence of unmarked obstacles by modifying the provided map. Because the robot has size and is not simply a point, the robot may collide with an obstacle even when the center of the robot is a short distance away from the obstacle. Morphological dilation increases the size of all obstacles and walls, so the path planner will automatically stay a specified distance away. When a large obstacle is present which is not marked on the provided map, the path planner may choose a path which tries to go through the obstacle; the algorithm is not smart enough to go around the obstacle, and the robot is unable to reach our goal. We decided to take the simple measure of modifying the provided map to account for this.
 
 ### Dilating the Map to Account for Robot Size - Kolby
-The impassable features on the map were dilated by 60cm to account for the fact that the robot is not a point, which is important because path planners, especially Theta*, may produce paths which go very close to the wall. Furthermore, the Pure Pursuit algorithm cuts corners by nature, which can lead to a collision if the planned trajectory is very close to a corner. If the path planner thinks the obstacles and walls are thicker than they actually are, then the path returned should allow the robot to track the trajectory without hitting corners or obstacles. A map of Stata basement with this dilation is shown below, in Figure 7.
+The impassable features on the map were dilated by 60cm to account for the fact that the robot is not a point, which is important because path planners, especially Theta\*, may produce paths which go very close to the wall. Furthermore, the Pure Pursuit algorithm cuts corners by nature, which can lead to a collision if the planned trajectory is very close to a corner. If the path planner thinks the obstacles and walls are thicker than they actually are, then the path returned should allow the robot to track the trajectory without hitting corners or obstacles. A map of Stata basement with this dilation is shown below, in Figure 7.
 
 **Figure 7: Dilated Map of Stata Basement**
 ![Dilated Map of Stata Basement](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/dilated_map.jpg)
@@ -141,7 +141,7 @@ The above figure shows the resulting map  from dilating the impassable regions i
 
 ### Manually Editing the Map to Account for Obstacles - Jerry
 
-Large unmarked obstacles in the Stata basement often prevented the robot from reaching the goal point, which led us to mark these obstacles on the map. All the unmarked obstacles were against the wall of the basement, and protruded from the wall by about a meter. Despite their unobtrusiveness, these obstacles often prevented our robot from reaching its destination because Theta* generates the shortest path which is often very close to the wall, and therefore goes through these obstacles. We originally tried to apply morphological dilation to simply thicken the walls past the obstacles; however, we found that we had to use a dilation radius of 1.5 meters, which led some narrow corridors to be nearly or completely impassable. We finally realized that we could simply edit the provided map (see Figure 8 below); we made crude modifications in GIMP to mark the approximate locations of the obstacles, which allowed the robot to avoid them.
+Large unmarked obstacles in the Stata basement often prevented the robot from reaching the goal point, which led us to mark these obstacles on the map. All the unmarked obstacles were against the wall of the basement, and protruded from the wall by about a meter. Despite their unobtrusiveness, these obstacles often prevented our robot from reaching its destination because Theta\* generates the shortest path which is often very close to the wall, and therefore goes through these obstacles. We originally tried to apply morphological dilation to simply thicken the walls past the obstacles; however, we found that we had to use a dilation radius of 1.5 meters, which led some narrow corridors to be nearly or completely impassable. We finally realized that we could simply edit the provided map (see Figure 8 below); we made crude modifications in GIMP to mark the approximate locations of the obstacles, which allowed the robot to avoid them.
 
 
 **Figure 8: Original (Left) and Hand-modified (Right) Stata basement map.**
@@ -176,34 +176,34 @@ Paths between the start pose and destination point were scored by averaging the 
 ![Intersections where Bridge Sampling Worked and Failed](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/rrt.png)
 *The above figure shows the RRT-found path (green) between the start and end vertices. It took 48 seconds to find this path. Observe that RRT preferred using the top hallway over using the middle hallway because the turns required are smoother.*
 
-### Theta* - Sabina
+### Theta\* - Sabina
 
-Theta*, an A*-based search algorithm, computes any-angle shortest paths in a discrete grid by relaxing neighbor constraints, applying heuristics to bias search nodes, and checking for line-of-sight between nodes.
+Theta\*, an A*-based search algorithm, computes any-angle shortest paths in a discrete grid by relaxing neighbor constraints, applying heuristics to bias search nodes, and checking for line-of-sight between nodes.
 
 #### Using Euclidean Distance as the Search Heuristic
 
-Theta* prioritizes which paths to explore by favoring lower cost nodes, which is calculated by adding the Euclidean distances between nodes along the shortest-cost path. Node costs are calculated by recursively summing the Euclidean distances between the parent and child nodes between the current node and the start node, and then adding the Euclidean distance between the current node and the goal node. The node costs are then added into a priority queue, which is then used to select the lowest cost node to explore. By exploring the lowest cost node first, Theta* prioritizes paths that seem to be leading closer to the goal.
+Theta\* prioritizes which paths to explore by favoring lower cost nodes, which is calculated by adding the Euclidean distances between nodes along the shortest-cost path. Node costs are calculated by recursively summing the Euclidean distances between the parent and child nodes between the current node and the start node, and then adding the Euclidean distance between the current node and the goal node. The node costs are then added into a priority queue, which is then used to select the lowest cost node to explore. By exploring the lowest cost node first, Theta\* prioritizes paths that seem to be leading closer to the goal.
 
 #### Checking In-Line-of-Sight to Reduce Number of Waypoints in the Path
 
-In-line-of-sight allows Theta* to simplify the path by discarding intermediate nodes, by checking whether the line between any two nodes contains any obstacles. It does this by stepping along the direct path between the two nodes and checking if any intervening cells contain obstacles. Waypoints are only created to connect paths with direct line of sight between nodes, thereby reducing the number of intermediate points between the start and end node. See Figure 3 (Theta* Optimization) above for a visual representation of waypoint selection. The linear trajectory between waypoints are subdivided into many linear segments, so the overall best trajectory is returned as a piecewise linear path to be used in Trajectory Tracking.
+In-line-of-sight allows Theta\* to simplify the path by discarding intermediate nodes, by checking whether the line between any two nodes contains any obstacles. It does this by stepping along the direct path between the two nodes and checking if any intervening cells contain obstacles. Waypoints are only created to connect paths with direct line of sight between nodes, thereby reducing the number of intermediate points between the start and end node. See Figure 3 (Theta\* Optimization) above for a visual representation of waypoint selection. The linear trajectory between waypoints are subdivided into many linear segments, so the overall best trajectory is returned as a piecewise linear path to be used in Trajectory Tracking.
 
 #### Visualization
 
-The implementation of Theta* publishes several visualization messages. The start and end points are selected using Pose Estimate and Nav Goal tools respectively on rviz. The start point is visualized as a green sphere, and the goal point is visualized as a red sphere. The nodes searched via the search algorithm are visualized as small grey dots. As shown by the expansion direction of the grey dots, the Theta* heuristic successfully biases the search area towards the goal point. The final trajectory path (blue line) is shown via blue segments drawn between “waypoints” (red dots) along the path.
+The implementation of Theta\* publishes several visualization messages. The start and end points are selected using Pose Estimate and Nav Goal tools respectively on rviz. The start point is visualized as a green sphere, and the goal point is visualized as a red sphere. The nodes searched via the search algorithm are visualized as small grey dots. As shown by the expansion direction of the grey dots, the Theta\* heuristic successfully biases the search area towards the goal point. The final trajectory path (blue line) is shown via blue segments drawn between “waypoints” (red dots) along the path.
 
-**Figures 11: Sample Run of Theta**
-![Sample Run of Theta*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastarpath.png)
-*The above diagram illustrates a sample path from Theta*. It took 7.47s to compute*
+**Figures 11: Sample Run of Theta\**
+![Sample Run of Theta\*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastarpath.png)
+*The above diagram illustrates a sample path from Theta\*. It took 7.47s to compute*
 
 #### Optimizing Theta Star
 
-Vectorizing in\_line\_of\_sight, decreasing the map resolution, and removing the rviz visualization significantly increased the speed of the theta* search algorithm. After profiling the code, we found that visualization alone takes up half the time of the theta* script to run, so removing rviz visualization increases the overall search speed by 2x. Vectorizing the in\_line\_of\_sight function also showed a decrease in time, in particular changing the python for-loops to numpy arrays, because we found from profiling that in\_line\_of\_sight took the bulk of the execution time. The largest optimization involves decreasing the resolution of the map. Decreasing the resolution decreases the number of nodes needed to be searched by theta*, thereby increasing the search speed of the path planner. We decreased the resolution of the map by a factor of 2, which decreases the number of grid cells in the map (and thus the search time) by a factor of 4. We chose the factor 2 as the minimum resolution decrease to achieve an acceptable runtime.
+Vectorizing in\_line\_of\_sight, decreasing the map resolution, and removing the rviz visualization significantly increased the speed of the theta\* search algorithm. After profiling the code, we found that visualization alone takes up half the time of the theta\* script to run, so removing rviz visualization increases the overall search speed by 2x. Vectorizing the in\_line\_of\_sight function also showed a decrease in time, in particular changing the python for-loops to numpy arrays, because we found from profiling that in\_line\_of\_sight took the bulk of the execution time. The largest optimization involves decreasing the resolution of the map. Decreasing the resolution decreases the number of nodes needed to be searched by theta\*, thereby increasing the search speed of the path planner. We decreased the resolution of the map by a factor of 2, which decreases the number of grid cells in the map (and thus the search time) by a factor of 4. We chose the factor 2 as the minimum resolution decrease to achieve an acceptable runtime.
 
 ## Trajectory Tracking - Jerry, Kolby, Marek
 The Pure Pursuit trajectory tracker was implemented according to the algorithm with few modifications. Our implementation used a fixed lookahead distance of \\(1.5\\) meters, assumed the wheelbase length was \\(0.25\\) meters, and published drive commands with a fixed forwards speed of \\(2.5\\) meters per second. These parameters were the default values in the skeleton code provided (with the exception of speed, which we increased in the interest of time); we found the trajectory tracker performed adequately with these parameters and we did not have time to tune them or to experiment with variable lookahead distance or forward speed.
 
-Implementing Pure Pursuit with NumPy allowed it to run efficiently, far in excess of real time. The slowest part of the algorithm is where it finds the closest point on the trajectory to the robot's current location. This requires computing the distance from the robot to every line segment on the trajectory, which can be done efficiently using NumPy, even for trajectories which contain many line segments. In practice, however, the path planners Theta* and RRT both tend to return trajectories with 20 or fewer segments, so this performance optimization turned out to be likely unnecessary. Empirically, the implementation was able to output a drive command within \\(0.01s\\) of receiving the robot's current pose from our localization algorithm, which is more than fast enough; our localization algorithm only publishes every \\(0.05s\\), the same rate as the Velodyne LIDAR sends new laser scans.
+Implementing Pure Pursuit with NumPy allowed it to run efficiently, far in excess of real time. The slowest part of the algorithm is where it finds the closest point on the trajectory to the robot's current location. This requires computing the distance from the robot to every line segment on the trajectory, which can be done efficiently using NumPy, even for trajectories which contain many line segments. In practice, however, the path planners Theta\* and RRT both tend to return trajectories with 20 or fewer segments, so this performance optimization turned out to be likely unnecessary. Empirically, the implementation was able to output a drive command within \\(0.01s\\) of receiving the robot's current pose from our localization algorithm, which is more than fast enough; our localization algorithm only publishes every \\(0.05s\\), the same rate as the Velodyne LIDAR sends new laser scans.
 
 For ease of use and debugging, the implementation automatically halts once the goal point is reached, and publishes useful visualization messages. When the goal point is detected as being within \\(0.5m\\) of the robot, the implementation automatically resets and clears the trajectory being followed, until it receives a new trajectory. The implementation visualizes the closest point on the trajectory, a circle with the lookahead radius, the lookahead point itself, and the arc computed from the bicycle Ackermann model which Pure Pursuit follows to the lookahead point.
 
@@ -227,9 +227,9 @@ _This diagram shows the entirety of the pathway, from the sensor inputs to the d
 
 ## Evaluation
 
-### Theta* Was Faster and More Reliable - Ravi
+### Theta\* Was Faster and More Reliable - Ravi
 
-Theta* proved superior compared to RRT with its faster path computation (1.40s vs 33.44s), higher success rate (100% vs 70%), and shorter yet pursuable paths over 10 randomized, sample trials. As such, our final implementation used the Theta* algorithm.
+Theta\* proved superior compared to RRT with its faster path computation (1.40s vs 33.44s), higher success rate (100% vs 70%), and shorter yet pursuable paths over 10 randomized, sample trials. As such, our final implementation used the Theta\* algorithm.
 
 ### Pure Pursuit Worked on Hand-made Trajectories - Ravi
 
@@ -242,7 +242,7 @@ In preliminary testing of pure pursuit, we focused on qualitatively ensuring the
 
 Once the path planner and trajectory tracker were both implemented, we integrated them together and tested them quantitatively and qualitatively in simulation. We tested the simulated robot's ability to find a path and drive to multiple goal points, both in clear open areas and in a crowded region with complex obstacles. We qualitatively verified that the paths were efficient and that the robot was appropriately moving towards the specified goal points. We also recorded how long it took for the path planner to compute the paths and the tracking error of the trajectory tracker. The average tracking error was computed by computing the average distance between the simulated robot's location, as determined by localization, and the closest point on the trajectory.
 
-Our test results are shown in the video in Figure 13 below. The Theta* path planning algorithm was able to compute paths through open space in negligible time, and was able to plan a path around a wall in 10 seconds. The tracking error was large overall, at 0.351 meters, but this is because at the beginning of each path, the robot was not oriented in the direction of the path. Once the robot converged onto the planned trajectory, the tracking error was only 0.068 meters.
+Our test results are shown in the video in Figure 13 below. The Theta\* path planning algorithm was able to compute paths through open space in negligible time, and was able to plan a path around a wall in 10 seconds. The tracking error was large overall, at 0.351 meters, but this is because at the beginning of each path, the robot was not oriented in the direction of the path. Once the robot converged onto the planned trajectory, the tracking error was only 0.068 meters.
 
 Overall, we were satisfied by the ability of the integrated path planning and trajectory tracking algorithm to find and follow paths in simulation.
 
@@ -251,7 +251,7 @@ Overall, we were satisfied by the ability of the integrated path planning and tr
 **Figure 13: Path Planning and Trajectory Tracking in Simulation**.
 <iframe width="560" height="315" src="https://www.youtube.com/embed/C1fnWmCpJxk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
-_This video visualizes both the path planning process with the Theta* algorithm and the trajectory tracking process with the Pure Pursuit algorithm, run in simulation. The Theta* algorithm was able to efficiently find a path, and the Pure Pursuit algorithm was able to follow it with only minor deviations once it had converged onto the path from the start point._
+_This video visualizes both the path planning process with the Theta\* algorithm and the trajectory tracking process with the Pure Pursuit algorithm, run in simulation. The Theta\* algorithm was able to efficiently find a path, and the Pure Pursuit algorithm was able to follow it with only minor deviations once it had converged onto the path from the start point._
 </center>
 
 
@@ -259,7 +259,7 @@ _This video visualizes both the path planning process with the Theta* algorithm 
 
 We performed multiple test runs on the real robot in the Stata basement, with good results. We used the same metrics as those in simulation--measuring the time it took to compute the trajectory to the goal point as well as the tracking error. We performed a short test run across half the basement as well as two long test runs across the entire basement. The path for the short test run took 2.3 seconds to compute, and the path for the long test runs took 47.21 seconds and 22.9 seconds to compute. The tracking error for the short test run was 0.0437 meters, and the tracking errors for the long test runs were 0.101 and 0.0858 meters, respectively. Our video of the second long test run is in Figure 14 below.
 
-We found that the length of time it takes for Theta* to compute the trajectory is strongly dependent on the effectiveness of the heuristic, but the slowest runtime we found was still sufficiently fast. In an open space where the trajectory is directly towards the goal point, the heuristic is very effective and leads to a very rapid computation. In a space where the trajectory must go around a large obstacle, such as in the first test run, the heuristic is ineffective and the computation time is substantially longer. Overall, however, even 47.21 seconds is an acceptable runtime; we had budgeted around a minute to find the trajectory.
+We found that the length of time it takes for Theta\* to compute the trajectory is strongly dependent on the effectiveness of the heuristic, but the slowest runtime we found was still sufficiently fast. In an open space where the trajectory is directly towards the goal point, the heuristic is very effective and leads to a very rapid computation. In a space where the trajectory must go around a large obstacle, such as in the first test run, the heuristic is ineffective and the computation time is substantially longer. Overall, however, even 47.21 seconds is an acceptable runtime; we had budgeted around a minute to find the trajectory.
 
 The observed tracking error is sufficiently low. A tracking error of around 0.1 meters, as was observed, is within the expected error from localization, especially considering 0.1 meters is less than the width of the robot.
 
@@ -268,7 +268,7 @@ The observed tracking error is sufficiently low. A tracking error of around 0.1 
 **Figure 14: Path Planning and Trajectory Tracking on the Robot.**
 <iframe width="560" height="315" src="https://www.youtube.com/embed/AkD9tCay0mQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
-_This video shows one of our three test runs on the robot in the Stata basement. The robot first uses Theta* to find the shortest path to the specified goal point in 22.9 seconds, then uses Pure Pursuit to follow the shortest path with an average tracking error of 0.0858 meters._
+_This video shows one of our three test runs on the robot in the Stata basement. The robot first uses Theta\* to find the shortest path to the specified goal point in 22.9 seconds, then uses Pure Pursuit to follow the shortest path with an average tracking error of 0.0858 meters._
 </center>
 
 
