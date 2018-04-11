@@ -92,6 +92,7 @@ Because the path is composed of line segments, the problem reduces to intersecti
 
 
 (1)  \\( |x-q| = r \\)</br>
+(2)  \\( |x-q| = r \\)</br>
 (2)  \\( |m+tv−q| = r \\)</br>
 (3)  \\( (m+tv−q)·(m+tv−q) = r^2 \\)
 
