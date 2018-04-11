@@ -1,4 +1,4 @@
-Lab 6
+Lab 5
 =====
 
 ## Abstract - Ravi
@@ -23,7 +23,7 @@ We implemented a particle filter to perform localization--using sensor data with
 
 Our system consists of multiple interacting parts: sensory data, a map of Stata basement, a precomputed lookup table, and our particle filter algorithm, which uses the former parts to determine our most likely pose. The particle filter algorithm uses odometry messages to intuit how the robot has moved since the last time step. Laser scans from the LIDAR, along with the map and precomputed lookup table, are used in a submodule of the algorithm called RangeLibC to reassess the probability distribution associated with our location. The most likely pose is extracted from this distribution. This process is repeated, and can be seen in the figure below. 
 
-<center>**Particle Filter Localization System Diagram**<br /><span>![Particle Filter Localization System Diagram](assets/images/lab6/SystemDiagram.png)</span></center>
+<center>**Particle Filter Localization System Diagram**<br /><span>![Particle Filter Localization System Diagram](assets/images/lab5/SystemDiagram.png)</span></center>
 
 <center>**Figure 6.1**: *Diagram illustrating an overview of our system architecture. The robot provides laser and odometry sensor data. Combining this data with a known map of the environment and the initial pose, the particle filter calculates an inferred pose for the robot. Odometry data is passed to RViz for visualization.*</center>
 
@@ -32,7 +32,7 @@ Our system consists of multiple interacting parts: sensory data, a map of Stata 
 
 We first describe the particle filter in generality. Figure 6.2 provides an overview of the algorithm.
 
-<center>**Particle Filter Pipeline**<br /><span>![Particle Filter Pipeline](assets/images/lab6/ParticleFilter.png)</span></center>
+<center>**Particle Filter Pipeline**<br /><span>![Particle Filter Pipeline](assets/images/lab5/ParticleFilter.png)</span></center>
 
 <center>**Figure 6.2**: *Diagram illustrating the steps of Particle Filter/Monte Carlo Localization. It first initializes the particles based on known robot location. Then, at each timestep, MCL: 1) resamples the particles based on the weights computed in the previous timestep, 2) moves each particle's pose using the motion model, and 3) updates each particle's weight using the sensor model.*</center>
 
@@ -61,7 +61,7 @@ When our algorithm receives an initial pose or initial position from either the 
 
 <br />
 <br />
-<center>**Particle Filter Local Initialization**<br /><span>![Particle Filter Local Initialization](assets/images/lab6/InitialParticles.png)</span></center>
+<center>**Particle Filter Local Initialization**<br /><span>![Particle Filter Local Initialization](assets/images/lab5/InitialParticles.png)</span></center>
 <center>**Figure 6.3**: *Screenshot showing the initial poses (red vectors) after clicking a location in RViz. Positions were drawn from a normal distribution centered at the clicked point and with a standard deviation of \\(1m\\). Orientations were drawn from a uniform distribution.*
 </center>
 ### Using Randomness to Account for Noise in Odometry
@@ -70,7 +70,7 @@ As a part of the particle filter algorithm, we use a Monte Carlo approach to acc
 
 For each particle, we independently select the distance to move the particle from a log-normal distribution or normal distribution. We draw the distance to move each particle from a log-normal distribution if the odometry data indicates the robot is moving, or from a normal distribution if the odometry data indicates the robot is standing still. If the odometry indicates the robot is moving forward, we expect the robot is unlikely to be moving backwards; a log-normal distribution has no probability mass less than zero, reflecting this property. We determine the robot's movement direction by comparing the robot's change in position with the orientation reported by odometry. Figure 6.4 provides the equations we use for these calculations.
 
-<center>**Distance Formulas**</br><span>![Distance Formulas](assets/images/lab6/DistanceFormulas.png)</span></center>
+<center>**Distance Formulas**</br><span>![Distance Formulas](assets/images/lab5/DistanceFormulas.png)</span></center>
 
 <center>**Figure 6.4**: *How we draw the distances \\(d\\) to move each particle from the odometry data. The odometry data provides us with a pose \\((x, y, \theta)\\) (computed from dead reckoning) and a covariance matrix \\(\Sigma\\). From the pose, we compute \\(\Delta x, \Delta y\\), the differences in the \\(x\\) and \\(y\\) coordinates from the previous reported pose. These allow us to determine the direction and distance of movement, and we estimate the noise using \\(\Sigma\\). We then draw the distances to move each particle based on these computations.*</center>
 
@@ -78,7 +78,7 @@ We sample the angle to rotate each particle from a normal distribution centered 
 
 Figure 6.5 provides an example of the complete pose updating process.
 
-<center><span>![Motion Model](assets/images/lab6/MotionModelDiagram.png)</span></center>
+<center><span>![Motion Model](assets/images/lab5/MotionModelDiagram.png)</span></center>
 
 <center>**Figure 6.5**: *For each particle we draw the distance to move the particle from a log-normal distribution and the angle to rotate the particle from a normal-distribution, with parameters selected based on the odometry sensor data. Each particle is translated by the selected distance in the direction the particle was facing, and then rotated by the selected angle. If the robot is detected as not moving or moving backwards, the distance is instead drawn from a normal distribution or negative log-normal distribution instead (not shown).*</center>
 
@@ -93,7 +93,7 @@ Following the lab handout, we construct a 4-part sensor model to specify the pro
 
 We add all these components together to compute the total probability of measuring a distance \\(r\\). This probability is then "squashed" to the power of \\(\frac{12}{num\\\_laser\\\_samples}\\), where \\(num\\\_laser\\\_samples\\) is the number of laser measurements we make from each particle. The squashing exponent comes out to \\(\frac{1}{6}\\) for 72 samples. Squashing ensures that if many laser measurements all report related errors, e.g. due to many laser measurements hitting the same unexpected obstacle, it does not too strongly impact our particle weights. All parameters used in our sensor model were hand-tuned to optimize for score on the autograder; we did not find it necessary to re-tune them for the real robot. Figure 6.6 provides a visualization of our final, normalized sensor model.
 
-<center>**Sensor Model Visualization**</br><span>![Sensor Model Visualization](assets/images/lab6/SensorModelVisualization.png =528x417)</span></center>
+<center>**Sensor Model Visualization**</br><span>![Sensor Model Visualization](assets/images/lab5/SensorModelVisualization.png =528x417)</span></center>
 
 <center>**Figure 6.6**: *Our precomputed sensor model (after squashing and normalization), showing the probability of measuring a distance given the ground truth distance.*</center>
 
@@ -143,7 +143,7 @@ These accuracy measurements indicate the general reliability of particle filter 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/RobK9O0yZCo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
 <center>**Figure 6.8**: *The above video shows our particle filter algorithm running on the robot at \\(20 hz\\) with \\(72\\) laser samples per update and \\(4000\\) particles. The red path represents the inferred poses while the white dots represent laser scans. We qualitatively determined the filter was accurate for \\(114\\) of the \\(120\\) seconds (\\(95\\%\\)).*</center>
 
-<center>**Inferred vs Actual Trail**<br /><span>![Inferred vs Actual Trail](assets/images/lab6/InferredActualTrail.png =450x450)</span></center>
+<center>**Inferred vs Actual Trail**<br /><span>![Inferred vs Actual Trail](assets/images/lab5/InferredActualTrail.png =450x450)</span></center>
 <center>**Figure 6.9**: *This diagram shows the inferred trail in red in the area where the localization diverged in the test run shown in Figure 6.9, and compares it to a hand-drawn actual trail. We see that the localization overshot the corner but was otherwise correct.*</center>
 
 ## Lessons Learned: Tuning Noise is a Tall Task - Kolby, Marek
