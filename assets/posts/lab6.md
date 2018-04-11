@@ -194,7 +194,7 @@ The implementation of Theta\* publishes several visualization messages. The star
 
 <center>**Figure 11: Sample Run of Theta\***</br>
 ![Sample Run of Theta\*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastarpath.png =450x550)</br>
-*The above diagram illustrates a sample path from Theta\*. It took 7.47s to compute*
+*The above diagram illustrates a sample path from Theta\*. It took 7.47s to compute*</center>
 
 #### Optimizing Theta Star
 
@@ -222,7 +222,7 @@ The abbreviated ROS architecture, showing the entire pathway from the sensor inp
 
   
 <center>**Figure 12: Abbreviated ROS Architecture**</br>
-![Abbreviated ROS Architecture*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/ros_architecture.jpg =360x630)</br>
+![Abbreviated ROS Architecture*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/ros_architecture.jpg =450x500)</br>
 _This diagram shows the entirety of the pathway, from the sensor inputs to the drive commands issued to the motor. Each box represents a node; the arrows represent topics which nodes subscribe to or publish to. Some topic names have been omitted from the diagram for brevity. Where it is unclear what information is passed between nodes, the topics are labeled._</center>
 
 ## Evaluation
