@@ -25,4 +25,6 @@ run("assets/posts/lab3.md", "lab3")
 run("assets/posts/lab4.md", "lab4")
 run("assets/posts/lab5.md", "lab5")
 run("assets/posts/lab6.md", "lab6")
+run("assets/posts/final.md", "final")
+
 
