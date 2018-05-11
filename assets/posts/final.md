@@ -2,7 +2,7 @@
 
 # Abstract (Marek)
 The challenge of fast collision avoidance consists of navigating through an unknown environment at high speeds while avoiding randomly placed obstacles. This problem is tackled by using lidar and path planning with IMU-derived orientation.
-<iframe width="560" height="315" src="https://youtu.be/etJRtKCzkqU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/etJRtKCzkqU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 # Intro (Kolby)
 ## Overview & Motivation
