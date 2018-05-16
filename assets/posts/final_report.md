@@ -1,8 +1,45 @@
-# Final Challenge - Fast Collision Avoidance
+# Final Report DRAFT - Fast collision avoidance 
+1. Abstract (marek)
+2. Intro (kolby)
+    - Overview & Motivation
+    - Proposed Approach 1
+    - Proposed Approach 2
+3. Design/Algorithm
+    - Conceptual System Overview (marek)
+    - Algorithms/Technical Details
+        - Path Planning Algorithm (ravi)
+        - Pure Pursuit (jerry)
+        - Safety Controller (kolby)
+        - SLAM (sabina)
+    - Major Decisions (kolby)
+4. Implementation
+    - Path planning (ravi)
+    - Pure pursuit (jerry)
+    - Safety controller (jerry)
+    - SLAM (sabina)
+    - ROS Architecture (jerry)
+5. Evaluation
+    - Test Procedures (marek)
+    - Outcomes (unassigned, can't do yet)
+    - Analyses (unassigned, can't do yet)
+    (Make sure claims backed up with logic)
+        - What is being tested?
+        - How was it tested?
+        - What was the outcome?
+        - Data to back up outcome?
+        - (Optional) Comparisons?
+        - Conclusions?
+6. Lessons Learned (unassigned)
+    - Individual technical and communication lessons learned;
+    - suggestions for improvement
+7. Future Work (unassigned)
+
+=============================================
+=============================================
 
 # Abstract (Marek)
 The challenge of fast collision avoidance consists of navigating through an unknown environment at high speeds while avoiding randomly placed obstacles. This problem is tackled by using lidar and path planning with IMU-derived orientation.
-<iframe width="560" height="315" src="https://www.youtube.com/embed/etJRtKCzkqU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://youtu.be/etJRtKCzkqU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 # Intro (Kolby)
 ## Overview & Motivation
