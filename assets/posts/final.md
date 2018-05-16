@@ -1,144 +1,224 @@
-# Final Challenge - Fast Collision Avoidance
+# Final Report - Fast Collision Avoidance 
 
-# Abstract (Marek)
-The challenge of fast collision avoidance consists of navigating through an unknown environment at high speeds while avoiding randomly placed obstacles. This problem is tackled by using lidar and path planning with IMU-derived orientation.
-<iframe width="560" height="315" src="https://www.youtube.com/embed/etJRtKCzkqU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+# Abstract (Ravi and Marek)
+This Fast Collision Avoidance challenge requires the RACECAR to navigate through an unknown environment at high speeds and with zero obstacle collisions. The final implementation consists of three main components: obstacle detection and path planning, path following, and safety-induced dynamics readjustments. After detecting obstacles in real-time using LIDAR data, and combining orientation data from the Inertial Measurement Unit (IMU) (less than 0.1 rad error over a curved 20 meter test course), the greedy path planner returns locally-optimal paths towards the goal at 20Hz. The path following controller, adapted from a pure pursuit controller, actuates the robot. Finally, the Safety Controller overrides the published drive commands as needed to prevent collisions. Each component runs at 20Hz. This approach successfully enabled the RACECAR to safely navigate through unknown courses at an average of 1.95 m/s.
+<center>
+    **Figure 1: Video Abstract**<br />
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/uCCF3jQEOzY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
+
 
 # Intro (Kolby)
-## Overview & Motivation
-For the final challenge, we chose to take on the task of fast collision avoidance. We saw this as an exciting opportunity to continue our work with autonomous robots in a challenging and important technical assignment. Driving at high speeds while safely avoiding obstacles, even on a small scale such as this, is a crucial task in the development of self-driving cars and other autonomous vehicles. 
-## Proposed Approach 1
-We initially hypothesized that SLAM would be essential to simultaneously localize obstacles and create an updated map with these obstacles present. This map would then be given to a path planner, which we believed would be an implementation of RRT. The path planner would produce a path around the obstacles for the robot to execute, and we would employ a safety controller as an added measure to ensure successful collision avoidance. Upon further consideration, however, we concluded that this approach would be unnecessary for this challenge. We determined that, instead of localizing each object, it would be simpler to rely on the LIDAR to find unoccupied space and then use a greedy path planner to drive as far as possible through this unoccupied space.
-# Proposed Approach 2
-We then hypothesized that this challenge could be reasonably tackled with only IMU data and a path planner based on Dubins curves. Dubins curve is the shortest curve connecting two points assuming the vehicle is traveling forward and with a constraint on its curvature (related to the vehicle's minimum turn radius). The IMU data, which could be obtained directly from the robot, would yield a reasonable estimate for robot orientation. With knowledge of orientation, we would then create paths using Dubins curve through unoccupied space (as determined by the robot's LIDAR) in the lateral direction to the goal region (i.e. forward). Again, as an added safety measure, we would employ a safety controller to correct potential bad decisions by the robot. 
+## Overview & Motivation: Avoiding Obstacles in Real Life
+Fast Collision Avoidance requires the RACECAR to navigate through an unknown course at high speeds. This real-world challenge emphasizes both safety, since collisions resulted in a disqualification, and speed, the primary metric for scoring. A collision avoidance component is necessary for self-driving cars, because obstacles on the road, such as other cars, are often not known in advance.
+## Proposed Approach 1: Global is Too Complex
+We initially attempted a complex and heavyweight but globally correct approach, but we realized it was both unwieldy and unnecessary. In this approach, a LIDAR-based simultaneous localization and mapping (SLAM) algorithm would place the robot in a global frame, thus allowing a path planner, such as RRT, to identify a drivable, obstacle-free route towards the goal. A Pure pursuit controller would then follow the path and a safety controller would correct for path following errors to prevent obstacle collisions. Upon initial testing and further consideration, SLAM did not offer the required speed or precision for this challenge, and was also difficult to implement efficiently. We also realized that global localization and path planning was unnecessarily complex for this challenge, as we discuss below.
+## Proposed Approach 2: Local is Simple
+Our second approach instead computed locally-optimal paths using a LIDAR and IMU-based greedy path planner, which was substantially easier to implement than a globally correct approach. Orientation estimates, derived from the IMU, enabled calculation of the goal direction. The path planner constructed Dubins paths (the shortest path between two poses with a limit on curvature) through unoccupied space (as determined by the robot's LIDAR) towards the goal. Because the challenge description stated there would be no "dead ends", it is sufficient to plan paths locally in this manner. Similar to the initial approach, the pure pursuit algorithm would be used for path following and safety controller would correct for path following errors to prevent obstacle collisions. This was the approach we ultimately decided to use.
+
 # Design/Algorithm
 ## Conceptual System Overview (Marek)
-Our current fucntioning system consists of three major technical components: path planning, pure pursuit, and safety controller. We use a greedy path planning Ravi*(tm) algorithm that directs us towards the general direcion of the goal point and avoids obstacles as far ahead as the lidar can see. We update this path every time step to dynamically avoid newly discovered obstacles. Pure pursuit, an algorithm that tracks the closest point on a drawn path within a specified lookahead distance, is used to follow these planned paths. Safety controller checks that obstacles ahead of the robot are within safe stopping distance. Otherwise, it will turn the robot away from obstacles if possible and slow it down if necessary. When run simultaneously, these three components ensure we can traverse an obstacle ridden path safely and swiftly. The more specific technical details will be discussed below. 
+The system for the Fast Collision Avoidance challenge consists of three major technical components: a IRN<sup>1</sup> path planner, a pure pursuit path follower, and a safety controller. The greedy IRN path planner first computes a navigable region (from LIDAR data) and then computes an obstacle-free path to the furthest LIDAR point in the goal direction. On every timestep, the RACECAR updates this path to avoid newly discovered obstacles. The next component, a pure pursuit path follower, finds an appropriate lookahead point on the path and then actuates the robot towards that point. The safety controller then checks that obstacles ahead of the robot are a safe distance away. If not, it navigates the robot away from obstacles, and if necessary, lowers the robot's speed. When run simultaneously, these three components ensure the robot can traverse an obstacle-ridden path safely and swiftly.
 
-## Algorithms/Technical Details
-### Path Planning Algorithm (Ravi)
-The robot dilutes LIDAR data, identifies navigable paths via a greedy algorithm, selects the best path, and publishes it to the Pure Pursuit component. Path planning process involves four components.
+<sup><sub><sup>1</sup>IRN stands for InstantRahmanNoodle. This name was inspired by our teammate Ravi Rahman developing this algorithm. In this case, we interpret paths as noodles and return them instantly.</sub></sup>
 
-1. First, it dilutes the laser scan data into navigable points.
-2. Second, it combines orientation updates with  diluated laser data to compute DUBINS paths
-3. Third, it rejects non-navigable paths and scores the remaining options
-4. Fourth, it send sends the best path to the Pure Pursuit Algorithm
+## Algorithms
+### IRN Path Planning Algorithm: a Greedy Planner (Ravi)
+The IRN path planning algorithm has three steps:
 
-Dilation accounts for the robot’s non-zero size by reducing the raw LIDAR ranges to the maximum distance the robot can safely travel. Without dilation, paths would neglect to account for the RACECAR’s width, resulting in many crashes. Originally, we simply measured the RACECAR’s dimensions, and dilated each laser scan by this constant factor. However, in simulator testing, the robot would still approach obstacles too closely, and occasionally crash, even though the robot could occupy any point on the path without intersecting an obsticle. To correct for the path follower’s error, the dilation amount is scaled proportional to the current speed. This approach is logically coherent, since the path planner is less accurate as the robot travels at higher speeds. As such, it is crucial to return more error-tolerant paths, which this dynamic dilation accomplishes.
+1. It computes a set of Dubins paths from the robot's current pose in several different directions.
+1. It determines how far the robot can drive along each path based on LIDAR data, and truncates each path to that length.
+1. It scores each path using a heuristic to determine which path is most likely to bring the robot towards the goal, and outputs the path with the best score.
 
-On each orientation estimate originating from the IMU, and with the dilated LIDAR data, the RACECAR then computes DUBINS paths. A DUBINS path navigates between two poses via a circular trajectory, followed by a straight-line segment, followed by another circular trajectory. The DUBINS algorithm returns the shortest path subject to a minimum radius for the circular components (which accounts for the non-holonomic nature of the robot). Since paths were computed in the RACECAR frame, the start pose is simply the origin, pointed forward. The end pose would be on the end of the dilated laser range, pointed towards the goal. The IMU orientation updates were used to compute the orientation towards the goal. This approach works because the corridor is straight, so the starting orientation is the same as the goal orientation.
+On each timestep, the IRN algorithm draws a set of Dubins paths which lead the robot in a variety of different directions. A Dubins path connects two poses with the shortest path given a curvature constraint. This limit on curvature accounts for the RACECAR's minimum turning radius. The start pose for each Dubins path is the robot's current pose; the end poses are uniformly spaced out in different angles from the robot, where each pose is located as far as the robot's LIDAR can see in that direction, and is oriented towards the goal area.
 
-To select the end pose for Dubins Paths, we tried three approaches: greedy, randomized greedy, and uniform. In the greedy approach, the laser ranges with the greatest distance in the direction of the goal were sampled. This approach resulted in nearly identical paths with little variation, since these ranges were very close to each-other. In the greedy-randomized approach, laser ranges were weighted by the distance component in the direction of the goal, and a randomized sample was taken. This approach resulted in slightly more variation than the purely greedy option. However, in the scenario where all poses would require a sharp turn, and that sharp turn would intersect an obsticle, both approaches failed to identify valid paths. As such, we decided on a uniform approach, where end poses were selected over an evenly spaced interval. This approach guaranteed all directions were considered and always returned varying path options.
+The IRN algorithm then truncates each Dubins path to the furthest point along the path that the robot can drive to without colliding with an obstacle. For each path, the algorithm samples evenly-spaced points along the path and determines the first point, if any, where the robot will collide with an obstacle which was detected by the most recent LIDAR data. In doing so, the algorithm must account for the dimensions of the robot, and check not just whether an obstacle lies along the path itself, but rather any obstacles are close enough for the robot to collide with while following the path. Each path, if an obstacle lies along it, is then truncated so that the remaining path is collision-free.
 
-Each DUBINS path was sampled to determine whether it would be navigable, and the navigable paths were then scored to select the best path to pursue. We rejected paths where any sample on the path would be beyond the dilated laser scan pointed towards the sample. In the event where no paths were found, the algorithm triggers an emergency stop. (Note that, as the robot slows down, the dilation will lessen, so the algorithm will likely find a path on future timesteps). Otherwise, for all navigable paths, we scored them by the path’s distance towards the goal. The path with the highest score is then sent to Pure Pursuit component for navigation.
+Once the IRN algorithm has truncated each path to be collision-free, the paths are scored to identify and return the path which will best lead the robot to the goal area. If there are no collision-free paths, the algorithm triggers an emergency stop. If paths do exist, paths are scored using a heuristic; we describe the heuristic we used below in the Implementation section on the Path Planning algorithm.
+
+<center>**Figure 2: IRN Algorithm**<br />
+    ![IRN Algorithm*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/best_path_selection.PNG =648x370)<br/>
+_This diagram illustrates the main components of the IRN Algorithm. In the left figure, the green lines represent a sample of the Dubins found. The white dots represent the limits of the navigable space. In the right picture, the remaining green line represents the path with the highest score that is then pursued. Note that the goal is towards the top of the picture._
+</center>
+
+### Pure Pursuit (Ravi)
+The Pure Pursuit path follower, adapted from the [previous lab](https://github.mit.edu/pages/rss2018-team12/#lab6), smoothly actuates the RACECAR along the path returned by the path planner. The path follower finds a lookahead point on the path a fixed distance from the robot. It then computes an appropriate steering angle and speed to reach this point. Finally, these motion commands drive the RACECAR.
+### Safety Controller: Last-Resort Obstacle Dodging (Kolby)
+The safety controller intercepts the drive command issued by the Pure Pursuit algorithm and, if it is unsafe, issues a safer drive command to override it. It operates independently of the path planner and follower, and as much as possible relies directly on sensor data, so as to be robust to any bugs in the path planner or follower.
+
+Given the intercepted drive command, the safety controller predicts the path which the path follower intends to follow, and if it is unsafe, considers a number of alternative navigable paths, and returns an appropriate drive command for the safest alternate path. The safety controller assumes that the robot will turn in an arc with a constant steering angle (i.e. the steering angle in the intercepted drive command) for some duration and then drive forward in a straight line. The algorithm determines the maximum speed the robot can drive at and still stop in time if it were to follow a path of this form. If the desired speed in the intercepted drive command is greater than this safe speed, the safety controller examines a number of alternative paths, and if any of them have a higher maximum safe speed, issues a drive command to follow the best alternative path. If no alternative path is safer, the safety controller re-issues the original intercepted drive command, but at a lower, safe speed.
+
+### Simultaneous Localization and Mapping (SLAM) (Sabina)
+Simultaneous Localization and Mapping, also known as SLAM, enables the RACECAR to build a map of its environment while also localizing itself within this map in real-time. "Localization" involves inferring the RACECAR's pose given a map, while "Mapping" involves inferring a map given a known location. Traditionally, localization requires a map, and mapping requires localization. SLAM solves this recursive challenge while initially knowing neither.
+
+Initially, we wanted to use a variant of the Particle Filter SLAM. Using localization and mapping as a two-step iterative process, our SLAM algorithm would alternate between localizing in one timestep and mapping in the next timestep. 
+
+In this SLAM algorithm, the RACECAR localizes itself using the particle filter algorithm, also known as Monte Carlo Localization, from [lab 5](https://github.mit.edu/pages/rss2018-team12/#lab5). Given an map skeleton (containing only some obstacles), along with odometry and laser scan data, the particle filter algorithm uses motion and sensor models to update the probability distribution of the robot, enabling the robot to localize itself based on the most likely pose from this distribution, assuming the map skeleton is the true map.
+
+Using the last updated pose from localization, mapping then updates the occupancy grid using a simple sensor model and Bayes' Rule. The occupancy grid contains the probability of there being an obstacle at a particular location. The updated map from mapping is then used as the new map for localization in the next timestep. 
+
+Through this continuous iterative process between localization and mapping, the racecar updates the map with new obstacles during mapping, and then localize both the obstacles as well as itself within this new map during localization, enabling the robot to simultaneously localize and map in real-time.
+
+## Major Decisions (Kolby)
+
+### Local Path Planning instead of Global
+
+We switched from our original intent to use a global RRT-based path planner to a local, greedy path planner. From Professor How's feedback for our technical plan, we realized the latter approach was better suited for this challenge. Without a complete map of obstacles, the robot would need to completely abandon its path and construct a new path in the face of new obstacles. A local path planner can accomplish this task more efficiently, since it does not plan further ahead than what can be safely navigated. It also does not require a map, and needs to know only the direction of the goal.
+
+### Using onboard IMU for Orientation
+
+We switched to using the IMU for orientation instead of using localization or SLAM, which is more complex and prone to catastrophic failure. Preliminary testing confirmed the precision of this approach (less than 0.1 rad error over a 20 meter, twisty test course). The greedy path planner only requires orientation data (it does not require a global position) since it moves the robot along longest possible unobstructed paths toward the goal. Because of the precision and simplicity of IMU-based orientation, we used this sensor instead of localization pose information. While the IMU will tend to accumulate error over time, we found the error is small, whereas localization is difficult to calibrate in noisy environments and can give completely incorrect data in the event of a loss of localization.
+
+### Abandoning SLAM
+
+We abandoned SLAM after confirming the usability of the greedy IRN path planning algorithm and the accuracy of the IMU. At the time, we had implemented mapping, and SLAM would have required significant resources to fully implement, because it is computationally expensive, and RangeLibC, which we used for fast raycasting, requires substantial time to reinitialize on new maps. Since the IRN planner needed neither a map nor a pose in the global frame, and the IMU provided the necessary orientation data, SLAM added no additional value. Hence, we abandoned it.
 
 
-### Pure Pursuit (Jerry)
-Same as before honestly (I asked on piazza if I can refer to a previous paper, tbd...)
-### Safety Controller (Kolby)
-The safety controller considers potential paths which could be traversed by driving along an arc at a certain speed and angle and then proceeding to drive in a straight line. The controller then determines if the potential paths are safe at the current driving speed, and ultimately sets the robot to drive at the fastest possible speed at an angle which maintains safety.
-### SLAM (Sabina)
-Simultaneous Localization and Mapping, also known as SLAM, is a computational problem of having a robot build a map of its surroundings while simultaneously trying to find its own position and orientation within this map in real-time. "Localization" involves inferring location given a map, while "Mapping" involves inferring a map given a known location. In other words, a map is needed for localization, but a good pose estimate is needed for mapping. The challenge in SLAM is that the robot must figure out both its pose and map structure while not initially knowing either. 
-
-For our final challenge, our robot needs to quickly and autonomously navigate between two known positions while avoiding unknown obstacles. In our SLAM implementation, we use the particle filter algorithm, or MCL, for localization (described in Lab 5), and Bayes' Rule to update the map's occupancy grid at each laser scan hit (where each location in the grid represents the probability of there existing an obstacle at that point) for mapping.
-
-Bayes' Rule can be stated as:
-![](https://cdn-images-1.medium.com/max/1600/1*9YuCNcICo5PW5qqQug6Yqw.png) 
-where A and B are events, and P(B) != 0.
-
-## Major Decisions (kolby)
-- Abandon SLAM: We ultimately decided not to utilize SLAM for a number of reasons. Google Cartographer was at our disposal, which made SLAM seem appealing, but in reality Google Cartographer would have been too large and slow to serve our purpose. We then resolved to make our own barebones SLAM implementation, but this did not seem terribly promising. Whenever Ravi had the idea to use the IMU to obtain the robot's orientation, which was endorsed by Professor Carlone, we decided to ditch SLAM altogether.
-- Use onboard IMU: A large reason for abandoning localization with SLAM is that we suspected IMU data could yield robot orientation to reasonable accuracy. This would suffice for our approach, which essentially was to always move the robot along longest possible unobstructed paths toward the goal; in order to have a concept of "toward the goal," the robot must have knowledge of its orientation.  
-- Greedy path planner instead of RRT: Our initial technical plan called for an RRT implementation for path planning. However, we received some important feedback from Professor How regarding path planning. Essentially, since the robot has limited knowledge of what lies behind a frontier of obstacles, it could be too costly to perform RRT every time a newly discovered obstacle deems the path invalid. For the sake of efficiency, we decided to implement a "greedy" path planner which takes the longest unobstructed path based on what the LIDAR sees.
 # Implementation
-## Path planning (ravi)
-1: Speed-Dynamic Dilation
+Our implementation consists of a Velodyne Laser Adjuster, an IMU Processor, the IRN Path Planner, a Pure Pursuit Trajectory Follower, and a Safety Controller.
 
-Path planning first dilates the laser scan by the robot’s dimensions, so the resulting LIDAR ranges represent the maximum distance the robot can safely travel. First, the racecar size is scaled according to the following formula:
-$$robot\_dimension = max(robot\_length, robot\_width) * max(1, speed / min\_speed)$$
-This dynamic sizing of the robot accounts for the increased error of trajectory tracking when the RACECAR travels at increased speeds. Because the LIDAR data is in a polar coordinate system, the size of the RACECAR, in radians, for a given laser range depends on the length of the laser range. Ray distances were reduced to the minimum over an interval of the size of the racecar as if it was 1m away from an obsticle. Taking the minimum range over this interval ensures that the robot is sized correctly, even if an individual ray returns an overestimate.
-Next, the RACECAR is sized, in radians, at this reduced ray distance, according to the following formula:
-$$\Delta_\text{angle} = 2 * |\tan^{-1}(\frac{\frac{\text{robot_dimension}}{2}}{\text{reduced_laser_ranges}})|$$
-Finally, the ray is reduced to the minimum over this interval, and $\frac{\text{robot_dimension}}{2}$ is subtracted to account for the RACECAR’s length. The implementation is vectorized in Numpy to optimize for speed. When receiving raw laser data at 40hz on the simulator, this reduction runs at 30 hz, indicating a acceptable propagation delay. On the RACECAR, the Velodyne laser publishes at 20hz, so this algorithm should be sufficiently fast.
+## ROS Architecture (Jerry)
+<center>**Figure 3: ROS Architecture**<br />
+    ![ROS Architecture*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/ros_arch.png =300x462)<br/>
+_This diagram illustrates the components of our system. First, Laser and IMU Orientation data are adjusted and filtered. This processed data is then passed into the Path Planner, which then issues driving commands to the RACECAR. The Safety Controller draws from lower-level LIDAR data as to ensure faster and less error-prone results in critical situations_
+</center>
 
-2: IMU Orientation
-Next, IMU orientation data is filtered through the $\text{imu_complementary_filter}$ ros package, which automatically adjusts for IMU  drift. In preliminary testing, where the robot was driven down a twisty 20 meter test course with the controller and then reversed to the starting pose, the resulting orientation errored at most 0.1 rad from the starting pose. As such, IMU data filtered through this package is sufficiently precise. This package introduces no measurable delay. 
+## Handling Quirks in the Velodyne with a Laser Adjuster Node (Marek and Ravi)
+Velodyne laser data is pre-processed in its own node to convert the laser ranges into useable data. First, the angles are adjusted, so 0 rad in the RACECAR's frame points forward. Next, because of the Velodyne's dual mode, only half of the ranges are published on each update. The previous reading is combined with the current reading to provide a full reading of the surrounding area. Then, the max range is truncated to 30m for better downstream performance.
 
-3: Path Construction
-On each IMU update, the racecar combines the latest orientation readings with the most recent LIDAR data to plan a path using the DUBINS algorithm. We designed our own, greedy and locally-optimized path planning algorithm suited for the specifics of this challenge. It first constructs possible DUBINS paths, next scores them according to their navigability and distance towards the goal, and finally sends the best path to the path following component. Note that because the robot does not have world positioning information, paths are computed on each timestep in the robot’s frame.
+Since laser readings marked as \\(\infty\\) could represent either obstacles too close to be detected or actual free space, the Velodyne Laser Adjuster node updated these ranges to distinguish between these possibilities. If, in the last published adjusted laser scan, the range on that angle and both adjacent angles are less than one meter, the \\(\infty\\) is replaced with 0.4 meters. Otherwise, the \\(\infty\\) was replaced with the maximum range. This approach works because the robot will approach the obstacle first, so before the obstacle gets too close the robot will see a short range. Assuming the obstacle is large enough (e.g. a wall, where the robot can see the wall that is a little off to the side in both directions but not right in front of it), the robot will continue to see the obstacle. Otherwise, obstacles detected in this manner will decay, which prevents the spurious detection of obstacles which would slow down the robot.
 
-Our path planner constructs 50 DUBINS paths. Each path requires a start pose, end pose, and a maximum turn radius. The start pose is always (0,0) pointed in the forward direction, since paths are computed in the RACECAR’s frame. The minimum turn radius was set to 0.8m, measured experimentally on the RACECAR. As such, only the end poses varied among the paths. The orientation of each end pose was in the direction of the goal, which is simply the negative orientation returned from the IMU. (This simple subtraction works because we assume the starting orientation is in the direction of the goal, according to the challenge description). The positions for these poses are selected as the end points of the diluted laser ranges over a uniformly spaced interval $[-\frac{2\pi}{3}; \frac{2\pi}{3}]$. In effect, each path instructed the robot to crash into an obsticle. However, because paths were being computed online with updated laser data, and the problem guaranteed there would be no dead-ends, new paths would constantly be formed before the robot would crash. With these start and end poses, the algorithm then calls the PyDubins C-backed library to compute paths. On the simulator, each path takes on average 36 microseconds to compute. Thus, the cost to compute 50 paths is negligible.
-[TODO: Picture of 10 sample paths]
-4: Path Scoring
-Paths were scored according to their navigability and their distance in the direction of the goal. To measure navigability, these continuous paths were converted into points 0.2m apart, expressed in polar form. As such, for any given angle, if there was a point on the path further than the diluted laser range, then the path is not navigable. Such paths were given a score of 0. All remaining paths were socred according to the following formula:
-$$\text{score} = \text{radius}^{\alpha} * e^{\beta * \text{goal_displacement}} * \text{total_path_length}^{\gamma}$$
-Where:
-* $radius$ is the radius of circular component sof the resulting dubins path
-* $goal\_displacement$ is the component of the path displacement in the direction of the goal
-* $total\_path\_length$ is the total path length of the path.
+This new laser data was published in its own topic for downstream consumption. On the RACECAR, it ran at 20hz, the same frequency as the Velodyne LIDAR scanner.
 
-Through preliminary testing, we found the following regularization parameters scores paths optimally:
+## IMU Orientation: Simple and Accurate (Ravi)
+IMU orientation data is used to compute the orientation towards the goal. Since the IMU is inherently noisy, the raw data is filtered through the [IMU Complementary Filter](http://wiki.ros.org/imu_complementary_filter) ROS Package. This package automatically adjusts for IMU drift to produce an accurate orientation estimate. In preliminary testing, where the robot was driven down a twisty 20 meter test course with the controller and then reversed to the starting pose, the resulting orientation differed at most 0.1 rad from the starting pose. As such, IMU data filtered through this package is sufficiently precise. This package introduces no measurable delay. 
 
-* $\alpha=0$
-* $\beta=1.0$
-* $\gamma=1.0$
+Since the obstacle course is a straight path, we initially position the RACECAR in the direction of the goal. Hence, if according to the IMU data the robot is facing at an angle \\(\theta\\) relative to its initial orientation, the IRN implementation considers the goal to be in the \\(-\theta\\) direction relative to the robot frame.
+<center>**Figure 4: IMU Orientation**<br />
+    ![IMU Orientation*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/imu_orientation.PNG =262x549)<br/>
+_This diagram illustrates the relationship between IMU orientation and the goal direction. It is assumed that the RACECAR's initial orientation is towards the goal. Hence, the negative change in orientation, relative to the RACECAR's frame, represents the direction towards the goal. This direction is used when planning paths.situations_
+</center>
+
+## IRN Path Planner
+### LIDAR Preprocessing: Averaging, Dynamic Obstacle Dilation, and Smoothing (Jerry and Ravi)
+
+For performance and robustness reasons, the path planner first coarsens the LIDAR data by grouping adjacent laser scan ranges and averaging them together. The algorithm first divides the laser scan data into segments which are 0.04 radians wide, then averages the measurements to produce one single range measurement for each segment. Measurements which are at the maximum range are ignored in this average, because those are assumed to be noise; however, if more than half the measurements are at the maximum range, then instead the LIDAR is considered to have missed and the outputted range measurement for that segment is instead the maximum range. This process makes the path planner more robust to noise in the LIDAR and also improves performance by decreasing the number of laser measurements which need to be processed.
+
+In order to determine whether the robot will collide with an obstacle while following a Dubins path, the path planning algorithm pre-processes the LIDAR data by dilating the obstacles detected in the LIDAR data by the length of the robot. More precisely, the path planner reduces the range along each angle of the averaged laser data, so the resulting LIDAR ranges represent the maximum distance the robot can safely travel. For each range measurement \\(r\\) in the averaged LIDAR data, nearby measurements which are within the "angular size" of the RACECAR (defined below) which are greater than \\(r\\) are reduced to \\(r\\). For example, suppose the LIDAR shows an obstacle two meters away at an angle of 0 radians, and an obstacle five meters away at an angle of 0.04 radians. Then the measurement at the angle of 0.04 radians will be reduced to 2, because if the robot were to move in that direction, it would collide with the two-meter-away obstacle detected at 0 radians before colliding with the obstacle at 0.04 radians. After this process, each measurement is further reduced by the length of the robot. See Figure 5 for what the LIDAR measurements look like after dilation. After dilation, the IRN algorithm simply checks points along each Dubins path, spaced 0.25m apart, and verifies that the adjusted laser measurement in the direction of each point exceeds the distance that point is from the robot.
+
+When the robot is moving quickly, the robot should stay farther away from obstacles to account for drift, therefore at each timestep, the IRN implementation computes five distinct dilated laser scans, where the largest dilation assumes the robot is \\(1.6\\) times as large as it actually is. When the IRN algorithm selects paths, if the path does not hit any obstacles even with a larger dilation, the path is given a higher score, and if the path is selected, the robot is allowed to drive more quickly along this path.
+
+Because the "angular size" of the RACECAR is dependent on the laser measurement, for performance reasons our IRN implementation performs dilation only approximately using a discrete approach. In particular, the angular size is computed as
+\\(\Delta_\text{angle} = \tan^{-1}\left(\frac{\text{robotlength}/2}{\text{laserrange}}\right)\\)
+Namely, if the robot is placed at a distance _laserrange_ away from the origin, \\(\Delta_\text{angle}\\) is the span of the angles which would hit the robot on each side, which determines the number of nearby laser measurements which need to be decreased during the dilation process. Implementing this calculation as well as the adjustments in Python is slow; in order to vectorize this computation, the IRN implementation divides the laser measurements into a series of discrete buckets, where the buckets go from 0 to 20 meters and each bucket is 0.2 meters wide. All the adjustments for the laser measurements in the same bucket are then processed at the same time using a minimum filter. With this optimization, the dilation process takes about 0.03s on the robot to compute all five dilations, which is able to keep up with the 20Hz Velodyne LIDAR.
+
+Finally, because the Velodyne LIDAR is angled slightly upward, some obstacles are sufficiently short that the Velodyne is unable to see them reliably, so the IRN algorithm caches the last three LIDAR readings and, for each angle, uses the shortest measurement across the last three readings.
+<center>**Figure 5: Adjusted LIDAR Scans**<br />
+    ![Adjusted LIDAR Scans*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/safescan.png =208x278)<br/>
+_This diagram illustrates the adjusted LIDAR scans. The red lines represent the raw LIDAR data, and the white points represent the adjusted LIDAR ranges when obstacles are dilated for the RACECAR's size. As such, the RACECAR will not collide with obstacles when navigating within the white boundary._
+</center>
+
+### Constructing Dubins Paths: Spread Them Out (Ravi)
+
+To select the end pose for Dubins paths, we tried three approaches: greedy, randomized greedy, and uniformly distributed, and ultimately decided to use the uniformly distributed approach. In the greedy approach, the laser ranges with the greatest distance in the direction of the goal were sampled. This approach resulted in nearly identical paths with little variation, since these ranges were very close to each-other. In the greedy-randomized approach, laser ranges were weighted by the distance component in the direction of the goal, and a randomized sample was taken. This approach resulted in slightly more variation than the purely greedy option. However, in the scenario where all poses would require a sharp turn, and that sharp turn would intersect an obstacle, both approaches failed to identify valid paths. As such, our final algorithm selected 130 end poses, where the angle of the end poses to the robot were uniformly distributed in the range \\(\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)\\) in front of the robot. This approach guaranteed all directions were considered and always returned varying path options.
+
+We constructed a new set of paths each time the Velodyne LIDAR updated, i.e. at 20Hz. Note that because the robot does not have global positioning information, paths are computed on each timestep in the robot’s frame.
+
+<center>**Figure 6: Sample Dubins Paths**<br />
+    ![Sample Dubins Paths*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/uniform_paths.png =264x341)<br/>
+_The above diagram illustrates sample Dubins paths drawn with Greedy path planning algorithm._
+</center>
+
+### Determining the Best Path: Check all and Select the Best (Jerry and Ravi)
+Paths were scored along four criteria:
+1. Distance in the direction of the goal
+2. Absolute length
+3. Navigability at high speeds
+4. Similarity to prior paths
+
+The first criterion for scoring paths is that they should bring the robot closer to the goal, so this criterion was given a high weight of 6.0. For this criterion, the IRN algorithm computes the distance of the end of the path in the direction of the goal. However, it is more important that the robot is able to make immediate progress than for the robot to plan a long path. Therefore, the path is truncated to a length of 6 meters for this criterion, and the square root of this distance is used instead of the raw value.
+
+The second criterion for scoring paths is the absolute length of the path, which helps when the robot needs to move horizontally to proceed, and is given a weight of 0.5. In particular, if there is a wide obstacle in front of the robot, it may not be able to see where the opening is which allows it to proceed forward. In this case, the robot should move horizontally until it finds an opening. To encourage this behavior, longer paths, as measured by the distance of the end of the path from the robot, are prioritized over shorter ones. Again, the path length is truncated to 6 meters for this criterion.
+
+The third criterion for scoring paths is navigability, as measured by how fast the robot can travel along it while staying safe, which is given a weight of 2.0. Recall from the section on LIDAR Preprocessing above that the IRN algorithm computes several dilated laser scans. If the path is traversable at a higher level of dilation, it is given a correspondingly higher score. However, in order to ensure that the robot tries to make maximum forward progress, the IRN algorithm computes the best path where each path is only scored based on the lowest level of dilation, and then refines the path by considering 17 nearby paths at higher levels of dilation. The intent is that the "greediest" path may bring the robot too close to an obstacle, and adding the navigability criterion causes the robot to choose a similar path which stays further away from obstacles.
+
+The fourth criterion addresses an issue where when the robot approaches an obstacle head-on, the IRN algorithm may oscillate between turning left and turning right, so it adds an "inertia" criterion with a weight of 0.3. Recall that the IRN algorithm selects 130 uniformly distributed paths; this associates each path with an index in the range 0 through 129. Paths are penalized based on the absolute difference in index with the path returned in the previous timestep.
+
+The path with the highest score is then sent to the path planning algorithm. This process of collision detection and path scoring takes approximately 4ms on 130 Dubins paths. This is sufficiently fast to keep up with the 20Hz Velodyne LIDAR.
+
+<center>**Figure 7: Best Dubins Path**<br />
+    ![Best Dubins Path*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/best_path.png =306x401)<br/>
+_The above diagram illustrates the best Dubins path, selected according to the above criteria, for the paths identified in figure 6._
+</center>
+
+## Pure Pursuit: Follow the Trajectory (Jerry)
+The RACECAR uses a simplified Pure Pursuit trajectory tracker, since paths are computed in the RACECAR's frame. As in previous labs, The algorithm dynamically uses a lookahead distance of 2.8m if the trajectory is straight ahead, or a slightly shorter 2.0m if the path has an angle of at least 0.1 radians. With this lookahead distance, the Pure Pursuit algorithm computes a corresponding lookahead point and steering angle. In contrast to previous labs, the steering angle is scaled by an additional 10% so the Dubins path will be followed more closely. In addition, the algorithm dynamically chooses a drive speed based on steering angle as well as the path length. The drive speed is 4.5 m/s when going straight and linearly decreases to 1.5 m/s at any steering angle at least 0.3 radians. The controller also limited jerk to \\(0.25 \frac{m}{s^3}\\) for stability. Finally, these drive commands were published for RACECAR actuation.
+
+<center>
+    **Figure 8: Trajectory Following**<br />
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/RImgnsDn9yY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <br />
+_The above figure illustrates the trajectory follower running in the simulated environment. The goal direction is towards the top of the video. The green line represents the planned path, and the red dot shows the lookahead point. The white lines represent the laser scan with obstacles dilated. It takes approximately 12 seconds for the RACECAR to travel 35 meters, indicating an average speed of 2.9 m/s.
+</center>
 
 
-The path with the highest score was then sent to the path planning algorithm. This process of collision detection and path scoring takes approximately 4ms on 50 DUBINS path.
-Combining all components together, paths were returned approximately every 6 ms and ran at 30hz. _[Side note: why is there such a large discrepancy between frequency and delay?]_. This implementation is sufficiently fast, as the RACECAR needs drive updates at 20Hz frequency to maintain smooth trajectories.
-
-
-## Pure pursuit (jerry)
-The robot uses a very similar Pure Pursuit trajectory tracker as the one used in previous labs, but with minor changes. Since the robot is no longer running localization, the Pure Pursuit trajectory tracker was integrated with the RahmanNoodle Path Planner, and was adjusted to track trajectories specified in the frame of the robot instead of the map frame. As in previous labs, the algorithm dynamically uses a long lookahead distance of 4.5m if the trajectory is straight ahead, or 1.5m if the path has an angle of at least 0.1 radians. In contrast to previous labs, the algorithm dynamically chooses a drive speed based on the computed steering angle, the drive speed is 4.5 m/s when going straight and linearly decreases to 1.5 m/s at any steering angle at least 0.3 radians.
-
-## Safety controller (jerry)
-Aside from small optimizations, implementing the new safety controller had three main challenges: how to select alternative paths the robot may drive along when the original drive direction is unsafe, how to account for the width of the robot in selecting alternative safe paths, and how to ensure the safety controller is able to run in real time. There are innumerable possible alternative paths the robot can drive, and the controller must intelligently explore them in order to select a path which is safe without deviating substantially from the original desired path of the robot, and must return this path within a reasonable timeframe. The controller must only return a path which the robot can drive along without colliding with obstacles, accounting for the width of the robot. Finally, the controller must be careful to publish a drive command in real time, at the same rate that the original drive commands are being published, or else it will not sucessfully override all of the original drive commands.
+## Safety controller: Last-Second Alternative Planning (Jerry)
+Aside from small optimizations, implementing the new safety controller had three main challenges: how to select alternative paths the robot may drive along when the original drive direction is unsafe, how to account for the width of the robot in selecting alternative safe paths, and how to ensure the safety controller is able to run in real time. There are innumerable possible alternative paths the robot can drive, and the controller must intelligently explore them in order to select a path which is safe without deviating substantially from the original desired path of the robot, and must return this path within a reasonable timeframe. The controller must only return a path which the robot can drive along without colliding with obstacles, accounting for the width of the robot. Finally, the controller must be careful to publish a drive command in real time, at the same rate that the original drive commands are being published, or else it will not successfully override all of the original drive commands.
 
 The algorithm balances between completeness and performance by considering a small, fixed set of possible paths, which are likely to approximate the true optimal path of the robot. The steering angles considered by the robot are a sequence of nine angles, spaced 0.1 radians apart, between the maximum possible steering angles (\\(\pm 0.41\\) radians). For each steering angle, the robot considers stopping the turn after 0.5, 1, and 1.5 arc-radians. The controller finds the steering angle closest to the original desired steering angle such that the robot can safely drive along some path corresponding to that angle, at the original desired speed. If such an angle does not exist, the controller finds the steering angle where the robot can safely drive the fastest. If the controller determines that one of the alternative paths has a higher safe driving speed than the original desired path, the speed of the drive command issued is the safe speed along the chosen alternative path, or the original desired driving speed, whichever is lower.
 
-To account for the width of the robot, the controller verifies that two parallel paths, spaced apart by the width of the robot, are both clear of obstacles. The algorithm samples points along both paths, spaced approximately 0.1 meters apart, and verifies that the laser measurement in the direction of each point exceeds the distance to that point by a safety threshold of 0.2 meters.
+To account for the width of the robot, the controller verifies that two parallel paths, spaced apart by the width of the robot, are both clear of obstacles. The algorithm samples points along each path, spaced approximately 0.1 meters apart, and verifies that the laser measurement in the direction of each point exceeds the distance to that point by a safety threshold of 0.1 meters.
 
 In order for the safety controller to run in real time, the controller is limited to only checking the small number of paths described above, everything is written using numpy, and the algorithm also performs some memoization. One of the advantages of using a fixed set of paths is that the coordinates of all the points on the path are fixed. Therefore, the paths can be memoized between different timesteps, allowing the algorithm to spend more time checking if the paths are traversable. This optimization sped up the algorithm by about 30%.
 
 Finally, as a small optimization for path stability, if the safety controller causes the car to drive along an alternative path, it will cache the angle of the issued drive command and issue a command for the same angle for the next three timesteps. This helps avoid behavior where the safety controller causes the robot to swerve back and forth when approaching an obstacle.
 
-## SLAM (sabina)
-Updating the occupancy grid based on laser scan hits
+<center>**Figure 9: Alternative Path from the Safety Controller**<br />
+    ![Safety Alternative Path*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/safety_alternate_path.PNG =335x277)<br/>
+_The above diagram illustrates an alternate path drawn by the safety controller. The Blue shape represents the RACECAR; the white line is a wall. The red line shows the original path returned by the path planner. The Safety controller computed the Green path to navigate around the wall. Note that the Safety controller activated on less than 5% of the timesteps because of the path planner's precision._
+</center>
 
-At initialization, given our initial map, we initialize all the walls to be at probability 1, and all free spaces to be at 0.5. If the probability of a grid reaches a certain threshold (ie. 0.8), we consider there to be an obstacle within the map. 
- 
-At each timestep, using laser scan sensor data, we update the probability of each location in the occupancy grid. Given a laser scan hit, if the grid is considered "free" (aka prob < 0.8), we multiply the current probability of the grid with the probability of there being a hit given the grid being free. If the grid is considered "obstacle" (aka prob > 0.8), we multiply the current probability of the grid with the probability of there being a hit given there being an obstacle. 
-
-## ROS Architecture (jerry)
-laser, laser adjuster, imu, I think there's a node for managing the imu, greedy planner with inbuilt trajectory tracker, and safety
-# Evaluation
+# Evaluation: Test, Test, and Test Some More
 ## Test Procedures (Marek)
-Our ultimate goal for fast collision avoidance is to successfuly navigate through an unknown environment consisting of obstacles of bound widths. The subcomponents of this challenge had to be tested preliminarily in order to achieve this goal. The main components that needed to be tested and improved were path planning and safety controller. Although path planning had previously worked on a static and known map, traversing an unknown environment requires dynamic planning. 
+In order to successfully navigate through a pathway of unknown obstacles, the crucial technical sub-components, path planning and the safety controller, had to be implemented and tested. Pure pursuit was not tested individually because the previous implementation was robust and fully functional. Although path planning had previously worked on a static and known map, traversing an unknown environment requires dynamic planning.
 
-We tested iteratively in the simulator, optimized parameters, and then on the Robot. Initial testing illustrated the potential of the greedy path planning algorithm. 
+The greedy path planner was tested initially in simulation. First, it was tested in an open region to ensure that it would drive in the direction of the goal point. After ensuring that it could identify and construct paths towards the the goal, it was then tested in a limited-obstacle map. This test uncovered the issue of planning paths too close to obstacles which was solved by increasing obstacle dilation. After increasing dilation, the RACECAR could successfully navigate through a limited-obstacle map at slow speeds. This confirmed the applicability of the greedy algorithm for this challenge. Next, testing was conducted at higher speeds. The RACECAR was able to complete a more complicated obstacle course at a max speed of 5m/s.
 
-Our goal for the safety controller was for it to be able to recognize when we were on a collision course and see whether it was possible to safely avoid the obstacle by turning away. This was tested through simulation: a known map with obstacles was loaded, a path was purposefully drawn through obstacles, and the robot was allowed to drive in order to evaluate whether it would divert away from the obstacles. 
+<center>**Figure 10: Testing in Simulation**<br />
+    ![Testing in Simulation*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/sim_debug.png =611x290)<br/>
+_The above diagram illustrates an example of bug fixed in simulation. The left image shows a path drawn too close teo the black wall. Simulation enabled us to identify an issue with the obstacle dilation. The right image shows the new obstacle dilation (white line) and the resulting path._
+</center>
 
-Once our subcomponents were tested and acceptable, the main objective was tested by loading initially through simulation. This was done by launching our map and code containing our previously discussed technical components. A test was deemed succesful if the robot could make it successfully from one end to another without crashing into one of the unknown obstacles. This was initially tested at a slower speed of about 1.5m/s. Once deemed successful, the speed was increased and tested again. If a test was failed, we would search for the bug, attempt to fix the subcomponent in which it occured, and try again. This would be done using RVIZ visualization. We were able to successfully navigate through the test map at 5m/s in simulation, 1.5m/s faster than the speed for the max score. 
+The safety controller needed to recognize when the RACECAR was on a collision course and then safely navigate around the obstacle or stop if otherwise necessary. This was tested initially in simulation: a known map with obstacles was loaded, a path was manually drawn through obstacles, and the RACECAR was allowed to pursue the path in order to evaluate whether it would divert away from the obstacles. The safety controller would actuate based on a calculated safe speed determined by the required stopping distance. The stopping distance was scaled with a multiplying variable that would effectively determine how "scared" the RACECAR was. If this was too high, the robot would stop prematurely. If too low, it would not actuate in time and potentially crash. The final scaling parameter was set at 0.3. 
 
-Once our simulation testing was complete, we tested in a real life obstacle path. We used RVIZ to visualize the important components of our system for debuggin purposes. We used a similar iterative procedure: we tested at slower speeds and increased our speed as we successfully traveresed the obstacle course (actually need to test is though)
+Once our sub-components were implemented and tested, the main goal was tested in simulation. The test was launched using a single launch file called final\_project.launch which launched our path planner, safety controller, and pure pursuit. A test map was also launched and the robot would attempt to navigate through the environment. The test was deemed successful if the robot could navigate from one end to another without colliding with the unknown obstacles. This was initially tested at a slower speed of about 1.5m/s. Once deemed successful, the speed was increased and tested again. If the test failed, one of the many parameters governing the code would be altered. Mainly, the robot assumed-length, obstacle dilation, and turning tendency weights were altered. RViz visualization was used to facilitate debugging. Testing in simulation determined that the RACECAR was able to successfully navigate through the test map at 5m/s in simulation, 2.25m/s faster than the speed for the max score. 
 
-- Real life
-- What is being tested?
-- How was it tested?
-## Outcomes (Unassigned)
-- What is the outcome?
-- Data to back up the outcome?
-- I don't think we need this yet?
-## Analyses (Unassigned)
-- Any comparisons? Conclusions?
-- Also don't think we need this yet?
-# Lessons Learned
-- Individual technical and communication lessons learned;
-- suggestions for improvement
-# Future Work
-We can probably use an actual path planner in a more complex environment which requires turning around. For computational efficiency we can dynamically switch between the two, using the greedy one normally or falling back to the global path planner if the greedy one fails.
+Once simulation testing was complete, we tested in a real life obstacle path. RViz was used to visualize the important components of the system for debugging purposes such as the current path, obstacles, and alternative paths when safety controller was activated. A similar iterative procedure was used with iteratively increasing speeds as the course was successfully navigated. Due to success being dependent on multiple parameters and factors, testing consisted of smart guesses as to which parameters to change. The main parameters that were altered were min and max speed, robot dynamic dilation, turning tendencies, and obstacle dilation. Testing and visualization uncovered the RACECAR's inability to see shorter obstacles. The RACECAR's movements was also deemed abrupt and jerky. It was discovered that adding a maximum jerk parameter smoothed the speed changes of the RACECAR leading to improved performance. Performance was highly dependent on current obstacle placement. During testing, the RACECAR completed the course at a best time of 8.2 seconds. 
 
+## Adaptability Led to Good Results on Demo Day (Kolby & Marek)
+The system was capable of guiding the robot through an unknown, obstacle-filled environment, albeit at a slower average speed than desired. Performance was highly dependent on course difficulty which was variable throughout the length of the demonstrations. Highly parameterized code made it easy to modify and adapt to different courses on the spot. This allowed us to make a high number of course attempts: over 20. 
 
+Of the trial runs that the RACECAR successfully completed, the two fastest times were 8.9 seconds and 11.06 seconds over a 19.45m test course. This is an average speed of 1.97 m/s. The average speed is well above the 1.5 m/s minimum required for credit, yet still well below the 2.5 m/s threshold required for full marks. Despite the wide variance in performance, 8.9s was the fastest time achieved by any team!
 
+<center>
+    **Figure 11: Live Run**<br />
+    <iframe width="560" height="315" 
+            src="https://www.youtube.com/embed/aEMn55uByG8?start=22" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <br />
+_The above figure illustrates the trajectory follower running on the actual RACECAR. With a time of 8.9 seconds, the RACECAR successfully navigated the 19.45m test course in 11.01 seconds._
+</center>
+
+# Lessons Learned: Simplicity and Planning are Key (Kolby)
+
+Our approach illustrated the applicability of simple locally optimal approaches to construct a good solution, even in unknown environments. Our use of the IMU avoided the localization problems faced by other teams. The greedy planner was easy to implement, allowing us to focus on performance improvements instead of debugging.
+
+This lab stressed the importance of advance planning along with simulator and robot testing. Creating a Gantt chart enabled us to track our schedule, progress, and accountability. It illustrated the urgency of implementing the minimum viable product for each subsystem. Simulator testing provided proof-of-concept for algorithms and enabled identification of bugs. RACECAR testing facilitated parameter tuning.
+
+This was a substantial technical challenge which spanned a few weeks. It was crucial that we communicated availabilities to find times to work effectively as a team despite other constraints.  This challenge required a lot of testing and debugging, and it would have been nice to have more time to tune and test our system.
+
+# Future Work (Jerry)
+
+The IRN algorithm used for this challenge is a relatively simple algorithm, but would fail in a more complex environment containing dead ends. For such an environment, SLAM combined with a global path planner would be more appropriate. For a real self-driving car, a greedy path planner remains appropriate in many situations because obstacles are often small and scattered. However, the IRN algorithm would need to be modified to better account for a global path which the car is trying to follow, instead of simply moving in a fixed direction.
+
+# Final Thoughts
+The labs of this semester prepared us for the latest of challenges in developing safe and speedy autonomous systems. We thank the RSS Professors and Course Staff -- especially to Professors How and Connor for their detailed feedback every lab -- for making this rewarding experience possible.
 
