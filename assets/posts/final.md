@@ -204,7 +204,7 @@ Of the trial runs that the RACECAR successfully completed, the two fastest times
     <iframe width="560" height="315" 
             src="https://www.youtube.com/embed/aEMn55uByG8?start=22" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     <br />
-_The above figure illustrates the trajectory follower running on the actual RACECAR. With a time of 8.9 seconds, the RACECAR successfully navigated the 19.45m test course in 11.01 seconds._
+_The above figure illustrates the trajectory follower running on the actual RACECAR. With a speed of 1.76 m/s, the RACECAR successfully navigated the 19.45m test course in 11.01 seconds._
 </center>
 
 # Lessons Learned: Simplicity and Planning are Key (Kolby)
