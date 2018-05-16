@@ -4,7 +4,8 @@
 This Fast Collision Avoidance challenge requires the RACECAR to navigate through an unknown environment at high speeds and with zero obstacle collisions. The final implementation consists of three main components: obstacle detection and path planning, path following, and safety-induced dynamics readjustments. After detecting obstacles in real-time using LIDAR data, and combining orientation data from the Inertial Measurement Unit (IMU) (less than 0.1 rad error over a curved 20 meter test course), the greedy path planner returns locally-optimal paths towards the goal at 20Hz. The path following controller, adapted from a pure pursuit controller, actuates the robot. Finally, the Safety Controller overrides the published drive commands as needed to prevent collisions. Each component runs at 20Hz. This approach successfully enabled the RACECAR to safely navigate through unknown courses at an average of 1.95 m/s.
 <center>
     **Figure 1: Video Abstract**<br />
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/uCCF3jQEOzY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></center>
+<iframe width="640" height="360" src="https://www.youtube.com/embed/iVEiKpk274k" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</center>
 
 
 # Intro (Kolby)
