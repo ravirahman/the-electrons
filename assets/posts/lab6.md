@@ -31,7 +31,7 @@ Trajectory tracking, implemented via Pure Pursuit, actuates the robot along this
 
 
 <center>**Figure 1: System Architecture**<br/><span>
-![System Architecture](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/system_diagram.jpg =520x310)</span><br/>
+![System Architecture](https://ravirahman.github.io/the-electrons/assets/images/lab6/system_diagram.jpg =520x310)</span><br/>
 _The above figure illustrates the steps for path planning and trajectory tracking. First, start and goal poses are selected via rviz. Then, using the given map, Path Planning computes a trajectory. Finally, Trajectory Tracking computes and issues RACECAR drive commands._</center>
 
 
@@ -44,7 +44,7 @@ RRT iteratively computes navigable paths through a stochastic process. It first 
 
 
 <center>**Figure 2: Navigable (Left) and Obstructed (Right) RRT Paths**<br/>
-![Navigable (Left) and Obstructed (Right) RRT Paths](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/rrt_paths.PNG)<br/>
+![Navigable (Left) and Obstructed (Right) RRT Paths](https://ravirahman.github.io/the-electrons/assets/images/lab6/rrt_paths.PNG)<br/>
 _The above figures shows navigable (left) and obstructed (right) RRT paths for randomly selected points (green). The blue vector represents a nearest pose already in the tree. On the left, the purple pose would be added to the tree as a child of the blue pose. However, on the right, RRT would ignore the green point because of the obstructed path._</center>
 
 
@@ -61,7 +61,7 @@ A* is a best-first-search algorithm that finds shortest paths using Dijkstra's A
 Theta\* expands on A* by using line-of-sight to relax paths between nodes, which simplifies the path by removing unnecessary intermediate nodes. When adding vertices to the graph, it sets the parent to the furthest-back cell such that an unobstructed, line-of-sight path exists. This optimization allows for any angle \\(\theta : \tan^{-1}(\theta) \in \mathbb{Q}\\) and removes intermediate waypoints in a straight line.
 
 <center>**Figure 3: Theta\* Optimizations**<br/>
-![Theta\* Optimizations](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastar.png =600x300)<br/>
+![Theta\* Optimizations](https://ravirahman.github.io/the-electrons/assets/images/lab6/thetastar.png =600x300)<br/>
  _The above figure illustrates an A*-based path (left) and the optimized Theta\*-based path (right). Whereas A* creates a connection between every individual node along the path, Theta\* only connects nodes when a shorter path with direct line-of-sight exists. [Image Credits](http://aigamedev.com/static/tutorials/aap-pathcompare2D.png)_</center>
 
 
@@ -71,7 +71,7 @@ Theta\* expands on A* by using line-of-sight to relax paths between nodes, which
 Trajectory tracking follows a given path via a pure pursuit controller. This controller 1) determines the RACECAR's position relative to the path based on the closest point, 2) computes a lookahead point on the path a given distance away from the robot, and 3) accelerates towards the lookahead point. 
 
 <center>**Figure 4: Pure Pursuit**<br/>
-![Pure Pursuit](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/pure_pursuit.jpg =550x360)<br/>
+![Pure Pursuit](https://ravirahman.github.io/the-electrons/assets/images/lab6/pure_pursuit.jpg =550x360)<br/>
 
 *The above figure illustrates the pure pursuit algorithm. On each timestep, it first finds a "lookahead" point on the trajectory a specified distance away from the robot. Then, Ackermann steering commands are issued to navigate towards this point.*</center>
 
@@ -123,7 +123,7 @@ We accounted for the size of the robot through morphological dilation, and we ac
 The impassable features on the map were dilated by 60cm to account for the fact that the robot is not a point, which is important because path planners, especially Theta\*, may produce paths which go very close to the wall. Furthermore, the Pure Pursuit algorithm cuts corners by nature, which can lead to a collision if the planned trajectory is very close to a corner. If the path planner thinks the obstacles and walls are thicker than they actually are, then the path returned should allow the robot to track the trajectory without hitting corners or obstacles. A map of Stata basement with this dilation is shown below, in Figure 7.
 
 <center>**Figure 7: Dilated Map of Stata Basement**<br/>
-![Dilated Map of Stata Basement](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/dilated_map.jpg =325x430)<br/>
+![Dilated Map of Stata Basement](https://ravirahman.github.io/the-electrons/assets/images/lab6/dilated_map.jpg =325x430)<br/>
 The above figure shows the resulting map  from dilating the impassable regions in the Stata basement map by \\(0.6m\\). This is actually the dilated version of the map after it was manually edited to account for obstacles (see Figure 8 below).
 
 </center>
@@ -134,7 +134,7 @@ Large unmarked obstacles in the Stata basement often prevented the robot from re
 
 
 <center>**Figure 8: Original (Left) and Hand-modified (Right) Stata basement map.**<br/>
-![Comparision of Maps](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/maps_compared.PNG =750x450)<br/>
+![Comparision of Maps](https://ravirahman.github.io/the-electrons/assets/images/lab6/maps_compared.PNG =750x450)<br/>
 _The above figure shows the enhancements to the TA-provided map of the Stata basement. We used GIMP to draw in obstacles by hand in the corridor on the left (circled in red)._
 </center>
 
@@ -147,7 +147,7 @@ Bridge sampling, a method that picks unobstructed points surrounded by obstacles
 
 
 <center>**Figure 9: Intersections where Bridge Sampling Worked (Green) and Failed (Orange)** <br/>
-![Intersections where Bridge Sampling Worked and Failed](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/bridge_error.PNG =300x390)<br/>
+![Intersections where Bridge Sampling Worked and Failed](https://ravirahman.github.io/the-electrons/assets/images/lab6/bridge_error.PNG =300x390)<br/>
 
 *The above figure shows how bridge sampling would examine the green sample and discard the orange sample. The green sample's bridge intersects the boundry, whereas the orange's sample bridge is completely within the navigatable space. The blue dot represents the current robot position. The black line represents a found path. Therefore, it is unlikely the robot will take the first right turn.* </center>
 
@@ -162,7 +162,7 @@ Paths between the start pose and destination point were scored by averaging the 
 
 
 <center>**Figure 10: Simulated RRT Path Planning**<br/>
-![Intersections where Bridge Sampling Worked and Failed](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/rrt.png =390x490)<br/>
+![Intersections where Bridge Sampling Worked and Failed](https://ravirahman.github.io/the-electrons/assets/images/lab6/rrt.png =390x490)<br/>
 *The above figure shows the RRT-found path (green) between the start and end vertices. It took 48 seconds to find this path. Observe that RRT preferred using the top hallway over using the middle hallway because the turns required are smoother.*</center>
 
 ### Theta\* - Sabina
@@ -182,7 +182,7 @@ In-line-of-sight allows Theta\* to simplify the path by discarding intermediate 
 The implementation of Theta\* publishes several visualization messages. The start and end points are selected using Pose Estimate and Nav Goal tools respectively on rviz. The start point is visualized as a green sphere, and the goal point is visualized as a red sphere. The nodes searched via the search algorithm are visualized as small grey dots. As shown by the expansion direction of the grey dots, the Theta\* heuristic successfully biases the search area towards the goal point. The final trajectory path (blue line) is shown via blue segments drawn between “waypoints” (red dots) along the path.
 
 <center>**Figure 11: Sample Run of Theta\***<br/>
-![Sample Run of Theta\*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/thetastarpath.png =450x550)<br/>
+![Sample Run of Theta\*](https://ravirahman.github.io/the-electrons/assets/images/lab6/thetastarpath.png =450x550)<br/>
 *The above diagram illustrates a sample path from Theta\*. It took 7.47s to compute*</center>
 
 #### Optimizing Theta Star
@@ -211,7 +211,7 @@ The abbreviated ROS architecture, showing the entire pathway from the sensor inp
 
   
 <center>**Figure 12: Abbreviated ROS Architecture**<br/>
-![Abbreviated ROS Architecture*](https://github.mit.edu/pages/rss2018-team12/assets/images/lab6/ros_architecture.jpg =450x500)<br/>
+![Abbreviated ROS Architecture*](https://ravirahman.github.io/the-electrons/assets/images/lab6/ros_architecture.jpg =450x500)<br/>
 _This diagram shows the entirety of the pathway, from the sensor inputs to the drive commands issued to the motor. Each box represents a node; the arrows represent topics which nodes subscribe to or publish to. Some topic names have been omitted from the diagram for brevity. Where it is unclear what information is passed between nodes, the topics are labeled._</center>
 
 ## Evaluation

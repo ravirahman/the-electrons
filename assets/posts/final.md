@@ -37,12 +37,12 @@ The IRN algorithm then truncates each Dubins path to the furthest point along th
 Once the IRN algorithm has truncated each path to be collision-free, the paths are scored to identify and return the path which will best lead the robot to the goal area. If there are no collision-free paths, the algorithm triggers an emergency stop. If paths do exist, paths are scored using a heuristic; we describe the heuristic we used below in the Implementation section on the Path Planning algorithm. Figure 2 below gives an example of the paths planned by the IRN algorithm.
 
 <center>**Figure 2: IRN Algorithm**<br />
-    ![IRN Algorithm*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/best_path_selection.PNG =648x370)<br/>
+    ![IRN Algorithm*](https://ravirahman.github.io/the-electrons/assets/images/final_project/best_path_selection.PNG =648x370)<br/>
 _This diagram illustrates the main components of the IRN Algorithm. In the left figure, the green lines represent a sample of the Dubins paths found. The white dots represent the limits of the navigable space. In the right picture, the remaining green line represents the path with the highest score that is then pursued. Note that the goal is towards the top of the picture._
 </center>
 
 ### Pure Pursuit (Ravi)
-The Pure Pursuit path follower, adapted from the [previous lab](https://github.mit.edu/pages/rss2018-team12/#lab6), smoothly actuates the RACECAR along the path returned by the path planner. The path follower finds a lookahead point on the path a fixed distance from the robot. It then computes an appropriate steering angle and speed to reach this point. Finally, these motion commands drive the RACECAR.
+The Pure Pursuit path follower, adapted from the [previous lab](https://ravirahman.github.io/the-electrons/#lab6), smoothly actuates the RACECAR along the path returned by the path planner. The path follower finds a lookahead point on the path a fixed distance from the robot. It then computes an appropriate steering angle and speed to reach this point. Finally, these motion commands drive the RACECAR.
 
 ### Safety Controller: Last-Resort Obstacle Dodging (Kolby)
 The safety controller intercepts the drive command issued by the Pure Pursuit algorithm and, if it is unsafe, issues a safer drive command to override it. It operates independently of the path planner and follower, and as much as possible relies directly on sensor data, so as to be robust to any bugs in the path planner or follower.
@@ -50,7 +50,7 @@ The safety controller intercepts the drive command issued by the Pure Pursuit al
 Given the intercepted drive command, the safety controller predicts the path which the path follower intends to follow, and if it is unsafe, considers a number of alternative navigable paths, and returns an appropriate drive command for the safest alternate path. The safety controller assumes that the robot will turn in an arc with a constant steering angle (i.e. the steering angle in the intercepted drive command) for some duration and then drive forward in a straight line. The algorithm determines the maximum speed the robot can drive at and still stop in time if it were to follow a path of this form. If the desired speed in the intercepted drive command is greater than this safe speed, the safety controller examines a number of alternative paths, and if any of them have a higher maximum safe speed, issues a drive command to follow the best alternative path. Figure 3 below illustrates an example alternative path when the robot is driving head-on towards a wall. If no alternative path is safer, the safety controller re-issues the original intercepted drive command, but at a lower, safe speed.
 
 <center>**Figure 3: Alternative Path from the Safety Controller**<br />
-    ![Safety Alternative Path*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/safety_alternate_path.PNG =335x277)<br/>
+    ![Safety Alternative Path*](https://ravirahman.github.io/the-electrons/assets/images/final_project/safety_alternate_path.PNG =335x277)<br/>
 _The above diagram illustrates an alternate path drawn by the safety controller. The Blue shape represents the RACECAR; the white line is a wall. The red line shows the original path returned by the path planner. The safety controller computes the Green path to navigate around the wall._
 </center>
 
@@ -60,7 +60,7 @@ Simultaneous Localization and Mapping, also known as SLAM, enables the RACECAR t
 
 Initially, we wanted to use a variant of the Particle Filter SLAM. Using localization and mapping as a two-step iterative process, our SLAM algorithm would alternate between localizing in one timestep and mapping in the next timestep. 
 
-In this SLAM algorithm, the RACECAR localizes itself using the particle filter algorithm, also known as Monte Carlo Localization, from [lab 5](https://github.mit.edu/pages/rss2018-team12/#lab5). Given an map skeleton (containing only some obstacles), along with odometry and laser scan data, the particle filter algorithm uses motion and sensor models to update the probability distribution of the robot, enabling the robot to localize itself based on the most likely pose from this distribution, assuming the map skeleton is the true map.
+In this SLAM algorithm, the RACECAR localizes itself using the particle filter algorithm, also known as Monte Carlo Localization, from [lab 5](https://ravirahman.github.io/the-electrons/#lab5). Given an map skeleton (containing only some obstacles), along with odometry and laser scan data, the particle filter algorithm uses motion and sensor models to update the probability distribution of the robot, enabling the robot to localize itself based on the most likely pose from this distribution, assuming the map skeleton is the true map.
 
 Using the last updated pose from localization, mapping then updates the occupancy grid using a simple sensor model and Bayes' Rule. The occupancy grid contains the probability of there being an obstacle at a particular location. The updated map from mapping is then used as the new map for localization in the next timestep. 
 
@@ -86,7 +86,7 @@ Our implementation consists of a Velodyne Laser Adjuster, an IMU Processor, the 
 
 ## ROS Architecture (Jerry)
 <center>**Figure 4: ROS Architecture**<br />
-    ![ROS Architecture*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/ros_arch.png =300x462)<br/>
+    ![ROS Architecture*](https://ravirahman.github.io/the-electrons/assets/images/final_project/ros_arch.png =300x462)<br/>
 _This diagram illustrates the components of our system. First, Laser and IMU Orientation data are adjusted and filtered. This processed data is then passed into the IRN Path Planner, which is split into two nodes for performance reasons: the Safe Scan node, which performs precomputations on the LIDAR data, and the Greedy Planner node, which finds and evaluates Dubins paths. The Pure Pursuit algorithm is integrated into the same node as the Greedy Planner, and issues Ackermann Drive commands. The Safety Controller intercepts this command and overrides it as needed if the LIDAR data indicates that the issued command is unsafe._
 </center>
 
@@ -102,7 +102,7 @@ IMU orientation data, after some processing, is used to compute the orientation 
 
 Since the obstacle course is a straight path, we initially position the RACECAR in the direction of the goal. Hence, if according to the IMU data the robot is facing at an angle \\(\theta\\) relative to its initial orientation, the IRN implementation considers the goal to be in the \\(-\theta\\) direction relative to the robot frame. Figure 5 below illustrates this process.
 <center>**Figure 5: IMU Orientation**<br />
-    ![IMU Orientation*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/imu_orientation.PNG =262x549)<br/>
+    ![IMU Orientation*](https://ravirahman.github.io/the-electrons/assets/images/final_project/imu_orientation.PNG =262x549)<br/>
 _This diagram illustrates the relationship between IMU orientation and the goal direction. It is assumed that the RACECAR's initial orientation is towards the goal. Hence, the negative change in orientation, relative to the RACECAR's frame, represents the direction towards the goal. This direction is used when planning paths.situations_
 </center>
 
@@ -121,7 +121,7 @@ Namely, if the robot is placed at a distance 'laserrange' away from the origin, 
 
 Finally, because the Velodyne LIDAR is angled slightly upward, some obstacles are sufficiently short that the Velodyne is unable to see them reliably, so the IRN algorithm caches the last three LIDAR readings and, for each angle, uses the shortest measurement across the last three readings.
 <center>**Figure 6: Adjusted LIDAR Scans**<br />
-    ![Adjusted LIDAR Scans*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/safescan.png =208x278)<br/>
+    ![Adjusted LIDAR Scans*](https://ravirahman.github.io/the-electrons/assets/images/final_project/safescan.png =208x278)<br/>
 _This diagram illustrates the adjusted LIDAR scans. The red lines represent the raw LIDAR data, and the white points represent the adjusted LIDAR ranges when obstacles are dilated for the RACECAR's size. As such, the RACECAR will not collide with obstacles when navigating within the white boundary._
 </center>
 
@@ -132,7 +132,7 @@ To select the end pose for Dubins paths, we tried three approaches: greedy, rand
 We constructed a new set of paths each time the Velodyne LIDAR updated, i.e. at 20Hz. Note that because the robot does not have global positioning information, paths are computed on each timestep in the robot’s frame.
 
 <center>**Figure 7: Sample Dubins Paths**<br />
-    ![Sample Dubins Paths*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/uniform_paths.png =264x341)<br/>
+    ![Sample Dubins Paths*](https://ravirahman.github.io/the-electrons/assets/images/final_project/uniform_paths.png =264x341)<br/>
 _The above diagram illustrates 10 sample Dubins paths drawn by the IRN greedy path planning algorithm._
 </center>
 
@@ -154,7 +154,7 @@ The fourth criterion addresses an issue where when the robot approaches an obsta
 The path with the highest score is then sent to the path planning algorithm. Figure 8 below gives an example of the path selected using these criteria. This process of collision detection and path scoring takes approximately 4ms on 130 Dubins paths. This is sufficiently fast to keep up with the 20Hz Velodyne LIDAR.
 
 <center>**Figure 8: Best Dubins Path**<br />
-    ![Best Dubins Path*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/best_path.png =306x401)<br/>
+    ![Best Dubins Path*](https://ravirahman.github.io/the-electrons/assets/images/final_project/best_path.png =306x401)<br/>
 _The above diagram illustrates the best Dubins path, selected according to the above criteria, for the paths identified in Figure 7 above. Observe that the path which takes the robot to the right of the obstacle brings the robot closer to the goal, but the robot is already moving left, therefore IRN selects the path going to the left as preferable over the path going to the right for consistency reasons._
 </center>
 
@@ -187,7 +187,7 @@ In order to successfully navigate through a pathway of unknown obstacles, the cr
 The greedy path planner was tested initially in simulation. First, it was tested in an open region to ensure that it would drive in the direction of the goal point. After ensuring that it could identify and construct paths towards the the goal, it was then tested in a limited-obstacle map. This test uncovered the issue of planning paths too close to obstacles which was solved by increasing obstacle dilation. After increasing dilation, the RACECAR could successfully navigate through a limited-obstacle map at slow speeds. This confirmed the applicability of the greedy algorithm for this challenge. Next, testing was conducted at higher speeds. The RACECAR was able to complete a more complicated obstacle course at a max speed of 5m/s, as shown in Figure 10 below.
 
 <center>**Figure 10: Testing in Simulation**<br />
-    ![Testing in Simulation*](https://github.mit.edu/pages/rss2018-team12/assets/images/final_project/sim_debug.png =611x290)<br/>
+    ![Testing in Simulation*](https://ravirahman.github.io/the-electrons/assets/images/final_project/sim_debug.png =611x290)<br/>
 _The above diagram illustrates an example of bug fixed in simulation. The left image shows a path drawn too close teo the black wall. Simulation enabled us to identify an issue with the obstacle dilation. The right image shows the new obstacle dilation (white line) and the resulting path._
 </center>
 
